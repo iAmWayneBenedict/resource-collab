@@ -4,8 +4,9 @@ interface Props {
 	name?: string;
 	type?: string;
 	error?: string;
+	onChangeCallback?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
-const CustomInput: React.FC<Props> = ({ placeholder, name, type, error }) => {
+const CustomInput: React.FC<Props> = ({ placeholder, name, type, error, onChangeCallback }) => {
 	const input = useRef<HTMLInputElement>(null);
 	const [value, setValue] = useState<string>("");
 	const line = useRef<HTMLSpanElement>(null);
@@ -49,12 +50,15 @@ const CustomInput: React.FC<Props> = ({ placeholder, name, type, error }) => {
 					type={type}
 					ref={input}
 					value={value}
-					onChange={(event) => setValue(event.target.value)}
+					onChange={(event) => {
+						setValue(event.target.value);
+						onChangeCallback && onChangeCallback(event);
+					}}
 				/>
 				<span
 					ref={line}
 					className={`${
-						error && value ? "bg-red-500" : "bg-white"
+						error && value ? "bg-red-500" : "bg-black dark:bg-white"
 					} absolute bottom-0 h-[1px] w-full  transition-all duration-300 ease-out`}
 				></span>
 			</div>

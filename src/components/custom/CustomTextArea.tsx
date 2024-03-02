@@ -3,9 +3,34 @@ interface Props {
 	placeholder?: string;
 	name?: string;
 	children?: any;
+	size?: "sm" | "md" | "lg" | "default";
 	error?: string;
 }
-const TextArea: React.FC<Props> = ({ placeholder, name, children, error }) => {
+
+// tailwindcss sizes
+const sizes = {
+	sm: 12,
+	md: 36,
+	lg: 48,
+
+	default: 0,
+};
+
+// for raw pixel sizes based on tailwindcss sizes
+const rawSizes = {
+	sm: 48,
+	md: 144,
+	lg: 192,
+
+	default: 0,
+};
+const CustomTextArea: React.FC<Props> = ({
+	placeholder,
+	name,
+	children,
+	size = "default",
+	error,
+}) => {
 	const [value, setValue] = useState<string>("");
 	const textArea = useRef<HTMLTextAreaElement>(null);
 	const line = useRef<HTMLSpanElement>(null);
@@ -41,14 +66,17 @@ const TextArea: React.FC<Props> = ({ placeholder, name, children, error }) => {
 		<div className="flex relative w-full">
 			<label
 				ref={label}
-				className="input-label absolute w-full left-0 text-white text-xl cursor-[text] transition-all duration-300 ease"
+				className="input-label absolute w-full left-0 text-black dark:text-white text-xl cursor-[text] transition-all duration-300 ease"
 				htmlFor={name}
 			>
 				{placeholder}
 			</label>
 			<div className="flex relative w-full overflow-hidden">
 				<textarea
-					className="mt-10 pb-3 text-2xl lg:text-3xl 2xl:text-4xl font-light  h-0 resize-none overflow-hidden bg-transparent border-b-[1px] w-full border-b-gray-500 border-opacity-50 focus:outline-none active:outline-none outline-none"
+					style={{
+						minHeight: `${rawSizes[size]}px`,
+					}}
+					className={`mt-10 pb-3 text-2xl lg:text-3xl 2xl:text-4xl font-light min-h-${sizes[size]} h-0 resize-none overflow-hidden bg-transparent border-b-[1px] w-full border-b-gray-500 border-opacity-50 focus:outline-none active:outline-none outline-none`}
 					name={name}
 					id={name}
 					value={value}
@@ -61,7 +89,7 @@ const TextArea: React.FC<Props> = ({ placeholder, name, children, error }) => {
 				</textarea>
 				<span
 					ref={line}
-					className="absolute bottom-0 bg-white h-[1px] w-full  transition-all duration-300 ease-out"
+					className="absolute bottom-0 bg-black dark:bg-white h-[1px] w-full  transition-all duration-300 ease-out"
 				></span>
 			</div>
 			{error && (
@@ -73,4 +101,4 @@ const TextArea: React.FC<Props> = ({ placeholder, name, children, error }) => {
 	);
 };
 
-export default TextArea;
+export default CustomTextArea;

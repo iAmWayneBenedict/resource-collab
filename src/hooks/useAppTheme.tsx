@@ -6,6 +6,7 @@ const useAppTheme = () => {
 	const { setTheme } = useTheme();
 	useEffect(() => {
 		window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (event) => {
+			console.log(event.matches);
 			setTheme(event.matches ? "dark" : "light");
 		});
 	}, []);
