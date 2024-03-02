@@ -13,36 +13,38 @@ import React from "react";
 
 const Resources = () => {
 	return (
-		<Main className="mx-24 mt-36">
+		<Main className="mt-36">
 			<NavBar />
-			<BannerGradient classNames="w-full h-[8rem]" />
+			<div className="mx-24">
+				<BannerGradient classNames="w-full h-[8rem]" />
 
-			<Section>
-				<BannerContent
-					title="Discover tools for your needs"
-					description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-					incididunt ut labore et dolore magna aliqua."
-				/>
-			</Section>
+				<Section>
+					<BannerContent
+						title="Discover tools for your needs"
+						description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+		incididunt ut labore et dolore magna aliqua."
+					/>
+				</Section>
 
-			<Section className="flex">
-				<Aside
-					links={[
-						{ title: "All", href: "/resources" },
-						{ title: "Design", href: "/resources?filter=design" },
-						{ title: "Development", href: "/resources?filter=development" },
-						{ title: "Marketing", href: "/resources?filter=marketing" },
-						{ title: "Productivity", href: "/resources?filter=productivity" },
-					]}
-				/>
-				<div className="w-full">
-					<div className="mt-16 grid gap-6 grid-cols-3 grid-rows-2">
-						{[1, 2, 3, 4, 5, 6].map((el) => (
-							<ResourceCard key={el} />
-						))}
+				<Section className="flex">
+					<Aside
+						links={[
+							{ title: "All", href: "/resources" },
+							{ title: "Design", href: "/resources?filter=design" },
+							{ title: "Development", href: "/resources?filter=development" },
+							{ title: "Marketing", href: "/resources?filter=marketing" },
+							{ title: "Productivity", href: "/resources?filter=productivity" },
+						]}
+					/>
+					<div className="w-full">
+						<div className="mt-16 grid gap-6 grid-cols-3 grid-rows-2">
+							{[1, 2, 3, 4, 5, 6].map((el) => (
+								<ResourceCard key={el} />
+							))}
+						</div>
 					</div>
-				</div>
-			</Section>
+				</Section>
+			</div>
 
 			<DarkModeToggler />
 			<Footer />

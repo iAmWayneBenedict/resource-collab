@@ -94,11 +94,11 @@ const NavBar = () => {
 				</div>
 			)}
 			<div ref={rightNavRef} className="flex items-center gap-3">
-				<Link href="/docs/getting-started" passHref>
+				<Link href="/auth/signup" passHref>
 					Sign up
 				</Link>
 				<Button asChild className={cn("rounded-full px-7")}>
-					<Link href="/docs/getting-started" passHref>
+					<Link href="/auth/login" passHref>
 						Login
 					</Link>
 				</Button>

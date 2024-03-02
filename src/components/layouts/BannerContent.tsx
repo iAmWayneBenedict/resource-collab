@@ -1,11 +1,13 @@
+import { cn } from "@/lib/utils";
 import React from "react";
 
 type Props = {
 	title: string;
 	description: string;
+	descriptionClasses?: string;
 };
 
-const BannerContent: React.FC<Props> = ({ title, description }) => {
+const BannerContent: React.FC<Props> = ({ title, description, descriptionClasses = "" }) => {
 	return (
 		<>
 			<div className="flex w-full justify-between items-center">
@@ -15,7 +17,7 @@ const BannerContent: React.FC<Props> = ({ title, description }) => {
 					</h1>
 				</div>
 			</div>
-			<p className="mt-10">{description}</p>
+			<p className={cn("mt-10 whitespace-pre-line", descriptionClasses)}>{description}</p>
 		</>
 	);
 };
