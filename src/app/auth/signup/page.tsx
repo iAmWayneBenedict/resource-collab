@@ -13,13 +13,12 @@ import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
 
 export default function Signup() {
-	const main = useRef<HTMLElement>(null);
 	const [passwordType, setPasswordType] = useState("password");
 	return (
-		<Main refObject={main}>
+		<Main>
 			<NavBar />
 
-			<div className="mx-24 mt-36 flex flex-row h-full gap-16">
+			<div className="mx-24 mt-52 flex flex-row h-full gap-16">
 				<div>
 					<BannerGradient classNames="min-w-[25rem] w-[25rem] h-full" />
 				</div>
@@ -120,13 +119,13 @@ export default function Signup() {
 								type="submit"
 								className="w-full bg-violet hover:bg-violet-foreground text-white rounded-full py-8 "
 							>
-								Login
+								Sign up
 							</Button>
 							<div>
 								<center className="mt-4">
-									Don't have an account?{" "}
-									<Link href="/auth/signup" className="text-green-500">
-										Sign up
+									Already have an account?{" "}
+									<Link href="/auth/login" className="text-green-500">
+										Login
 									</Link>
 								</center>
 							</div>

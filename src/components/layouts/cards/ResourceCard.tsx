@@ -27,7 +27,7 @@ const ResourceCard = () => {
 		});
 	};
 	return (
-		<div className="relative w-full h-[13rem] bg-white dark:bg-black rounded-2xl p-7">
+		<div className="relative w-full h-[13rem] bg-white dark:bg-black rounded-2xl p-7 shadow-md">
 			<div className="absolute top-7 left-7">
 				<Button
 					onClick={handleClickBookmark}

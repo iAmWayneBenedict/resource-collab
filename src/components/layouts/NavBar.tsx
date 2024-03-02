@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/navigation-menu";
 import { Button } from "@/components/ui/button";
 import useElementSize from "@/hooks/useElementSize";
+import { usePathname } from "next/navigation";
 
 const NavBar = () => {
 	const rightNavRef = useRef<HTMLDivElement>(null);
@@ -49,7 +50,7 @@ const NavBar = () => {
 											"bg-transparent hover:bg-transparent focus:bg-transparent"
 										)}
 									>
-										Home
+										<NavLinkStyleWrapper name="home">Home</NavLinkStyleWrapper>
 									</NavigationMenuLink>
 								</Link>
 							</NavigationMenuItem>
@@ -61,7 +62,23 @@ const NavBar = () => {
 											"bg-transparent hover:bg-transparent focus:bg-transparent"
 										)}
 									>
-										Resource
+										<NavLinkStyleWrapper name="resources">
+											Resources
+										</NavLinkStyleWrapper>
+									</NavigationMenuLink>
+								</Link>
+							</NavigationMenuItem>
+							<NavigationMenuItem>
+								<Link href="/portfolios" legacyBehavior passHref>
+									<NavigationMenuLink
+										className={cn(
+											navigationMenuTriggerStyle(),
+											"bg-transparent hover:bg-transparent focus:bg-transparent"
+										)}
+									>
+										<NavLinkStyleWrapper name="portfolios">
+											Portfolios
+										</NavLinkStyleWrapper>
 									</NavigationMenuLink>
 								</Link>
 							</NavigationMenuItem>
@@ -73,7 +90,9 @@ const NavBar = () => {
 											"bg-transparent hover:bg-transparent focus:bg-transparent"
 										)}
 									>
-										About
+										<NavLinkStyleWrapper name="about">
+											About
+										</NavLinkStyleWrapper>
 									</NavigationMenuLink>
 								</Link>
 							</NavigationMenuItem>
@@ -85,7 +104,9 @@ const NavBar = () => {
 											"bg-transparent hover:bg-transparent focus:bg-transparent"
 										)}
 									>
-										Contact
+										<NavLinkStyleWrapper name="contact">
+											Contact
+										</NavLinkStyleWrapper>
 									</NavigationMenuLink>
 								</Link>
 							</NavigationMenuItem>
@@ -108,3 +129,27 @@ const NavBar = () => {
 };
 
 export default NavBar;
+
+const NavLinkStyleWrapper = ({
+	name,
+	children,
+	className = "",
+}: {
+	name: string;
+	children: React.ReactNode;
+	className?: string;
+}) => {
+	const pathname = usePathname();
+	const activeStyle = "after:opacity-100";
+	return (
+		<div
+			className={cn(
+				"relative after:opacity-0 after:absolute after:content-[''] after:-bottom-1 after:left-1/2 after:-translate-x-1/2 after:w-1 after:h-1 after:rounded-full after:bg-black dark:after:bg-white",
+				className,
+				pathname.includes(name) || (name == "home" && pathname == "/") ? activeStyle : ""
+			)}
+		>
+			{children}
+		</div>
+	);
+};

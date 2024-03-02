@@ -25,7 +25,7 @@ const Aside: React.FC<Props> = ({ links }) => {
 		<aside className={cn("min-w-[18rem] pr-16")}>
 			<ul className="flex flex-col gap-1">
 				<li className="mb-5 pb-5 border-b border-neutral-400 dark:border-neutral-500">
-					<Link href={"/resources?filter=bookmark"}>
+					<Link href={`${links[0].href}?filter=bookmark`}>
 						<Badge
 							variant={"secondary"}
 							className={cn(

@@ -19,7 +19,7 @@ export default function Login() {
 		<Main refObject={main}>
 			<NavBar />
 
-			<div className="mx-24 mt-36 flex flex-row h-full gap-16">
+			<div className="mx-24 mt-52 flex flex-row h-full gap-16">
 				<div>
 					<BannerGradient classNames="min-w-[25rem] w-[25rem] h-full" />
 				</div>
