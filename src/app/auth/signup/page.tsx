@@ -11,8 +11,32 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
+import { useForm, Controller, SubmitHandler } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const FormSchema = z.object({
+	name: z.string().min(1, { message: "Name is required" }),
+	email: z.string().email().min(5).max(255),
+	password: z.string().min(8).max(255),
+
+	// Confirm password should be the same as password
+	confirm_password: z.string().refine((data) => data === "password", {
+		message: "Passwords do not match",
+	}),
+});
+
+type TFormValues = z.infer<typeof FormSchema>;
 
 export default function Signup() {
+	const {
+		register,
+		formState: { errors },
+		handleSubmit,
+	} = useForm<TFormValues>({
+		resolver: zodResolver(FormSchema),
+	});
+	const onSubmit: SubmitHandler<TFormValues> = (data) => console.log(data);
 	const [passwordType, setPasswordType] = useState("password");
 	return (
 		<Main>
@@ -28,26 +52,40 @@ export default function Signup() {
 						description={`Become part of our innovation hub! By signing up, you’ll gain exclusive access to software libraries, portfolio inspirations, and networking opportunities. Let’s create something amazing together!`}
 						descriptionClasses="max-w-[50rem]"
 					/>
-					<form className="mt-8 max-w-[50rem]">
+					<form onSubmit={handleSubmit(onSubmit)} className="mt-8 max-w-[50rem]">
 						<div className="flex flex-col gap-4">
-							<CustomInput placeholder="Name" name="name" type="name" />
-							<CustomInput placeholder="Email" name="email" type="email" />
 							<CustomInput
-								placeholder="Password"
-								name="password"
-								type={passwordType}
+								name="name"
+								type="text"
+								label="Name"
+								register={register("name")}
+								error={errors.name}
 							/>
 							<CustomInput
-								placeholder="Confirm Password"
+								name="email"
+								type="email"
+								label="Email"
+								register={register("email")}
+								error={errors.email}
+							/>
+							<CustomInput
+								name="password"
+								type={passwordType}
+								label="Password"
+								register={register("password")}
+								error={errors.password}
+							/>
+							<CustomInput
 								name="confirm_password"
 								type={passwordType}
+								label="Confirm Password"
+								register={register("confirm_password")}
+								error={errors.confirm_password}
 							/>
 							<div className="flex items-center space-x-2">
 								<Checkbox
 									id="show-password"
-									onCheckedChange={(
-										checked: React.ChangeEvent<HTMLInputElement>
-									) => {
+									onCheckedChange={(checked: boolean) => {
 										setPasswordType(checked ? "text" : "password");
 									}}
 								/>

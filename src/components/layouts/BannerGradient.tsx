@@ -16,6 +16,7 @@ const BannerGradient: React.FC<Props> = ({ classNames = "w-full h-[15rem]" }) =>
 			<Image
 				src={backGroundGradient}
 				className={cn("h-full w-full object-cover object-center")}
+				priority
 				alt={""}
 			/>
 		</div>

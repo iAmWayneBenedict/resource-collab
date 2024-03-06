@@ -11,8 +11,25 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
+import { useForm, Controller, SubmitHandler } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const FormSchema = z.object({
+	email: z.string().email().min(5).max(255),
+	password: z.string().min(8).max(255),
+});
+
+type TFormValues = z.infer<typeof FormSchema>;
 
 export default function Login() {
+	const {
+		register,
+		formState: { errors },
+		handleSubmit,
+	} = useForm<TFormValues>({
+		resolver: zodResolver(FormSchema),
+	});
 	const main = useRef<HTMLElement>(null);
 	const [passwordType, setPasswordType] = useState("password");
 	return (
@@ -31,18 +48,24 @@ export default function Login() {
 					/>
 					<form className="mt-8 max-w-[50rem]">
 						<div className="flex flex-col gap-4">
-							<CustomInput placeholder="Email" name="email" type="email" />
 							<CustomInput
-								placeholder="Password"
+								name="email"
+								type="email"
+								label="Email"
+								register={register("email")}
+								error={errors.email}
+							/>
+							<CustomInput
 								name="password"
 								type={passwordType}
+								label="Password"
+								register={register("password")}
+								error={errors.password}
 							/>
 							<div className="flex items-center space-x-2">
 								<Checkbox
 									id="show-password"
-									onCheckedChange={(
-										checked: React.ChangeEvent<HTMLInputElement>
-									) => {
+									onCheckedChange={(checked: boolean) => {
 										setPasswordType(checked ? "text" : "password");
 									}}
 								/>

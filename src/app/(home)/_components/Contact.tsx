@@ -5,13 +5,41 @@ import { cn, urlValidator } from "@/lib/utils";
 import contactGradient from "../../../../public/assets/img/contact-gradient.png";
 import Image from "next/image";
 import CustomTextArea from "@/components/custom/CustomTextArea";
+import { useForm, Controller, SubmitHandler } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+// Contact form schema
+// Define the schema for contact form
+export const FormSchema = z.object({
+	name: z.string().min(1, { message: "Name is required" }),
+	email: z.string().email().includes("@").min(5).max(255),
+	link: z
+		.string()
+		.url()
+		.min(5, {
+			message: "Link is required",
+		})
+		.max(255, { message: "Link is too long" }),
+	message: z.string().min(1, { message: "Message is required" }),
+});
+
+type TFormValues = z.infer<typeof FormSchema>;
+
 const Contact = () => {
+	const {
+		register,
+		formState: { errors },
+		handleSubmit,
+	} = useForm<TFormValues>({
+		resolver: zodResolver(FormSchema),
+	});
 	const handleUrlInput = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
 		const url = event.target.value;
 		const validatedUrl = urlValidator(url);
-		console.log(validatedUrl);
 	}, []);
 
+	const onSubmit: SubmitHandler<TFormValues> = (data) => console.log(data);
 	return (
 		<div
 			className="flex mt-56"
@@ -46,17 +74,36 @@ const Contact = () => {
 				</div>
 			</div>
 			<div className="flex-1 mt-7">
-				<form action="">
+				<form onSubmit={handleSubmit(onSubmit)}>
 					<div className="flex flex-col gap-3">
-						<CustomInput placeholder="Name" name="name" type="text" />
-						<CustomInput placeholder="Email" name="email" type="email" />
 						<CustomInput
-							onChangeCallback={handleUrlInput}
-							placeholder="Link"
+							name="name"
+							type="text"
+							label="Name"
+							register={register("name")}
+							error={errors.name}
+						/>
+						<CustomInput
+							name="email"
+							type="email"
+							label="Email"
+							register={register("email")}
+							error={errors.email}
+						/>
+						<CustomInput
 							name="link"
 							type="text"
+							label="Link"
+							register={register("link")}
+							error={errors.link}
 						/>
-						<CustomTextArea size="md" placeholder="Message" name="message" />
+						<CustomTextArea
+							name="message"
+							label="Message"
+							size="md"
+							register={register("message")}
+							error={errors.message}
+						/>
 					</div>
 					<div className="mt-10 w-full">
 						<button

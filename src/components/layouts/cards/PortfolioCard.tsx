@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
 import { Bookmark } from "lucide-react";
 import Image from "next/image";
@@ -6,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { MoveRight } from "lucide-react";
+import { Briefcase } from "lucide-react";
 
 const POSITION_TYPES = {
 	"entry level":
@@ -28,7 +30,10 @@ const PortfolioCard = () => {
 			return { fill: "#ffffff", stroke: "#ffffff" }; // Dark theme colors
 		}
 	};
-	const [iconColors, setIconColors] = useState<{ fill: string; stroke: string }>(getIconColors());
+	const [iconColors, setIconColors] = useState<{ fill: string; stroke: string }>({
+		fill: "#000000",
+		stroke: "#000000",
+	});
 	useEffect(() => {
 		setIconColors(getIconColors());
 	}, [theme]);
@@ -59,9 +64,8 @@ const PortfolioCard = () => {
 					<Image
 						src="https://www.iamwayne.tech/assets/ico/logo.png"
 						alt="image"
-						layout="fill"
-						objectFit="cover"
-						objectPosition="center"
+						fill
+						sizes="100%"
 					/>
 				</div>
 				<div>
@@ -74,17 +78,18 @@ const PortfolioCard = () => {
 				<div className="mt-6 flex flex-row justify-between gap-3">
 					<Badge
 						className={cn(
-							"px-8 py-3 bg-black dark:bg-white hover:bg-black cursor-default text-xs",
+							"px-6 py-2 text-base bg-black dark:bg-white hover:bg-black cursor-default",
 							POSITION_TYPES["default"]
 						)}
 					>
 						Entry Level
 					</Badge>
-					<div className="flex items-center">
-						<MoveRight />
+					<div className="flex items-center gap-3">
+						<Briefcase className="text-purple-500" />
+						<span>Looking for job</span>
 					</div>
 				</div>
-				<div className="mt-3">
+				<div className="mt-3 text-sm">
 					<span className="text-green-600 dark:text-green-500 font-bold">Skills: </span>
 					<span className="text-neutral-600 dark:text-neutral-400">
 						{["Front-end", "Back-end", "Full-stack", "DevOps"].join(", ")}
