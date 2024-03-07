@@ -3,6 +3,9 @@ import { cn } from "@/lib/utils";
 import { z } from "zod";
 import { TValidFormNames, TextAreaType } from "@/types/FormTypes";
 import { FieldError, UseFormRegisterReturn } from "react-hook-form";
+import { Label } from "../ui/label";
+import { Textarea } from "../ui/textarea";
+import { FormMessage } from "../ui/form";
 
 const sizeEnum = z.enum(["sm", "md", "lg", "default"]);
 
@@ -32,6 +35,29 @@ const rawSizes = {
 
 	default: 0,
 };
+
+/**
+ * CustomTextArea is a component that renders a text area with custom sizes and additional properties.
+ * @date 7/3/2024 - 02:11:20 AM
+ *
+ * @typedef {Object} Props
+ * @property {string} label - The label text for the text area.
+ * @property {TValidFormNames} name - The name attribute for the text area, used for form registration.
+ * @property {React.ReactNode} [children] - The children nodes to be rendered inside the text area.
+ * @property {("sm" | "md" | "lg" | "default")} size - The size of the text area, defined by the sizeEnum.
+ * @property {UseFormRegisterReturn<string>} register - The register function from react-hook-form.
+ * @property {FieldError | undefined} error - The error object for the text area, if any.
+ * @property {TextAreaType} ...otherProps - Additional props specific to the text area.
+ *
+ * @param {string} label - The label text for the text area.
+ * @param {TValidFormNames} name - The name attribute for the text area.
+ * @param {React.ReactNode} [children] - The children nodes to be rendered inside the text area.
+ * @param {("sm" | "md" | "lg" | "default")} size - The size of the text area, defined by the sizeEnum.
+ * @param {UseFormRegisterReturn<string>} register - The register function from react-hook-form.
+ * @param {FieldError | undefined} error - The error object for the text area, if any.
+ * @param {TextAreaType} ...otherProps - Additional props specific to the text area.
+ * @returns {React.ReactElement} The rendered text area component.
+ */
 const CustomTextArea: React.FC<Props> = ({
 	label,
 	name,
@@ -69,20 +95,20 @@ const CustomTextArea: React.FC<Props> = ({
 
 	return (
 		<div className="flex relative w-full">
-			<label
+			<Label
 				ref={labelRef}
 				className="input-label absolute w-full left-0 text-black dark:text-white text-xl cursor-[text] transition-all duration-300 ease"
 				htmlFor={name}
 			>
 				{label}
-			</label>
+			</Label>
 			<div className="flex relative w-full overflow-hidden">
-				<textarea
+				<Textarea
 					style={{
 						minHeight: `${rawSizes[size]}px`,
 					}}
 					className={cn(
-						`mt-10 pb-3 text-2xl lg:text-3xl 2xl:text-4xl font-light h-0 resize-none overflow-hidden bg-transparent border-b-[1px] w-full border-b-gray-500 border-opacity-50 focus:outline-none active:outline-none outline-none`
+						`mt-10 pb-3 px-0 text-2xl lg:text-3xl 2xl:text-4xl font-light h-0 resize-none overflow-hidden bg-transparent border-x-0 border-t-0 border-b-[1px] w-full border-b-gray-500 border-opacity-50 focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 active:outline-none outline-none`
 					)}
 					id={name}
 					onKeyUp={(event: React.KeyboardEvent<HTMLTextAreaElement>) =>
@@ -92,13 +118,13 @@ const CustomTextArea: React.FC<Props> = ({
 					{...props}
 				>
 					{children}
-				</textarea>
+				</Textarea>
 				<span className="absolute bottom-0 bg-black dark:bg-white h-[1px] w-full  transition-all duration-300 ease-out"></span>
 			</div>
 			{error && (
-				<p className="absolute text-red-500 text-xs md:text-sm -bottom-[1.3rem] right-0">
+				<FormMessage className="absolute text-red-500 text-xs md:text-sm -bottom-[1.3rem] right-0">
 					{error.message}
-				</p>
+				</FormMessage>
 			)}
 		</div>
 	);

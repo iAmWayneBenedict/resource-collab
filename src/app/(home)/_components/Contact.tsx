@@ -5,9 +5,13 @@ import { cn, urlValidator } from "@/lib/utils";
 import contactGradient from "../../../../public/assets/img/contact-gradient.png";
 import Image from "next/image";
 import CustomTextArea from "@/components/custom/CustomTextArea";
-import { useForm, Controller, SubmitHandler } from "react-hook-form";
+import { useForm, Controller, SubmitHandler, FieldErrors } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Form } from "@/components/ui/form";
+import { TValidFormNames, validContactFormNames } from "@/types/FormTypes";
+import ControlledInput from "@/components/custom/ControlledInput";
+import ControlledTextArea from "@/components/custom/ControlledTextArea";
 
 // Contact form schema
 // Define the schema for contact form
@@ -26,14 +30,28 @@ export const FormSchema = z.object({
 
 type TFormValues = z.infer<typeof FormSchema>;
 
+const formFields = [
+	{ name: "name", type: "text" },
+	{ name: "email", type: "email" },
+	{ name: "link", type: "url" },
+];
+
 const Contact = () => {
+	const form = useForm<TFormValues>({
+		resolver: zodResolver(FormSchema),
+		defaultValues: {
+			name: "",
+			email: "",
+			link: "",
+			message: "",
+		},
+	});
 	const {
 		register,
-		formState: { errors },
 		handleSubmit,
-	} = useForm<TFormValues>({
-		resolver: zodResolver(FormSchema),
-	});
+		formState: { errors },
+		control,
+	} = form;
 	const handleUrlInput = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
 		const url = event.target.value;
 		const validatedUrl = urlValidator(url);
@@ -74,47 +92,41 @@ const Contact = () => {
 				</div>
 			</div>
 			<div className="flex-1 mt-7">
-				<form onSubmit={handleSubmit(onSubmit)}>
-					<div className="flex flex-col gap-3">
-						<CustomInput
-							name="name"
-							type="text"
-							label="Name"
-							register={register("name")}
-							error={errors.name}
-						/>
-						<CustomInput
-							name="email"
-							type="email"
-							label="Email"
-							register={register("email")}
-							error={errors.email}
-						/>
-						<CustomInput
-							name="link"
-							type="text"
-							label="Link"
-							register={register("link")}
-							error={errors.link}
-						/>
-						<CustomTextArea
-							name="message"
-							label="Message"
-							size="md"
-							register={register("message")}
-							error={errors.message}
-						/>
-					</div>
-					<div className="mt-10 w-full">
-						<button
-							type="submit"
-							title="Submit"
-							className="bg-violet text-white w-full py-3 rounded-full text-lg"
-						>
-							Message
-						</button>
-					</div>
-				</form>
+				<Form {...form}>
+					<form onSubmit={handleSubmit(onSubmit)}>
+						<div className="flex flex-col gap-3">
+							{formFields.map(({ name, type }) => {
+								return (
+									<ControlledInput
+										key={name}
+										name={name}
+										type={type}
+										label={name[0].toUpperCase() + name.slice(1)}
+										control={control}
+										error={errors[name as keyof TFormValues]}
+									/>
+								);
+							})}
+
+							<ControlledTextArea
+								size="lg"
+								name={"message"}
+								label={"Message"}
+								control={control}
+								error={errors["message"]}
+							/>
+						</div>
+						<div className="mt-10 w-full">
+							<button
+								type="submit"
+								title="Submit"
+								className="bg-violet text-white w-full py-3 rounded-full text-lg"
+							>
+								Message
+							</button>
+						</div>
+					</form>
+				</Form>
 			</div>
 		</div>
 	);
