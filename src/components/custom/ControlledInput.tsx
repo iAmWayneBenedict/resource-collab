@@ -41,7 +41,9 @@ const ControlledInput: React.FC<Props> = ({
 	...props
 }) => {
 	const labelRef = useRef<HTMLLabelElement>(null);
-	const handleLabel = (event: React.FocusEvent<HTMLInputElement>) => {
+	const handleLabel = (
+		event: React.FocusEvent<HTMLInputElement> | React.ChangeEvent<HTMLInputElement>
+	) => {
 		const { currentTarget: inputRef, type } = event;
 		labelRef.current!.classList.toggle("active", type === "focus" || inputRef.value !== "");
 	};
@@ -49,7 +51,9 @@ const ControlledInput: React.FC<Props> = ({
 		<FormField
 			name={name}
 			control={control}
-			render={({ field: { onBlur: onBlurReactHookForm, ...field } }) => {
+			render={({
+				field: { onBlur: onBlurReactHookForm, onChange: onChangeReactHookForm, ...field },
+			}) => {
 				return (
 					<div className="flex relative flex-col w-full">
 						<FormLabel
@@ -78,6 +82,11 @@ const ControlledInput: React.FC<Props> = ({
 									onFocus={(e: React.FocusEvent<HTMLInputElement>) => {
 										handleLabel(e);
 									}}
+									onChange={(e) => {
+										handleLabel(e);
+										onChangeReactHookForm(e);
+									}}
+									suppressHydrationWarning // This is a workaround for a bug in Next.js where additional attributes are being added to the input element and causing a hydration mismatch due to the browser extensions
 									{...field}
 									{...props}
 								/>

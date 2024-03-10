@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { GeistSans } from "geist/font/sans";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
+import LenisWrapper from "@/components/layouts/LenisWrapper";
 
 export const metadata: Metadata = {
 	title: "Resource Collab",
@@ -22,7 +23,7 @@ export default function RootLayout({
 					enableSystem
 					disableTransitionOnChange
 				>
-					{children}
+					<LenisWrapper>{children}</LenisWrapper>
 				</ThemeProvider>
 			</body>
 		</html>

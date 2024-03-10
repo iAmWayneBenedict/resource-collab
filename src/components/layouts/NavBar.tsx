@@ -118,7 +118,10 @@ const NavBar = () => {
 				<Link href="/auth/signup" passHref>
 					Sign up
 				</Link>
-				<Button asChild className={cn("rounded-full px-7")}>
+				<Button
+					asChild
+					className={cn("rounded-full px-7 bg-violet hover:bg-violet-foreground")}
+				>
 					<Link href="/auth/login" passHref>
 						Login
 					</Link>
@@ -144,7 +147,7 @@ const NavLinkStyleWrapper = ({
 	return (
 		<div
 			className={cn(
-				"relative after:opacity-0 after:absolute after:content-[''] after:-bottom-1 after:left-1/2 after:-translate-x-1/2 after:w-1 after:h-1 after:rounded-full after:bg-black dark:after:bg-white",
+				"relative after:opacity-0 after:absolute after:content-[''] after:-bottom-1 after:left-1/2 after:-translate-x-1/2 after:w-1 after:h-1 after:rounded-full after:bg-violet",
 				className,
 				pathname.includes(name) || (name == "home" && pathname == "/") ? activeStyle : ""
 			)}
