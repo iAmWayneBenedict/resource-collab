@@ -1,5 +1,11 @@
 import type { Config } from "tailwindcss";
 const { default: flattenColorPalette } = require("tailwindcss/lib/util/flattenColorPalette");
+import {
+	fluidExtractor,
+	fluidCorePlugins,
+	defaultThemeFontSizeInRems,
+	defaultThemeScreensInRems,
+} from "fluid-tailwind";
 
 const config = {
 	darkMode: ["class"],
@@ -21,6 +27,8 @@ const config = {
 				"2xl": "1400px",
 			},
 		},
+		fontSize: defaultThemeFontSizeInRems,
+		screens: defaultThemeScreensInRems,
 		extend: {
 			colors: {
 				border: "hsl(var(--border))",
@@ -86,7 +94,8 @@ const config = {
 			},
 		},
 	},
-	plugins: [require("tailwindcss-animate"), addVariablesForColors],
+	extract: fluidExtractor(),
+	plugins: [require("tailwindcss-animate"), addVariablesForColors, fluidCorePlugins],
 } satisfies Config;
 
 // This plugin adds each Tailwind color as a global CSS variable, e.g. var(--gray-200).

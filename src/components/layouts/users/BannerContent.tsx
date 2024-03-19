@@ -12,7 +12,7 @@ const BannerContent: React.FC<Props> = ({ title, description, descriptionClasses
 		<>
 			<div className="flex w-full justify-between items-center">
 				<div className="flex flex-col gap-4">
-					<h1 className="text-6xl font-PlayFairDisplay font-medium whitespace-pre-line leading-snug">
+					<h1 className="text-5xl xl:text-6xl font-PlayFairDisplay font-medium whitespace-pre-line leading-snug">
 						{title}
 					</h1>
 				</div>

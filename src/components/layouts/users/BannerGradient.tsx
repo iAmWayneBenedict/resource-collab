@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import backGroundGradient from "../../../public/assets/img/gradient-bg-4.png";
+import backGroundGradient from "../../../../public/assets/img/gradient-bg-4.png";
 import { cn } from "@/lib/utils";
 
 type Props = {

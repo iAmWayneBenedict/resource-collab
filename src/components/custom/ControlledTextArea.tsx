@@ -101,6 +101,7 @@ const ControlledTextArea: React.FC<Props> = ({
 							onFocus={(e: React.FocusEvent<HTMLTextAreaElement>) => {
 								handleLabel(e);
 							}}
+							suppressHydrationWarning // This is a workaround for a bug in Next.js where additional attributes are being added to the input element and causing a hydration mismatch due to the browser extensions
 							{...field}
 							{...props}
 						>

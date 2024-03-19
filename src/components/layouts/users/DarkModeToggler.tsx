@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 export function DarkModeToggler() {
 	const { setTheme, theme } = useTheme();
 	return (
-		<div className="fixed bottom-24 right-28">
+		<div className="fixed bottom-24 right-10 md:right-28">
 			<Button
 				variant="outline"
 				onClick={() => setTheme(theme == "light" ? "dark" : "light")}

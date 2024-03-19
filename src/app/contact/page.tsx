@@ -1,4 +1,4 @@
-import NavBar from "@/components/layouts/NavBar";
+import NavBar from "@/components/layouts/users/NavBar";
 import React from "react";
 
 const contact = () => {

@@ -1,21 +1,18 @@
 "use client";
 
-import Aside from "@/components/layouts/Aside";
-import BannerContent from "@/components/layouts/BannerContent";
-import BannerGradient from "@/components/layouts/BannerGradient";
-import { DarkModeToggler } from "@/components/layouts/DarkModeToggler";
-import Footer from "@/components/layouts/Footer";
-import Main from "@/components/layouts/Main";
-import NavBar from "@/components/layouts/NavBar";
+import Aside from "@/components/layouts/users/Aside";
+import BannerContent from "@/components/layouts/users/BannerContent";
+import BannerGradient from "@/components/layouts/users/BannerGradient";
+import Layout from "@/components/layouts/users/Layout";
 import Section from "@/components/layouts/Section";
 import ResourceCard from "@/components/layouts/cards/ResourceCard";
 import React from "react";
+import Container from "@/components/layouts/Container";
 
 const Resources = () => {
 	return (
-		<Main className="mt-36">
-			<NavBar />
-			<div className="mx-24">
+		<Layout className="mt-36">
+			<Container>
 				<BannerGradient classNames="w-full h-[8rem]" />
 
 				<Section>
@@ -26,7 +23,7 @@ const Resources = () => {
 					/>
 				</Section>
 
-				<Section className="flex">
+				<Section className="flex flex-col lg:flex-row">
 					<Aside
 						links={[
 							{ title: "All", href: "/resources" },
@@ -37,18 +34,15 @@ const Resources = () => {
 						]}
 					/>
 					<div className="w-full">
-						<div className="mt-16 grid gap-6 grid-cols-3 grid-rows-2">
+						<div className="mt-16 gap-6 flex flex-wrap">
 							{[1, 2, 3, 4, 5, 6].map((el) => (
 								<ResourceCard key={el} />
 							))}
 						</div>
 					</div>
 				</Section>
-			</div>
-
-			<DarkModeToggler />
-			<Footer />
-		</Main>
+			</Container>
+		</Layout>
 	);
 };
 

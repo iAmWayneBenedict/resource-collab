@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -66,10 +67,11 @@ const PortfolioCard = () => {
 						alt="image"
 						fill
 						sizes="100%"
+						className="object-cover w-full h-full rounded-lg"
 					/>
 				</div>
 				<div>
-					<h2 className="text-2xl font-bold mt-8">Wayne Benedict Iraola</h2>
+					<h2 className="~text-base/2xl font-bold mt-8">Wayne Benedict Iraola</h2>
 					<p className="truncate text-neutral-600 dark:text-neutral-400">
 						Lorem ipsum dolor sit amet.
 					</p>
@@ -78,7 +80,7 @@ const PortfolioCard = () => {
 				<div className="mt-6 flex flex-row justify-between gap-3">
 					<Badge
 						className={cn(
-							"px-6 py-2 text-base bg-black dark:bg-white hover:bg-black cursor-default",
+							"px-4 2xl:px-6 py-2 ~text-xs/sm bg-black dark:bg-white hover:bg-black cursor-default",
 							POSITION_TYPES["default"]
 						)}
 					>
@@ -86,7 +88,7 @@ const PortfolioCard = () => {
 					</Badge>
 					<div className="flex items-center gap-3">
 						<Briefcase className="text-purple-500" />
-						<span>Looking for job</span>
+						<span className="~text-xs/base">Looking for job</span>
 					</div>
 				</div>
 				<div className="mt-3 text-sm">

@@ -1,9 +1,9 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import BannerGradient from "@/components/layouts/BannerGradient";
+import BannerGradient from "@/components/layouts/users/BannerGradient";
 import Section from "@/components/layouts/Section";
-import BannerContent from "@/components/layouts/BannerContent";
+import BannerContent from "@/components/layouts/users/BannerContent";
 
 const Banner = () => {
 	return (

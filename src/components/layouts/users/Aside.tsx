@@ -28,16 +28,13 @@ const Aside: React.FC<Props> = ({ links }) => {
 		"bg-black text-white hover:bg-black dark:hover:bg-white dark:bg-white dark:text-black";
 
 	return (
-		<aside className={cn("min-w-[18rem] pr-16")}>
-			<ul className="flex flex-col gap-1">
+		<aside className={cn("hidden lg:flex min-w-[15rem] 2xl:min-w-[18rem] pr-10 2xl:pr-16")}>
+			<ul className="flex flex-col gap-1 w-full">
 				<li className="mb-5 pb-5 border-b border-neutral-400 dark:border-neutral-500">
 					<Link href={`${links[0].href}?filter=bookmark`} scroll={false}>
 						<Badge
 							variant={"secondary"}
-							className={cn(
-								"w-full py-3 ps-5 text-base cursor-pointer flex gap-2 bg-background-body hover:bg-neutral-200 dark:hover:bg-neutral-800 transition-none",
-								filter === "bookmark" ? activeStyle : ""
-							)}
+							className={cn(filter === "bookmark" ? activeStyle : "")}
 						>
 							<Bookmark className="transition-none" /> <span>Bookmark</span>
 						</Badge>
@@ -49,7 +46,6 @@ const Aside: React.FC<Props> = ({ links }) => {
 							<Badge
 								variant={"secondary"}
 								className={cn(
-									"w-full py-3 ps-5 cursor-pointer text-base bg-background-body hover:bg-neutral-200 dark:hover:bg-neutral-800",
 									filter === link.title.toLocaleLowerCase() ? activeStyle : ""
 								)}
 							>

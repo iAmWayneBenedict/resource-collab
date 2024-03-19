@@ -4,12 +4,18 @@ import React, { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ReactLenis, useLenis } from "@studio-freight/react-lenis";
 
+type LenisType = {
+	lenis: {
+		raf: (time: number) => void;
+	};
+};
+
 export default function LenisWrapper({ children }: { children: React.ReactNode }) {
 	const lenisRef = useRef(null);
 
 	useEffect(() => {
 		function update(time: number) {
-			lenisRef.current?.lenis?.raf(time * 1000);
+			(lenisRef.current as unknown as LenisType)?.lenis?.raf(time * 1000);
 		}
 
 		gsap.ticker.add(update);

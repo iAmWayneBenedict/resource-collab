@@ -60,7 +60,7 @@ const Contact = () => {
 	const onSubmit: SubmitHandler<TFormValues> = (data) => console.log(data);
 	return (
 		<div
-			className="flex mt-56"
+			className="flex mt-56 lg:flex-row flex-col w-full"
 			style={{
 				gap: "clamp(3rem, 10vw, 10rem)",
 			}}
@@ -70,7 +70,7 @@ const Contact = () => {
 					<h1
 						className={cn(
 							"font-PlayFairDisplay font-medium",
-							"text-6xl whitespace-pre-wrap flex flex-col gap-3"
+							"~text-4xl/6xl whitespace-pre-wrap flex flex-col gap-3"
 						)}
 					>
 						<span>Want to add?</span>
