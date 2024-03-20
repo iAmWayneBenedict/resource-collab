@@ -1,5 +1,4 @@
 import React, { useRef } from "react";
-import { InputType } from "@/types/FormTypes";
 import { cn } from "@/lib/utils";
 import { FieldError } from "react-hook-form";
 import { FormControl, FormField, FormLabel, FormMessage } from "../ui/form";

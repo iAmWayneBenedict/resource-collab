@@ -1,5 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useRef } from "react";
-import { InputType, TValidFormNames } from "@/types/FormTypes";
 import { cn } from "@/lib/utils";
 import { FieldError, UseFormRegisterReturn } from "react-hook-form";
 import { FormLabel, FormMessage } from "../ui/form";
@@ -8,7 +8,7 @@ import { Input } from "../ui/input";
 type PropsSchema = {
 	label: string;
 	type: string;
-	name: TValidFormNames;
+	name: string;
 	register: UseFormRegisterReturn<string>;
 	error: FieldError | undefined;
 	valueAsNumber?: boolean;
@@ -24,7 +24,7 @@ type Props = PropsSchema & InputType;
  * @param {Props} props - The props for the CustomInput component.
  * @param {string} props.label - The label text for the input.
  * @param {string} props.type - The type of the input.
- * @param {TValidFormNames} props.name - The name attribute for the input.
+ * @param {string} props.name - The name attribute for the input.
  * @param {UseFormRegisterReturn<string>} props.register - The register function from react-hook-form.
  * @param {FieldError | undefined} props.error - The error object for the input, if any.
  * @param {boolean} [props.valueAsNumber] - Whether the input value should be treated as a number.

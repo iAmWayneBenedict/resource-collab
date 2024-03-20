@@ -1,7 +1,6 @@
 import React, { useRef } from "react";
 import { cn } from "@/lib/utils";
 import { z } from "zod";
-import { TValidFormNames, TextAreaType } from "@/types/FormTypes";
 import { FieldError } from "react-hook-form";
 import { Label } from "../ui/label";
 import { Textarea } from "../ui/textarea";
@@ -11,7 +10,7 @@ const sizeEnum = z.enum(["sm", "md", "lg", "default"]);
 
 type Props = {
 	label: string;
-	name: TValidFormNames;
+	name: string;
 	children?: React.ReactNode;
 	size: z.infer<typeof sizeEnum>;
 	control: any;
@@ -32,7 +31,7 @@ const rawSizes = {
  * @component
  * @param {Object} props - Component props.
  * @param {string} props.label - The label for the textarea field.
- * @param {TValidFormNames} props.name - The name attribute for the textarea field.
+ * @param {string} props.name - The name attribute for the textarea field.
  * @param {React.ReactNode} [props.children] - Optional children to render within the textarea.
  * @param {('sm' | 'md' | 'lg' | 'default')} props.size - The size of the textarea ('sm', 'md', 'lg', or 'default').
  * @param {any} props.control - The control object from React Hook Form.

@@ -17,23 +17,19 @@ import ControlledInput from "@/components/custom/ControlledInput";
 import { Form } from "@/components/ui/form";
 import Layout from "@/components/layouts/users/Layout";
 import Container from "@/components/layouts/Container";
-
-const FormSchema = z.object({
-	name: z.string().min(1, { message: "Name is required" }),
-	email: z.string().email().min(5).max(255),
-	password: z.string().min(8).max(255),
-
-	// Confirm password should be the same as password
-	confirm_password: z.string().refine((data) => data === "password", {
-		message: "Passwords do not match",
-	}),
-});
-
-type TFormValues = z.infer<typeof FormSchema>;
+import { useMutation } from "@tanstack/react-query";
+import { register as registrationApi } from "@/api/auth";
+import { RegisterFormSchema, TRegisterForm } from "@/types/zod/forms";
 
 export default function Signup() {
-	const form = useForm<TFormValues>({
-		resolver: zodResolver(FormSchema),
+	const form = useForm<TRegisterForm>({
+		resolver: zodResolver(RegisterFormSchema),
+		defaultValues: {
+			name: "",
+			email: "",
+			password: "",
+			confirm_password: "",
+		},
 	});
 	const {
 		register,
@@ -41,7 +37,19 @@ export default function Signup() {
 		handleSubmit,
 		control,
 	} = form;
-	const onSubmit: SubmitHandler<TFormValues> = (data) => console.log(data);
+	const registerMutation = useMutation({
+		mutationFn: (data: TRegisterForm) => registrationApi(data),
+		onSuccess: (res) => {
+			// Navigate to the dashboard
+			console.log(res);
+		},
+		onError: (err) => {
+			console.error(err);
+		},
+	});
+	const onSubmit: SubmitHandler<TRegisterForm> = (data) => {
+		registerMutation.mutate(data);
+	};
 	const [passwordType, setPasswordType] = useState("password");
 	return (
 		<Layout>

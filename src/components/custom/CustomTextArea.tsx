@@ -1,7 +1,7 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useRef, useState, forwardRef } from "react";
 import { cn } from "@/lib/utils";
 import { z } from "zod";
-import { TValidFormNames, TextAreaType } from "@/types/FormTypes";
 import { FieldError, UseFormRegisterReturn } from "react-hook-form";
 import { Label } from "../ui/label";
 import { Textarea } from "../ui/textarea";
@@ -11,7 +11,7 @@ const sizeEnum = z.enum(["sm", "md", "lg", "default"]);
 
 type Props = {
 	label: string;
-	name: TValidFormNames;
+	name: string;
 	children?: React.ReactNode;
 	size: z.infer<typeof sizeEnum>;
 	register: UseFormRegisterReturn<string>;
@@ -38,19 +38,10 @@ const rawSizes = {
 
 /**
  * CustomTextArea is a component that renders a text area with custom sizes and additional properties.
- * @date 7/3/2024 - 02:11:20 AM
  *
- * @typedef {Object} Props
- * @property {string} label - The label text for the text area.
- * @property {TValidFormNames} name - The name attribute for the text area, used for form registration.
- * @property {React.ReactNode} [children] - The children nodes to be rendered inside the text area.
- * @property {("sm" | "md" | "lg" | "default")} size - The size of the text area, defined by the sizeEnum.
- * @property {UseFormRegisterReturn<string>} register - The register function from react-hook-form.
- * @property {FieldError | undefined} error - The error object for the text area, if any.
- * @property {TextAreaType} ...otherProps - Additional props specific to the text area.
  *
  * @param {string} label - The label text for the text area.
- * @param {TValidFormNames} name - The name attribute for the text area.
+ * @param {string} name - The name attribute for the text area.
  * @param {React.ReactNode} [children] - The children nodes to be rendered inside the text area.
  * @param {("sm" | "md" | "lg" | "default")} size - The size of the text area, defined by the sizeEnum.
  * @param {UseFormRegisterReturn<string>} register - The register function from react-hook-form.

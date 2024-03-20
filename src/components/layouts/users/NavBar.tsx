@@ -32,7 +32,6 @@ const NavBar = () => {
 	useEffect(() => {
 		if (rightNavRef.current) setObserveElement(rightNavRef.current);
 	}, []);
-	console.log(process.env.NEXT_PUBLIC_DC);
 	return (
 		<div className="fixed top-[30px] left-1/2 -translate-x-1/2 w-[90%] flex justify-between items-center bg-blur-background py-4 px-10 rounded-full shadow-lg backdrop-blur-md z-50">
 			<div
