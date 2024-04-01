@@ -12,12 +12,17 @@ type Props = {
  * (Layouts) - Container component is used to display the main container of the application.
  * @component
  * @param {Object} props - The component props.
+ * @param {React.RefObject<HTMLDivElement>} [props.refObject] - Ref object for the div element.
  * @param {React.ReactNode} props.children - The children elements.
  * @param {string} [props.className] - Additional CSS class name.
- * @param {React.RefObject<HTMLDivElement>} [props.refObject] - Ref object for the div element.
  * @returns {React.ReactElement} The rendered component.
  */
-const Container = ({ refObject, children, className = "", ...props }: Props) => {
+const Container = ({
+	refObject,
+	children,
+	className = "",
+	...props
+}: Props): React.ReactElement => {
 	return (
 		<div
 			ref={refObject}

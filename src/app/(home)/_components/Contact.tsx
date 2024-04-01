@@ -1,7 +1,7 @@
 import CustomInput from "@/components/custom/CustomInput";
 import React, { useCallback } from "react";
 import { Playfair_Display } from "next/font/google";
-import { cn, urlValidator } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import contactGradient from "../../../../public/assets/img/contact-gradient.png";
 import Image from "next/image";
 import CustomTextArea from "@/components/custom/CustomTextArea";
@@ -53,18 +53,17 @@ const Contact = () => {
 	} = form;
 	const handleUrlInput = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
 		const url = event.target.value;
-		const validatedUrl = urlValidator(url);
 	}, []);
 
 	const onSubmit: SubmitHandler<TFormValues> = (data) => console.log(data);
 	return (
 		<div
-			className="flex mt-56 lg:flex-row flex-col w-full"
+			className="flex flex-col w-full mt-56 lg:flex-row"
 			style={{
 				gap: "clamp(3rem, 10vw, 10rem)",
 			}}
 		>
-			<div className="flex-1 flex flex-col gap-10">
+			<div className="flex flex-col flex-1 gap-10">
 				<div>
 					<h1
 						className={cn(
@@ -84,7 +83,7 @@ const Contact = () => {
 				</div>
 				<div className="w-full h-auto overflow-hidden rounded-[20px]">
 					<Image
-						className="w-full h-full object-cover"
+						className="object-cover w-full h-full"
 						src={contactGradient}
 						alt="contact gradient"
 					/>
@@ -115,11 +114,11 @@ const Contact = () => {
 								error={errors["message"]}
 							/>
 						</div>
-						<div className="mt-10 w-full">
+						<div className="w-full mt-10">
 							<button
 								type="submit"
 								title="Submit"
-								className="bg-violet text-white w-full py-3 rounded-full text-lg"
+								className="w-full py-3 text-lg text-white rounded-full bg-violet"
 							>
 								Message
 							</button>

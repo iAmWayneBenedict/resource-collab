@@ -65,13 +65,14 @@ const NavLinkStyleWrapper = ({
 	className?: string;
 }) => {
 	const pathname = usePathname();
-	const activeStyle = "after:opacity-100";
+	const activeStyle = "after:opacity-100 opacity-100";
+	const isHomePath = name == "home" && pathname == "/";
 	return (
 		<div
 			className={cn(
-				"relative after:opacity-0 after:absolute after:content-[''] after:-bottom-1 after:left-1/2 after:-translate-x-1/2 after:w-1 after:h-1 after:rounded-full after:bg-violet",
+				"relative opacity-75 hover:opacity-100 after:opacity-0 after:absolute after:content-[''] after:-bottom-1 after:left-1/2 after:-translate-x-1/2 after:w-1 after:h-1 after:rounded-full after:bg-violet",
 				className,
-				pathname.includes(name) || (name == "home" && pathname == "/") ? activeStyle : ""
+				pathname.includes(name) || isHomePath ? activeStyle : ""
 			)}
 		>
 			{children}
@@ -191,7 +192,7 @@ const LargeNav = ({
 					</NavigationMenu>
 				</div>
 			)}
-			<div ref={rightNavRef} className="hidden lg:flex items-center gap-3">
+			<div ref={rightNavRef} className="items-center hidden gap-3 lg:flex">
 				<Link href="/auth/signup" passHref>
 					Sign up
 				</Link>

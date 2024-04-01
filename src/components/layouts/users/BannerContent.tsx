@@ -10,9 +10,9 @@ type Props = {
 const BannerContent: React.FC<Props> = ({ title, description, descriptionClasses = "" }) => {
 	return (
 		<>
-			<div className="flex w-full justify-between items-center">
+			<div className="flex items-center justify-between w-full">
 				<div className="flex flex-col gap-4">
-					<h1 className="text-5xl xl:text-6xl font-PlayFairDisplay font-medium whitespace-pre-line leading-snug">
+					<h1 className="text-5xl font-medium leading-snug whitespace-pre-line xl:text-6xl font-PlayFairDisplay">
 						{title}
 					</h1>
 				</div>

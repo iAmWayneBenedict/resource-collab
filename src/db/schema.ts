@@ -11,17 +11,6 @@ import {
 } from "drizzle-orm/pg-core";
 import { z } from "zod";
 
-/**
- * Description: This is the schema for the users table
- *
- * * NOTE: the relations is optional and is used to define the relationship between tables
- * * however, it is not used in the api routes / controller
- * * the ones are used is the SQL like way of querying the database
- *
- * * This is the SQL like way of querying the database is only for practicing purposes for now
- * * and will be converted to query relations in the future
- */
-
 export const usersEnum = pgEnum("users_enum", ["users", "admins", "super_admins", "guests"]);
 
 const usersObject = z.object({
@@ -39,7 +28,7 @@ export const users = pgTable("users", {
 	id: serial("id").primaryKey(),
 	name: varchar("name").notNull(),
 	email: text("email").unique().notNull(),
-	role: usersEnum("users").notNull().default("users"),
+	role: usersEnum("role").notNull().default("users"),
 	password: text("password"),
 	created_at: timestamp("created_at", { mode: "date" }).defaultNow(),
 	updated_at: timestamp("updated_at", { mode: "date" }).defaultNow(),

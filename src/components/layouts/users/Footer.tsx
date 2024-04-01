@@ -9,14 +9,14 @@ const Footer = () => {
 	const year = useTime({ options: { year: "numeric" } });
 	return (
 		<div className="absolute bottom-[30px] left-1/2 -translate-x-1/2 w-[90%] flex justify-between items-center bg-blur-background py-5 px-10 rounded-full shadow-lg backdrop-blur-md z-50">
-			<div id="nav-left" className="hidden md:flex flex-1">
+			<div id="nav-left" className="flex-1 hidden md:flex">
 				<div className="flex items-center">
 					<Link href="/" className="flex items-center">
 						<span className="text-xl font-bold">Co.</span>
 					</Link>
 				</div>
 			</div>
-			<div className="w-fit md:flex-1 flex justify-center">
+			<div className="flex justify-center w-fit md:flex-1">
 				{year && (
 					<small className="flex gap-2">
 						<span className="hidden md:flex">All Rights Reserved</span>
@@ -25,7 +25,7 @@ const Footer = () => {
 					</small>
 				)}
 			</div>
-			<div className="flex items-center gap-3 flex-1 justify-end">
+			<div className="flex items-center justify-end flex-1 gap-3">
 				<Link href="https://www.iamwayne.tech/" target="_blank" passHref>
 					<svg
 						width="106"
