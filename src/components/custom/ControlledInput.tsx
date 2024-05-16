@@ -1,4 +1,6 @@
-import React, { useRef } from "react";
+"use client";
+
+import React, { useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { FieldError } from "react-hook-form";
 import { FormControl, FormField, FormLabel, FormMessage } from "../ui/form";
@@ -41,11 +43,23 @@ const ControlledInput: React.FC<Props> = ({
 }) => {
 	const labelRef = useRef<HTMLLabelElement>(null);
 	const handleLabel = (
-		event: React.FocusEvent<HTMLInputElement> | React.ChangeEvent<HTMLInputElement>
+		event:
+			| React.FocusEvent<HTMLInputElement>
+			| React.ChangeEvent<HTMLInputElement>
+			| React.SyntheticEvent<HTMLInputElement, Event>
 	) => {
 		const { currentTarget: inputRef, type } = event;
+		labelTransform(type, inputRef);
+	};
+	const labelTransform = (type: string, inputRef: HTMLInputElement) => {
 		labelRef.current!.classList.toggle("active", type === "focus" || inputRef.value !== "");
 	};
+	useEffect(() => {
+		const inputRef = document.getElementById(name) as HTMLInputElement;
+		if (inputRef) {
+			labelTransform("", inputRef);
+		}
+	});
 	return (
 		<FormField
 			name={name}

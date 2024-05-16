@@ -1,5 +1,6 @@
 import type { Config } from "tailwindcss";
 const { default: flattenColorPalette } = require("tailwindcss/lib/util/flattenColorPalette");
+import { nextui } from "@nextui-org/react";
 import {
 	fluidExtractor,
 	fluidCorePlugins,
@@ -8,8 +9,9 @@ import {
 } from "fluid-tailwind";
 
 const config = {
-	darkMode: ["class"],
+	darkMode: "class",
 	content: [
+		"./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}",
 		"./pages/**/*.{ts,tsx}",
 		"./components/**/*.{ts,tsx}",
 		"./app/**/*.{ts,tsx}",
@@ -87,15 +89,42 @@ const config = {
 					from: { height: "var(--radix-accordion-content-height)" },
 					to: { height: "0" },
 				},
+				"caret-blink": {
+					"0%,70%,100%": { opacity: "1" },
+					"20%,50%": { opacity: "0" },
+				},
 			},
 			animation: {
 				"accordion-down": "accordion-down 0.2s ease-out",
 				"accordion-up": "accordion-up 0.2s ease-out",
+				"caret-blink": "caret-blink 1.25s ease-out infinite",
 			},
 		},
 	},
 	extract: fluidExtractor(),
-	plugins: [require("tailwindcss-animate"), addVariablesForColors, fluidCorePlugins],
+	plugins: [
+		require("tailwindcss-animate"),
+		addVariablesForColors,
+		fluidCorePlugins,
+		nextui({
+			prefix: "nextui", // prefix for themes variables
+			addCommonColors: false, // override common colors (e.g. "blue", "green", "pink").
+			defaultTheme: "light", // default theme from the themes object
+			defaultExtendTheme: "light", // default theme to extend on custom themes
+			layout: {}, // common layout tokens (applied to all themes)
+			themes: {
+				light: {
+					layout: {}, // light theme layout tokens
+					colors: {}, // light theme colors
+				},
+				dark: {
+					layout: {}, // dark theme layout tokens
+					colors: {}, // dark theme colors
+				},
+				// ... custom themes
+			},
+		}),
+	],
 } satisfies Config;
 
 // This plugin adds each Tailwind color as a global CSS variable, e.g. var(--gray-200).

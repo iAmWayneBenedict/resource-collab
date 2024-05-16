@@ -3,7 +3,8 @@ import { GeistSans } from "geist/font/sans";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import LenisWrapper from "@/components/layouts/LenisWrapper";
-import ReactQueryProvider from "./_providers/ReactQueryProvider";
+import Providers from "./_providers/Providers";
+import { Toaster } from "@/components/ui/sonner";
 
 export const metadata: Metadata = {
 	title: "RCollabs",
@@ -27,9 +28,10 @@ export default function RootLayout({
 					enableSystem
 					disableTransitionOnChange
 				>
-					<ReactQueryProvider>
+					<Toaster richColors position="top-center" />
+					<Providers>
 						<LenisWrapper>{children}</LenisWrapper>
-					</ReactQueryProvider>
+					</Providers>
 				</ThemeProvider>
 			</body>
 		</html>

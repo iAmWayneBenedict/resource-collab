@@ -1,3 +1,5 @@
+"use client";
+
 import CustomInput from "@/components/custom/CustomInput";
 import React, { useCallback } from "react";
 import { Playfair_Display } from "next/font/google";

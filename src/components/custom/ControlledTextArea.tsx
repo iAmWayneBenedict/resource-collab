@@ -1,4 +1,6 @@
-import React, { useRef } from "react";
+"use client";
+
+import React, { useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { z } from "zod";
 import { FieldError } from "react-hook-form";
@@ -52,17 +54,24 @@ const ControlledTextArea: React.FC<Props> = ({
 
 	const handleLabel = (event: React.FocusEvent<HTMLTextAreaElement>) => {
 		const { currentTarget: textArea, type } = event;
-		console.log(type);
+		labelTransform(type, textArea);
+	};
+	const labelTransform = (type: string, textArea: HTMLTextAreaElement) => {
 		labelRef.current!.classList.toggle("active", type === "focus" || textArea.value !== "");
 	};
-
 	const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
 		const { currentTarget: textArea } = event;
 		textArea.style.height = "0px";
 		textArea.style.height = textArea.scrollHeight + "px";
-		console.log(textArea.value);
 		labelRef.current!.classList.toggle("active", true);
 	};
+
+	useEffect(() => {
+		const textArea = document.getElementById(name) as HTMLTextAreaElement;
+		if (textArea) {
+			labelTransform("", textArea);
+		}
+	});
 
 	return (
 		<FormField

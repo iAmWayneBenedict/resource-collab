@@ -34,7 +34,10 @@ const Aside: React.FC<Props> = ({ links }) => {
 					<Link href={`${links[0].href}?filter=bookmark`} scroll={false}>
 						<Badge
 							variant={"secondary"}
-							className={cn(filter === "bookmark" ? activeStyle : "")}
+							className={cn(
+								filter === "bookmark" ? activeStyle : "",
+								"flex items-center gap-2"
+							)}
 						>
 							<Bookmark className="transition-none" /> <span>Bookmark</span>
 						</Badge>

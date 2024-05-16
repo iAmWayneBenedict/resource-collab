@@ -29,28 +29,39 @@ export function toJson<T>(data: T): number | string | boolean | object {
  * @param {T} data - data to be converted to string
  * @returns {string}
  */
-export function toStr<T>(data: T) {
+export function toStr<T>(data: T): string {
 	return JSON.stringify(data);
 }
 
 /**
- * Extracts error response data from an Axios error response object.
- * @template TErrorAPIResponse - The type of error response data to be extracted.
- * @param {any} error - The Axios error response object.
- * @returns {TErrorAPIResponse} The extracted error response data.
+ * Binds the error message to the react-hook-form
+ *
+ * @export
+ * @param {Error} errors - error object
+ * @param {(name: any, error: { message: string }) => void} setError - react-hook-form setError function
+ * @returns {void}
  *
  * @example
  * ```typescript
- * try {
- *   const response = await axios.post("/api/auth/register", data);
- *   return response.data;
- * } catch (error) {
- *   throw errorApiResponseExtractor(error);
- * }
+ * const { setError } = useForm();
+ * const mutation = useMutation({
+ *   mutationFn: (data: TRegisterForm) => AuthApiManager.register(data),
+ *   onError: (err) => {
+ *    bindReactHookFormError(errors, setError);
+ *  },
+ * });
  * ```
  */
-export const errorApiResponseExtractor = (error: any): TErrorAPIResponse => {
-	const { data, status } = error.response;
-	const message = data.message || "An error occurred";
-	return { data, status, message };
-};
+export function bindReactHookFormError(
+	errors: Error,
+	setError: (name: any, error: { message: string }) => void
+): void {
+	//  Cast the errors to TErrorAPIResponse - since the response is originally TErrorAPIResponse
+	const errorTemp = errors as unknown as TErrorAPIResponse;
+	if (Object.hasOwnProperty.call(errorTemp, "path")) return;
+	Object.entries(errorTemp.data!).forEach(([, paths]) => {
+		paths.forEach((path: string) => {
+			setError(path, { message: errorTemp.message });
+		});
+	});
+}
