@@ -26,7 +26,7 @@ const Footer = () => {
 				)}
 			</div>
 			<div className="flex items-center justify-end flex-1 gap-3">
-				<Link href="https://www.iamwayne.tech/" target="_blank" passHref>
+				<Link href="https://iamwayne.vercel.app/" target="_blank" passHref>
 					<svg
 						width="106"
 						height="20"

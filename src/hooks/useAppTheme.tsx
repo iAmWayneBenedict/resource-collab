@@ -1,14 +1,21 @@
-import React from "react";
 import { useTheme } from "next-themes";
 import { useEffect } from "react";
 
 const useAppTheme = () => {
 	const { setTheme } = useTheme();
+
 	useEffect(() => {
-		window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (event) => {
-			console.log(event.matches);
+		const darkModeMediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+
+		const handleColorSchemeChange = (event: { matches: boolean }) => {
 			setTheme(event.matches ? "dark" : "light");
-		});
+		};
+
+		// Check if the user's system color scheme preference is dark on first load
+		handleColorSchemeChange(darkModeMediaQuery);
+
+		// Listen for changes in the system color scheme preference
+		darkModeMediaQuery.addEventListener("change", handleColorSchemeChange);
 	}, []);
 };
 

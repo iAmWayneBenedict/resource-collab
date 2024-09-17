@@ -60,10 +60,10 @@ const PortfolioCard = () => {
 					/>
 				</Button>
 			</div>
-			<Link target="_blank" href={"https://www.iamwayne.tech/"}>
+			<Link target="_blank" href={"https://iamwayne.vercel.app/"}>
 				<div className="relative flex max-h-[15rem] h-[15rem] rounded-lg w-full overflow-hidden outline outline-neutral-100">
 					<Image
-						src="https://www.iamwayne.tech/assets/ico/logo.png"
+						src="https://iamwayne.vercel.app/assets/ico/logo.png"
 						alt="image"
 						fill
 						sizes="100%"

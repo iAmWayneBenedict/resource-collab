@@ -13,13 +13,16 @@ class AuthApiManager {
 		return ApiMethods.post(ENDPOINTS.REGISTER(), body);
 	};
 	static logout = async (body = {}) => {
-		return ApiMethods.post<any>(ENDPOINTS.LOGOUT(), body);
+		return ApiMethods.get<any>(ENDPOINTS.LOGOUT());
 	};
 	static isEmailExists = async (params = {}) => {
 		return ApiMethods.get<any>(ENDPOINTS.IS_EMAIL_EXISTS(queryParamsHandler(params)));
 	};
 	static verifyEmail = async (body = {}) => {
 		return ApiMethods.post<any>(ENDPOINTS.VERIFY_EMAIL(), body);
+	};
+	static verifyLoggedUser = async (body = {}) => {
+		return ApiMethods.get<any>(ENDPOINTS.VERIFY_LOGGED_USER());
 	};
 }
 

@@ -4,7 +4,6 @@ import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 import { createSession } from "../../utils";
-import { validateRequest } from "@/lib/auth";
 
 export async function POST(request: NextRequest) {
 	const body = await request.json();

@@ -44,7 +44,7 @@ const ResourceCard = () => {
 					/>
 				</Button>
 			</div>
-			<Link target="_blank" href={"https://www.iamwayne.tech/"}>
+			<Link target="_blank" href={"https://iamwayne.vercel.app/"}>
 				<div className="p-7">
 					<div className="flex justify-end">
 						<Image

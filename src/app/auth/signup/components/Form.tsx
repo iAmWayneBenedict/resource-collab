@@ -1,18 +1,12 @@
 "use client";
 
-import { useRef, useEffect, useState, Key } from "react";
-import BannerGradient from "@/components/layouts/users/BannerGradient";
-import BannerContent from "@/components/layouts/users/BannerContent";
-import CustomInput from "@/components/custom/CustomInput";
-import Image from "next/image";
+import { useState } from "react";
 import Link from "next/link";
-import { useForm, Controller, SubmitHandler } from "react-hook-form";
-import { set, z } from "zod";
+import { useForm, SubmitHandler } from "react-hook-form";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import ControlledInput from "@/components/custom/ControlledInput";
 import { Form } from "@/components/ui/form";
-import Layout from "@/components/layouts/users/Layout";
-import Container from "@/components/layouts/Container";
 import { useMutation } from "@tanstack/react-query";
 import AuthApiManager from "@/api/managers/AuthApiManager";
 import { RegisterFormSchema, TRegisterForm } from "@/types/zod/forms";

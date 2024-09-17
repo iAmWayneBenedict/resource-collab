@@ -1,9 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
-import React, { useState, useRef, useEffect } from "react";
+import React, { useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import {
 	NavigationMenu,
@@ -17,13 +16,26 @@ import {
 	SheetContent,
 	SheetDescription,
 	SheetHeader,
-	SheetTitle,
 	SheetTrigger,
 } from "@/components/ui/sheet";
 
 import { Button } from "@/components/ui/button";
 import useElementSize from "@/hooks/useElementSize";
 import { usePathname } from "next/navigation";
+import { CreditCard, Github, LifeBuoy, LogOut, Settings, User } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuGroup,
+	DropdownMenuItem,
+	DropdownMenuLabel,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import ProfileDropDown from "./Nav/ProfileDropDown";
+import { useQuery } from "@tanstack/react-query";
+import AuthApiManager from "@/api/managers/AuthApiManager";
 
 const NavBar = () => {
 	const rightNavRef = useRef<HTMLDivElement>(null);
@@ -114,6 +126,11 @@ const LargeNav = ({
 	size: { width: number; height: number };
 	rightNavRef: React.RefObject<HTMLDivElement>;
 }) => {
+	const { data, isLoading, isSuccess, isError } = useQuery({
+		queryKey: ["logged-user"],
+		queryFn: AuthApiManager.verifyLoggedUser,
+	});
+	console.log(data);
 	return (
 		<>
 			{size.width > 0 && (
@@ -193,17 +210,22 @@ const LargeNav = ({
 				</div>
 			)}
 			<div ref={rightNavRef} className="items-center hidden gap-3 lg:flex">
-				<Link href="/auth/signup" passHref>
-					Sign up
-				</Link>
-				<Button
-					asChild
-					className={cn("rounded-full px-7 bg-violet hover:bg-violet-foreground")}
-				>
-					<Link href="/auth/login" passHref>
-						Login
-					</Link>
-				</Button>
+				{(isLoading || isError) && (
+					<>
+						<Link href="/auth/signup" passHref>
+							Sign up
+						</Link>
+						<Button
+							asChild
+							className={cn("rounded-full px-7 bg-violet hover:bg-violet-foreground")}
+						>
+							<Link href="/auth/login" passHref>
+								Login
+							</Link>
+						</Button>
+					</>
+				)}
+				{isSuccess && <ProfileDropDown user={data} />}
 			</div>
 		</>
 	);

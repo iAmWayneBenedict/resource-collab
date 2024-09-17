@@ -5,7 +5,7 @@ import { lucia } from "@/config/auth/auth";
 import { db } from "@/db/connection";
 import { oauthAccounts, TOauthAccounts, TUsers, users } from "@/db/schema";
 import { generateRandomString, alphabet } from "oslo/crypto";
-import { and, eq } from "drizzle-orm";
+import { and, eq, or } from "drizzle-orm";
 import { createSession } from "@/app/api/utils";
 
 export async function GET(request: Request) {
@@ -31,16 +31,17 @@ export async function GET(request: Request) {
 		const existingUser = await db
 			.select()
 			.from(oauthAccounts)
-			.where(
-				and(
-					eq(oauthAccounts.provider_id, "github"),
-					eq(oauthAccounts.provider_user_id, githubUser.id)
+			.innerJoin(
+				users,
+				or(
+					eq(oauthAccounts.provider_user_id, githubUser.id),
+					eq(users.email, githubUser.email)
 				)
 			);
 
 		if (existingUser.length > 0) {
-			const user = existingUser[0] as TOauthAccounts;
-			await createSession(user.user_id);
+			const user = existingUser[0].users as TUsers;
+			await createSession(user.id);
 			return new Response(null, {
 				status: 302,
 				headers: {

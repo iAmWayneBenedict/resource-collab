@@ -15,12 +15,6 @@ type Params = {
  * @returns {Promise<void>}
  */
 export async function sendVerificationRequest({ identifier, code }: Params): Promise<void> {
-	console.log(
-		process.env.SMTP_USER,
-		process.env.SMTP_PASS,
-		process.env.SMTP_HOST,
-		process.env.SMTP_PORT
-	);
 	const transport = nodemailer.createTransport({
 		host: process.env.SMTP_HOST,
 		port: process.env.SMTP_PORT,
@@ -391,8 +385,8 @@ function html(params: { code: string }) {
                                                   If you have any questions, feel free to reach out at
                                                   <a
                                                       class="highlight-link"
-                                                      href="https://www.iamwayne.tech/contact"
-                                                      >https://www.iamwayne.tech/contact</a
+                                                      href="https://iamwayne.vercel.app/"
+                                                      >https://iamwayne.vercel.app/</a
                                                   >
                                               </p>
                                               <!-- Sub copy -->

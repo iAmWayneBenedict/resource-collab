@@ -10,8 +10,8 @@ export async function GET(): Promise<Response> {
 		path: "/",
 		secure: process.env.NODE_ENV === "production",
 		httpOnly: true,
-		maxAge: 60 * 10,
-		sameSite: "lax",
+		maxAge: 60 * 10, // 10 minutes
+		sameSite: "lax", // lax is the default value or you can use "strict" or "none"
 	});
 
 	return Response.redirect(url);

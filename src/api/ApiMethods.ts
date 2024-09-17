@@ -1,7 +1,7 @@
 import axios from "axios";
 import { errorApiResponseExtractor, getHeaders, successApiResponseExtractor } from "./utils";
 
-export const BASE_URL = "http://localhost:3000/api/";
+export const BASE_URL = (process.env.NEXT_PUBLIC_BASE_URL! || "http://localhost:8080") + "/api";
 
 type Method = "get" | "post" | "put" | "delete";
 

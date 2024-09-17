@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,6 +15,7 @@ import { bindReactHookFormError } from "@/lib/utils";
 import { useMutation } from "@tanstack/react-query";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
+import { Button } from "@nextui-org/Button";
 const LoginForm = () => {
 	const [isDisabledBtn, setDisabledBtn] = useState(false);
 	const router = useRouter();
@@ -88,8 +88,8 @@ const LoginForm = () => {
 					<Socials />
 					<br />
 					<Button
-						variant="default"
 						type="submit"
+						isLoading={isDisabledBtn}
 						className="w-full bg-violet hover:bg-violet-foreground text-white rounded-full py-8 "
 					>
 						Login
