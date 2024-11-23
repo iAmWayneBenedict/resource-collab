@@ -6,7 +6,7 @@
  */
 export const queryParamsHandler = (
 	queryParams: Record<string, string | number | boolean | undefined>
-) => {
+): string => {
 	let query = "?";
 	Object.keys(queryParams).forEach((key) => {
 		if (queryParams[key]) {
@@ -20,7 +20,7 @@ export const queryParamsHandler = (
  * Returns the headers for an HTTP request.
  * @returns {Record<string, string>} The headers for an HTTP request.
  */
-export const getHeaders = () => {
+export const getHeaders = (): Record<string, string> => {
 	// ! change this to your token
 	const getToken = localStorage.getItem("token") || null;
 
@@ -33,7 +33,6 @@ export const getHeaders = () => {
 /**
  * Extracts success response data from an Axios response object.
  * @template T - The type of success response data to be extracted.
- * @param {any} data - The Axios response object.
  * @returns {TSuccessAPIResponse<T>} The extracted success response data.
  *
  * @example
@@ -45,6 +44,7 @@ export const getHeaders = () => {
  *   throw errorApiResponseExtractor(error);
  * }
  * ```
+ * @param response
  */
 export const successApiResponseExtractor = <T>(response: any): TSuccessAPIResponse<T> => {
 	const { status } = response;

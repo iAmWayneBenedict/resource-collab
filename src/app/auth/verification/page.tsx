@@ -1,13 +1,15 @@
+"use client"
+
 import Image from "next/image";
 import bannerGradient from "../../../../public/assets/img/gradient-bg-4.png";
 import BackToHome from "./_components/BackToHome";
 import FormFields from "./_components/FormFields";
-import { validateRequest } from "@/lib/auth";
-import { redirect } from "next/navigation";
+import { redirect, useSearchParams } from "next/navigation";
 
-const Verification = async () => {
-	const { user } = await validateRequest();
-	if (!user) redirect("/auth/login");
+const Verification = () => {
+	const searchParams = useSearchParams()
+	const email = searchParams.get("email");
+	if (!email) redirect("/auth/login");
 	return (
 		<div className="relative h-screen w-screen flex justify-center items-center">
 			{/* back to homepage */}
@@ -34,12 +36,12 @@ const Verification = async () => {
 						<p className="text-center m-0 text-muted-foreground">
 							sent to{" "}
 							<span className="border-b border-green-500 text-primary font-medium">
-								{user?.email}
+								{email}
 							</span>
 						</p>
 					</div>
 				</div>
-				<FormFields email={user?.email} />
+				<FormFields email={email} />
 			</div>
 		</div>
 	);

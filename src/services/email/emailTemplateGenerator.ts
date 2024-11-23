@@ -50,7 +50,7 @@ function html(params: { code: string }) {
 
 	return `
   <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-  <html xmlns="http://www.w3.org/1999/xhtml">
+  <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
       <head>
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
           <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -98,7 +98,6 @@ function html(params: { code: string }) {
               }
               .email-masthead_container {
                   display: flex;
-                  max-width: calc(570px);
                   padding: 0 35px;
                   width: 100%;
                   justify-content: space-between;
@@ -365,10 +364,10 @@ function html(params: { code: string }) {
                                                               <div
                                                                   class="verification-code-container"
                                                               >
-                                                              ${code
-																	.split("")
-																	.map((c) => `<h1>${c}</h1>`)
-																	.join("")}
+                                                              ${ code
+		.split("")
+		.map((c) => `<h1>${ c }</h1>`)
+		.join("") }
                                                                   
                                                               </div>
                                                           </div>
@@ -385,8 +384,8 @@ function html(params: { code: string }) {
                                                   If you have any questions, feel free to reach out at
                                                   <a
                                                       class="highlight-link"
-                                                      href="https://iamwayne.vercel.app/"
-                                                      >https://iamwayne.vercel.app/</a
+                                                      href="mailto:rcollabs.dev2024@gmail.com"
+                                                      >rcollabs.dev2024@gmail.com</a
                                                   >
                                               </p>
                                               <!-- Sub copy -->
@@ -408,8 +407,8 @@ function html(params: { code: string }) {
                                       <tr>
                                           <td class="content-cell">
                                               <p class="sub center">
-                                                  Canvas Labs, Inc.
-                                                  <br />325 9th St, San Francisco, CA 94103
+                                                  made with ❤️ by Wayne
+                                                  <br /> <a href="https://iamwayne.vercel.app">iamwayne.vercel.app</a>
                                               </p>
                                           </td>
                                       </tr>

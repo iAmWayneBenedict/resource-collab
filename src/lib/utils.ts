@@ -53,7 +53,7 @@ export function toStr<T>(data: T): string {
  * ```
  */
 export function bindReactHookFormError(
-	errors: Error,
+	errors: { data: { [key: string]: string[] } } | Error,
 	setError: (name: any, error: { message: string }) => void
 ): void {
 	//  Cast the errors to TErrorAPIResponse - since the response is originally TErrorAPIResponse

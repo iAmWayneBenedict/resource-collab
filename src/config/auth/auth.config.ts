@@ -5,5 +5,5 @@ export const github = new GitHub(process.env.GITHUB_CLIENT_ID!, process.env.GITH
 export const google = new Google(
 	process.env.GOOGLE_CLIENT_ID!,
 	process.env.GOOGLE_CLIENT_SECRET!,
-	process.env.NEXT_PUBLIC_BASE_URL! + "/api/auth/login/google/callback"
+	process.env.BASE_URL! + "/api/auth/login/google/callback"
 );

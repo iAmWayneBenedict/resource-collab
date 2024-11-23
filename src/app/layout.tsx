@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import LenisWrapper from "@/components/layouts/LenisWrapper";
 import Providers from "./_providers/Providers";
 import { Toaster } from "@/components/ui/sonner";
+import React from "react";
 
 export const metadata: Metadata = {
 	title: "RCollabs",

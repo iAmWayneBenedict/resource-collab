@@ -8,25 +8,11 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
-import AuthApiManager from "@/api/managers/AuthApiManager";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import ENDPOINTS from "@/services/EndPoints";
 
 const ProfileDropDown = ({ user }: { user: TSuccessAPIResponse<any> }) => {
-	console.log(user);
-	const handleLogout = async () => {
-		try {
-			const logoutUrl = (await AuthApiManager.logout()) as unknown as string;
-			const response = await fetch(logoutUrl);
-			if (!response.ok) {
-				throw new Error(`Logout failed with status: ${response.status}`);
-			}
-
-			await response.json();
-		} catch (error) {
-			console.error("Error:", error);
-		}
-	};
+	
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
@@ -75,3 +61,21 @@ const ProfileDropDown = ({ user }: { user: TSuccessAPIResponse<any> }) => {
 };
 
 export default ProfileDropDown;
+
+const handleLogout = async () => {
+	try {
+		const logoutUrl = ENDPOINTS.LOGOUT();
+		const response = await fetch("/api" + logoutUrl);
+		if (!response.ok) {
+			throw new Error(`Logout failed with status: ${response.status}`);
+		}
+
+		await response.json();
+
+		// redirect to home page
+		location.href = "/"
+
+	} catch (error) {
+		console.error("Error:", error);
+	}
+};

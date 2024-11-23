@@ -4,7 +4,7 @@ import * as schema from "./schema";
 import { config } from "dotenv";
 config();
 
-const client = postgres(process.env.DB_CONNECTION_STRING || "", { prepare: false });
+const client = postgres(process.env.DATABASE_CONNECTION_URL ?? "", { prepare: false });
 const db = drizzle(client, { schema });
 
 export { db };

@@ -1,4 +1,3 @@
-import AuthApiManager from "@/api/managers/AuthApiManager";
 import { z } from "zod";
 
 export const RegisterFormSchema = z

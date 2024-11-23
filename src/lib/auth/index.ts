@@ -42,6 +42,7 @@ export async function logout(): Promise<ActionResult> {
 	if (!session) {
 		return {
 			error: "Unauthorized",
+			status: 403
 		};
 	}
 
@@ -49,11 +50,16 @@ export async function logout(): Promise<ActionResult> {
 
 	const sessionCookie = lucia.createBlankSessionCookie();
 	cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
-	return redirect("/");
+	
+	return {
+		error: null,
+		status: 200
+	}
 }
 
 interface ActionResult {
 	error: string | null;
+	status: number
 }
 
 export async function generateEmailVerificationCode(

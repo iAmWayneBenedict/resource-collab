@@ -22,20 +22,9 @@ import {
 import { Button } from "@/components/ui/button";
 import useElementSize from "@/hooks/useElementSize";
 import { usePathname } from "next/navigation";
-import { CreditCard, Github, LifeBuoy, LogOut, Settings, User } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuGroup,
-	DropdownMenuItem,
-	DropdownMenuLabel,
-	DropdownMenuSeparator,
-	DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import ProfileDropDown from "./Nav/ProfileDropDown";
 import { useQuery } from "@tanstack/react-query";
-import AuthApiManager from "@/api/managers/AuthApiManager";
+import { useGetLoggedUserQuery } from "@/services/queries/user/auth-services";
 
 const NavBar = () => {
 	const rightNavRef = useRef<HTMLDivElement>(null);
@@ -126,11 +115,7 @@ const LargeNav = ({
 	size: { width: number; height: number };
 	rightNavRef: React.RefObject<HTMLDivElement>;
 }) => {
-	const { data, isLoading, isSuccess, isError } = useQuery({
-		queryKey: ["logged-user"],
-		queryFn: AuthApiManager.verifyLoggedUser,
-	});
-	console.log(data);
+	const { data, isLoading, isSuccess, isError } = useGetLoggedUserQuery()
 	return (
 		<>
 			{size.width > 0 && (

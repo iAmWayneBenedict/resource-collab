@@ -9,19 +9,18 @@ import { Form } from "@/components/ui/form";
 import { Checkbox } from "@nextui-org/checkbox";
 import Socials from "../../_components/Socials";
 import { LoginFormSchema, TLoginForm } from "@/types/zod/forms";
-import AuthApiManager from "@/api/managers/AuthApiManager";
-import { useRouter } from "next/navigation";
 import { bindReactHookFormError } from "@/lib/utils";
-import { useMutation } from "@tanstack/react-query";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { Button } from "@nextui-org/Button";
+import { usePostLoginMutation } from "@/services/mutations/users/auth-services";
+
 const LoginForm = () => {
 	const [isDisabledBtn, setDisabledBtn] = useState(false);
-	const router = useRouter();
 	const form = useForm<TLoginForm>({
 		resolver: zodResolver(LoginFormSchema),
 	});
+	
 	const {
 		register,
 		formState: { errors },
@@ -29,9 +28,10 @@ const LoginForm = () => {
 		control,
 		setError,
 	} = form;
+	
 	const [passwordType, setPasswordType] = useState("password");
-	const loginMutation = useMutation({
-		mutationFn: (data: TLoginForm) => AuthApiManager.login(data),
+	
+	const loginMutation = usePostLoginMutation({
 		onSuccess: (res) => {
 			setDisabledBtn(false);
 			// router.push("/auth/verification?email=" + form.getValues("email"));

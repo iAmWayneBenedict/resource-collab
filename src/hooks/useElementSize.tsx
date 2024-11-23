@@ -1,11 +1,11 @@
-import React, { useEffect, useRef, useState } from "react";
+import  { useEffect, useRef, useState } from "react";
 
-type IObserveElement = Window | HTMLElement | null;
-type ISize = { height: number; width: number };
+type TObserveElement = Window | HTMLElement | null;
+type TSize = { height: number; width: number };
 
-type IUseElementSizeResult = {
-	size: ISize;
-	observeElement: IObserveElement;
+type TUseElementSizeResult = {
+	size: TSize;
+	observeElement: TObserveElement;
 	setObserveElement: (el: HTMLElement) => void;
 };
 
@@ -13,16 +13,16 @@ type IUseElementSizeResult = {
  * Description placeholder
  * @date 2/27/2024 - 9:57:33 AM
  *
- * @param {IObserveElement} target - Description target to be observed
- * @returns {IUseElementSizeResult} Description returns the element size and the observe element
+ * @param {TObserveElement} target - Description target to be observed
+ * @returns {TUseElementSizeResult} Description returns the element size and the observe element
  *
  */
-const useElementSize = (target?: IObserveElement): IUseElementSizeResult => {
-	const [elementSize, setElementSize] = useState<ISize>({
+const useElementSize = (target?: TObserveElement): TUseElementSizeResult => {
+	const [elementSize, setElementSize] = useState<TSize>({
 		height: 0,
 		width: 0,
 	});
-	const observeElement = useRef<IObserveElement>(target || null);
+	const observeElement = useRef<TObserveElement>(target || null);
 
 	const setObserveElement = (el: HTMLElement) => {
 		observeElement.current = el;

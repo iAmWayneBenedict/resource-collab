@@ -7,8 +7,6 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import ControlledInput from "@/components/custom/ControlledInput";
 import { Form } from "@/components/ui/form";
-import { useMutation } from "@tanstack/react-query";
-import AuthApiManager from "@/api/managers/AuthApiManager";
 import { RegisterFormSchema, TRegisterForm } from "@/types/zod/forms";
 import { Checkbox } from "@nextui-org/checkbox";
 import Socials from "../../_components/Socials";
@@ -17,6 +15,7 @@ import { useRouter } from "next/navigation";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { bindReactHookFormError } from "@/lib/utils";
+import { usePostRegisterMutation } from "@/services/mutations/users/auth-services";
 
 const SignUpForm = () => {
 	const [isDisabledBtn, setDisabledBtn] = useState(false);
@@ -37,8 +36,8 @@ const SignUpForm = () => {
 		control,
 		setError,
 	} = form;
-	const registerMutation = useMutation({
-		mutationFn: (data: TRegisterForm) => AuthApiManager.register(data),
+	
+	const registerMutation = usePostRegisterMutation({
 		onSuccess: (res) => {
 			setDisabledBtn(false);
 
@@ -114,7 +113,7 @@ const SignUpForm = () => {
 					<Button
 						type="submit"
 						isLoading={isDisabledBtn}
-						className="w-full bg-violet hover:bg-violet-foreground text-white rounded-full py-8 "
+						className="gap-4 w-full bg-violet hover:bg-violet-foreground text-white rounded-full py-8 "
 					>
 						Sign up
 					</Button>

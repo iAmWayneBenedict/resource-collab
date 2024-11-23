@@ -1,7 +1,7 @@
 import axios from "axios";
 import { errorApiResponseExtractor, getHeaders, successApiResponseExtractor } from "./utils";
 
-export const BASE_URL = (process.env.NEXT_PUBLIC_BASE_URL! || "http://localhost:8080") + "/api";
+export const BASE_URL = (process.env.BASE_URL! || "http://localhost:8080") + "/api";
 
 type Method = "get" | "post" | "put" | "delete";
 
@@ -21,7 +21,7 @@ class ApiMethods {
 	 * @param {TApiRequestParams} params - Request parameters (url, method, body).
 	 * @returns {Promise<TSuccessAPIResponse<T>>} - A promise resolving to the API response data.
 	 */
-	static async apiRequest<T>({
+	private static async apiRequest<T>({
 		url,
 		method,
 		body,
