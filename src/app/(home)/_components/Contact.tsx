@@ -1,9 +1,9 @@
 "use client";
 
 import CustomInput from "@/components/custom/CustomInput";
-import React, { useCallback } from "react";
+import { Fragment, useCallback, useEffect, useState } from "react";
 import { Playfair_Display } from "next/font/google";
-import { cn } from "@/lib/utils";
+import { cn, delay } from "@/lib/utils";
 import contactGradient from "../../../../public/assets/img/contact-gradient.png";
 import Image from "next/image";
 import CustomTextArea from "@/components/custom/CustomTextArea";
@@ -13,6 +13,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "@/components/ui/form";
 import ControlledInput from "@/components/custom/ControlledInput";
 import ControlledTextArea from "@/components/custom/ControlledTextArea";
+import { useWebScraperQuery } from "@/services/queries/scraper/web-scraper-services";
+import { useDebounce } from "@/hooks/useDebounce";
+import { SiteCard } from "@/components/layouts/cards/SiteCard";
 
 // Contact form schema
 // Define the schema for contact form
@@ -37,6 +40,13 @@ const formFields = [
 	{ name: "link", type: "url" },
 ];
 
+type TScrapedData = {
+	title: string;
+	description: string;
+	image: string;
+	link: string;
+}
+
 const Contact = () => {
 	const form = useForm<TFormValues>({
 		resolver: zodResolver(FormSchema),
@@ -50,12 +60,29 @@ const Contact = () => {
 	const {
 		register,
 		handleSubmit,
+		watch,
 		formState: { errors },
 		control,
 	} = form;
-	const handleUrlInput = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-		const url = event.target.value;
-	}, []);
+	
+	const [scrapedData, setScrapedData] = useState<TScrapedData | null>(null);
+	
+	// debounce link
+	const debouncedLink = useDebounce(watch("link"), 1000);
+	
+	const webScraperResponse = useWebScraperQuery({ data: debouncedLink })
+
+	useEffect(() => {
+		if (webScraperResponse.isSuccess) {
+			const data = webScraperResponse.data.data
+			setScrapedData({
+				title: data.title || data.site_name,
+				description: data.description,
+				image: data.image.includes("http") ? data.image : data.url + data.image,
+				link: data.url
+			});
+		}
+	}, [webScraperResponse.isSuccess]);
 
 	const onSubmit: SubmitHandler<TFormValues> = (data) => console.log(data);
 	return (
@@ -97,14 +124,23 @@ const Contact = () => {
 						<div className="flex flex-col gap-3">
 							{formFields.map(({ name, type }) => {
 								return (
-									<ControlledInput
-										key={name}
-										name={name}
-										type={type}
-										label={name[0].toUpperCase() + name.slice(1)}
-										control={control}
-										error={errors[name as keyof TFormValues]}
-									/>
+									<Fragment key={name}>
+										{name === "link" && scrapedData && (
+											<SiteCard
+												img={scrapedData.image}
+												title={scrapedData.title}
+												description={scrapedData.description}
+												link={scrapedData.link}
+											/>
+										)}
+										<ControlledInput
+											name={name}
+											type={type}
+											label={name[0].toUpperCase() + name.slice(1)}
+											control={control}
+											error={errors[name as keyof TFormValues]}
+										/>
+									</Fragment>
 								);
 							})}
 

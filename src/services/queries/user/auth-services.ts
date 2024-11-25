@@ -6,6 +6,7 @@ export const useGetLoggedUserQuery = () => {
     return useQuery({
         queryKey: ["logged-user"],
         queryFn: (): Promise<TSuccessAPIResponse<any> | TErrorAPIResponse> => ApiMethods.get<any>(ENDPOINTS.VERIFY_LOGGED_USER()),
+        retry: 1
     })
 }
 

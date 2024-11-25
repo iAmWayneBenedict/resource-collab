@@ -18,7 +18,7 @@ export function isServer() {
  * @returns {number | string | boolean | object}
  */
 export function toJson<T>(data: T): number | string | boolean | object {
-	return JSON.parse(JSON.stringify(data));
+	return JSON.parse(JSON.stringify(data)); // convert to string because data can be of any type and parse will convert it to json
 }
 
 /**
@@ -65,3 +65,14 @@ export function bindReactHookFormError(
 		});
 	});
 }
+
+export function isValidUrl(url: string): boolean {
+	try {
+		new URL(url);
+		return true;
+	} catch (_) {
+		return false;
+	}
+}
+
+export const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
