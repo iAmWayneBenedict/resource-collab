@@ -8,8 +8,12 @@ import { eq } from "drizzle-orm";
 import { TimeSpan, createDate } from "oslo";
 import { generateRandomString, alphabet } from "oslo/crypto";
 import { lucia } from "@/config/auth/auth";
-import { db } from "@/db/connection";
-import { emailVerificationCodes } from "@/db/schema";
+import { db } from "@/data/connection";
+import { emailVerificationCodes } from "@/data/schema";
+import {
+	addVerificationCode,
+	deleteVerificationCode,
+} from "@/repositories/email-verification-codes";
 
 export const validateRequest = cache(
 	async (): Promise<{ user: User; session: Session } | { user: null; session: null }> => {
@@ -42,7 +46,7 @@ export async function logout(): Promise<ActionResult> {
 	if (!session) {
 		return {
 			error: "Unauthorized",
-			status: 403
+			status: 403,
 		};
 	}
 
@@ -50,29 +54,32 @@ export async function logout(): Promise<ActionResult> {
 
 	const sessionCookie = lucia.createBlankSessionCookie();
 	cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
-	
+
 	return {
 		error: null,
-		status: 200
-	}
+		status: 200,
+	};
 }
 
 interface ActionResult {
 	error: string | null;
-	status: number
+	status: number;
 }
 
 export async function generateEmailVerificationCode(
 	userId: string,
 	email: string
 ): Promise<string> {
-	await db.delete(emailVerificationCodes).where(eq(emailVerificationCodes.user_id, userId));
+	await deleteVerificationCode(userId);
+
 	const code = generateRandomString(6, alphabet("0-9"));
-	await db.insert(emailVerificationCodes).values({
+
+	await addVerificationCode({
 		user_id: userId,
 		email,
 		code,
 		expires_at: createDate(new TimeSpan(15, "m")), // 15 minutes
 	});
+
 	return code;
 }

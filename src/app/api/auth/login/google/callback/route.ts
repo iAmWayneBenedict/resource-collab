@@ -1,9 +1,9 @@
 import { createSession } from "@/app/api/utils";
 import { google } from "@/config/auth/auth.config";
-import { db } from "@/db/connection";
-import { oauthAccounts, TOauthAccounts, TUsers, users } from "@/db/schema";
+import { db } from "@/data/connection";
+import { oauthAccounts, TUsers, users } from "@/data/schema";
 import { OAuth2RequestError } from "arctic";
-import { and, eq, or } from "drizzle-orm";
+import { eq, or } from "drizzle-orm";
 import { NextRequest } from "next/server";
 import { alphabet, generateRandomString } from "oslo/crypto";
 

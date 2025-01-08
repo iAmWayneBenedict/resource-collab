@@ -15,7 +15,7 @@ import { useRouter } from "next/navigation";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { bindReactHookFormError } from "@/lib/utils";
-import { usePostRegisterMutation } from "@/services/mutations/users/auth-services";
+import { usePostRegisterMutation } from "@/services/api/mutations/users";
 
 const SignUpForm = () => {
 	const [isDisabledBtn, setDisabledBtn] = useState(false);
@@ -36,7 +36,7 @@ const SignUpForm = () => {
 		control,
 		setError,
 	} = form;
-	
+
 	const registerMutation = usePostRegisterMutation({
 		onSuccess: (res) => {
 			setDisabledBtn(false);

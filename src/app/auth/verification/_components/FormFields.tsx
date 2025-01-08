@@ -10,7 +10,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { toast } from "sonner";
 import { bindReactHookFormError } from "@/lib/utils";
-import { usePostVerifyEmailMutation } from "@/services/mutations/users/auth-services";
+import { useRouter } from "next/navigation";
+import { usePostVerifyEmailMutation } from "@/services/api/mutations/users";
 
 const formSchema = z.object({
 	code: z.string().length(6, { message: "Invalid OTP" }),
@@ -20,6 +21,7 @@ const formSchema = z.object({
 type TVerifyEmailForm = z.infer<typeof formSchema>;
 
 const FormFields = ({ email }: { email: string | undefined }) => {
+	const router = useRouter();
 	const form = useForm<TVerifyEmailForm>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -31,6 +33,10 @@ const FormFields = ({ email }: { email: string | undefined }) => {
 	const verifyEmailMutation = usePostVerifyEmailMutation({
 		onSuccess: (res) => {
 			toast.success(res.message);
+
+			setTimeout(() => {
+				router.push("/auth/login");
+			}, 2000);
 		},
 		onError: (err) => {
 			bindReactHookFormError(err, setError);

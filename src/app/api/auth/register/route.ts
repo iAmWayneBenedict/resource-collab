@@ -1,12 +1,11 @@
-import { db } from "@/db/connection";
-import { emailVerificationCodes, sessionTable, users } from "@/db/schema";
+import { TUsers } from "@/data/schema";
 import { generateRandomString, alphabet } from "oslo/crypto";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcrypt";
-import { eq } from "drizzle-orm";
-import { lucia } from "@/config/auth/auth";
 import { generateEmailVerificationCode } from "@/lib/auth";
 import { sendVerificationRequest } from "@/services/email/emailTemplateGenerator";
+import { addUser, deleteUser, getUserBy } from "@/repositories/user";
+import { deleteVerificationCode } from "@/repositories/email-verification-codes";
 
 export async function POST(request: NextRequest) {
 	const body = await request.json();
@@ -20,23 +19,21 @@ export async function POST(request: NextRequest) {
 
 	const hashedPassword = await bcrypt.hash(body.password, 10);
 	const userId = generateRandomString(15, alphabet("a-z", "A-Z", "0-9"));
-	
+
+	await addUser({
+		id: userId,
+		name: body.name,
+		email: body.email,
+		password: hashedPassword,
+	} as TUsers);
+
 	const verificationCode = await generateEmailVerificationCode(userId, body.email);
 
 	try {
 		// Send verification email
+		console.log(verificationCode);
 		await sendVerificationRequest({ identifier: body.email, code: verificationCode });
 		console.log("Email sent");
-
-		await db.insert(users).values({
-			id: userId,
-			name: body.name,
-			email: body.email,
-			password: hashedPassword,
-		});
-
-		const session = await lucia.createSession(userId, {});
-		const sessionCookie = lucia.createSessionCookie(session.id);
 
 		return NextResponse.json(
 			{
@@ -45,19 +42,14 @@ export async function POST(request: NextRequest) {
 			},
 			{
 				status: 200,
-				headers: {
-					"Set-Cookie": sessionCookie.serialize(),
-				},
 			}
 		);
 	} catch (e) {
 		console.log("[Email send error] -- \n" + e);
 
 		// Rollback
-		await db.delete(emailVerificationCodes).where(eq(emailVerificationCodes.user_id, userId));
-		// await db.delete(sessionTable).where(eq(sessionTable.id, session.id));
-		// await db.delete(users).where(eq(users.id, userId));
-		// await lucia.invalidateSession(session.id);
+		await deleteVerificationCode(userId);
+		await deleteUser(userId);
 
 		return NextResponse.json(
 			{
@@ -116,12 +108,7 @@ async function validate(body: {
 			}
 		);
 	}
-	const userEmail = await db
-		.select({
-			email: users.email,
-		})
-		.from(users)
-		.where(eq(users.email, body.email));
+	const userEmail = await getUserBy("email", body.email);
 	if (userEmail.length > 0) {
 		return NextResponse.json(
 			{

@@ -96,6 +96,14 @@ CREATE TABLE IF NOT EXISTS "resource_categories" (
 	"updated_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "resource_to_categories" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"resource_id" serial NOT NULL,
+	"category_id" serial NOT NULL,
+	"created_at" timestamp DEFAULT now(),
+	"updated_at" timestamp DEFAULT now()
+);
+--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "resources" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"user_id" text NOT NULL,
@@ -195,6 +203,18 @@ END $$;
 --> statement-breakpoint
 DO $$ BEGIN
  ALTER TABLE "resource_bookmark_counts" ADD CONSTRAINT "resource_bookmark_counts_resource_id_resources_id_fk" FOREIGN KEY ("resource_id") REFERENCES "resources"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "resource_to_categories" ADD CONSTRAINT "resource_to_categories_resource_id_resources_id_fk" FOREIGN KEY ("resource_id") REFERENCES "resources"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "resource_to_categories" ADD CONSTRAINT "resource_to_categories_category_id_resource_categories_id_fk" FOREIGN KEY ("category_id") REFERENCES "resource_categories"("id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;

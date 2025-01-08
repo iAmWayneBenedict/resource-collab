@@ -13,14 +13,16 @@ import { bindReactHookFormError } from "@/lib/utils";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { Button } from "@nextui-org/Button";
-import { usePostLoginMutation } from "@/services/mutations/users/auth-services";
+import { useRouter } from "next/navigation";
+import { usePostLoginMutation } from "@/services/api/mutations/users";
 
 const LoginForm = () => {
+	const router = useRouter();
 	const [isDisabledBtn, setDisabledBtn] = useState(false);
 	const form = useForm<TLoginForm>({
 		resolver: zodResolver(LoginFormSchema),
 	});
-	
+
 	const {
 		register,
 		formState: { errors },
@@ -28,12 +30,13 @@ const LoginForm = () => {
 		control,
 		setError,
 	} = form;
-	
+
 	const [passwordType, setPasswordType] = useState("password");
-	
+
 	const loginMutation = usePostLoginMutation({
 		onSuccess: (res) => {
 			setDisabledBtn(false);
+			router.push("/");
 			// router.push("/auth/verification?email=" + form.getValues("email"));
 		},
 		onError: (err) => {

@@ -16,3 +16,5 @@ type TSuccessAPIResponse<TData> = {
 type TDataFormAPIResponse = {
 	path: string[];
 };
+
+type TResponseAPI<TData> = Promise<TSuccessAPIResponse<TData> | TErrorAPIResponse>;

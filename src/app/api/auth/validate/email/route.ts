@@ -1,5 +1,5 @@
-import { db } from "@/db/connection";
-import { emailVerificationCodes, users } from "@/db/schema";
+import { db } from "@/data/connection";
+import { emailVerificationCodes, users } from "@/data/schema";
 import { and, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 

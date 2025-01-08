@@ -1,9 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import React, { useRef, useEffect } from "react";
-import { cn } from "@/lib/utils";
-import useTime from "@/hooks/useTime";
+import React from "react";
+import { useTime } from "@/hooks";
 
 const Footer = () => {
 	const year = useTime({ options: { year: "numeric" } });

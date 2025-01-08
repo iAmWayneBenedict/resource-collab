@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { cn, toJson, toStr, bindReactHookFormError } from './utils';
+import { bindReactHookFormError, cn, toJson, toStr } from "@/lib/utils";
 
 
 describe('Utility functions', () => {

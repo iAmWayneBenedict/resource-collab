@@ -1,20 +1,17 @@
 "use client";
 
-import CustomInput from "@/components/custom/CustomInput";
-import { Fragment, useCallback, useEffect, useState } from "react";
-import { Playfair_Display } from "next/font/google";
-import { cn, delay } from "@/lib/utils";
+import { Fragment, useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
 import contactGradient from "../../../../public/assets/img/contact-gradient.png";
 import Image from "next/image";
-import CustomTextArea from "@/components/custom/CustomTextArea";
-import { useForm, Controller, SubmitHandler, FieldErrors } from "react-hook-form";
+import { useForm, SubmitHandler } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "@/components/ui/form";
 import ControlledInput from "@/components/custom/ControlledInput";
 import ControlledTextArea from "@/components/custom/ControlledTextArea";
-import { useWebScraperQuery } from "@/services/queries/scraper/web-scraper-services";
-import { useDebounce } from "@/hooks/useDebounce";
+import { useWebScraperQuery } from "@/services/api/queries/scraper";
+import { useDebounce } from "@/hooks";
 import { SiteCard } from "@/components/layouts/cards/SiteCard";
 
 // Contact form schema
@@ -45,7 +42,7 @@ type TScrapedData = {
 	description: string;
 	image: string;
 	link: string;
-}
+};
 
 const Contact = () => {
 	const form = useForm<TFormValues>({
@@ -58,31 +55,41 @@ const Contact = () => {
 		},
 	});
 	const {
-		register,
 		handleSubmit,
 		watch,
 		formState: { errors },
 		control,
 	} = form;
-	
-	const [scrapedData, setScrapedData] = useState<TScrapedData | null>(null);
-	
-	// debounce link
-	const debouncedLink = useDebounce(watch("link"), 1000);
-	
-	const webScraperResponse = useWebScraperQuery({ data: debouncedLink })
 
+	const [scrapedData, setScrapedData] = useState<TScrapedData | null>(null);
+
+	// debounce link
+	const watchedLink = watch("link");
+	const hasLink = watchedLink.length > 0;
+	const link = hasLink
+		? watchedLink.startsWith("https")
+			? watchedLink
+			: `https://${watchedLink}`
+		: "";
+
+	const debouncedLink = useDebounce(link, 250); // 250ms delay every change of link
+
+	const webScraperResponse = useWebScraperQuery({ data: debouncedLink });
+
+	// store the scraped data in state to make the data more readable
 	useEffect(() => {
 		if (webScraperResponse.isSuccess) {
-			const data = webScraperResponse.data.data
+			const data = webScraperResponse.data.data;
 			setScrapedData({
 				title: data.title || data.site_name,
 				description: data.description,
 				image: data.image.includes("http") ? data.image : data.url + data.image,
-				link: data.url
+				link: data.url,
 			});
+		} else {
+			setScrapedData(null);
 		}
-	}, [webScraperResponse.isSuccess]);
+	}, [webScraperResponse.data?.data, webScraperResponse.isSuccess, webScraperResponse.isError]);
 
 	const onSubmit: SubmitHandler<TFormValues> = (data) => console.log(data);
 	return (
@@ -125,6 +132,10 @@ const Contact = () => {
 							{formFields.map(({ name, type }) => {
 								return (
 									<Fragment key={name}>
+										{/*
+											show scraped link if name is link
+										*/}
+
 										{name === "link" && scrapedData && (
 											<SiteCard
 												img={scrapedData.image}
@@ -156,7 +167,7 @@ const Contact = () => {
 							<button
 								type="submit"
 								title="Submit"
-								className="w-full py-3 text-lg text-white rounded-full bg-violet"
+								className="w-full py-8 text-lg text-white rounded-full bg-violet"
 							>
 								Message
 							</button>

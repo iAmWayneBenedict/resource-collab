@@ -1,7 +1,7 @@
 import { Button } from "@nextui-org/Button";
 import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import React, { useState } from "react";
 
 type Props = {
 	disabled?: boolean;

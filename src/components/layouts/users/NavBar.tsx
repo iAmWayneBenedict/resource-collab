@@ -20,11 +20,11 @@ import {
 } from "@/components/ui/sheet";
 
 import { Button } from "@/components/ui/button";
-import useElementSize from "@/hooks/useElementSize";
+import { useElementSize } from "@/hooks";
 import { usePathname } from "next/navigation";
 import ProfileDropDown from "./Nav/ProfileDropDown";
 import { useQuery } from "@tanstack/react-query";
-import { useGetLoggedUserQuery } from "@/services/queries/user/auth-services";
+import { useGetLoggedUserQuery } from "@/services/api/queries/user";
 
 const NavBar = () => {
 	const rightNavRef = useRef<HTMLDivElement>(null);
@@ -115,7 +115,7 @@ const LargeNav = ({
 	size: { width: number; height: number };
 	rightNavRef: React.RefObject<HTMLDivElement>;
 }) => {
-	const { data, isLoading, isSuccess, isError } = useGetLoggedUserQuery()
+	const { data, isLoading, isSuccess, isError } = useGetLoggedUserQuery();
 	return (
 		<>
 			{size.width > 0 && (

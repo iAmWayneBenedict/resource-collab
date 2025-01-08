@@ -9,10 +9,9 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import ENDPOINTS from "@/services/EndPoints";
+import ENDPOINTS from "@/services/api/EndPoints";
 
 const ProfileDropDown = ({ user }: { user: TSuccessAPIResponse<any> }) => {
-	
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
@@ -73,8 +72,7 @@ const handleLogout = async () => {
 		await response.json();
 
 		// redirect to home page
-		location.href = "/"
-
+		location.href = "/";
 	} catch (error) {
 		console.error("Error:", error);
 	}

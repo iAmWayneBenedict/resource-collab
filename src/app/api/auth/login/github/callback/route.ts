@@ -1,11 +1,10 @@
 import { cookies } from "next/headers";
 import { OAuth2RequestError } from "arctic";
 import { github } from "@/config/auth/auth.config";
-import { lucia } from "@/config/auth/auth";
-import { db } from "@/db/connection";
-import { oauthAccounts, TOauthAccounts, TUsers, users } from "@/db/schema";
+import { db } from "@/data/connection";
+import { oauthAccounts, TUsers, users } from "@/data/schema";
 import { generateRandomString, alphabet } from "oslo/crypto";
-import { and, eq, or } from "drizzle-orm";
+import { eq, or } from "drizzle-orm";
 import { createSession } from "@/app/api/utils";
 
 export async function GET(request: Request) {

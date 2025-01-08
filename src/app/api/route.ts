@@ -1,8 +1,5 @@
-import { db } from "@/db/connection";
-import { admins, portfolios, skills, users } from "@/db/schema";
-import { eq } from "drizzle-orm";
 import { NextResponse, NextRequest } from "next/server";
-import { portfolioToSkills } from "../../db/schema";
+import { getResourceToCategoryByRelationalQuery } from "@/repositories/resource-to-category";
 
 // To handle a GET request to /api
 export async function GET(request: NextRequest, response: NextResponse) {
@@ -24,7 +21,13 @@ export async function GET(request: NextRequest, response: NextResponse) {
 	// 		.where(eq(skills.id, 1))
 	// );
 
-	return NextResponse.json({ message: "Hello World" });
+	return NextResponse.json({
+		data:
+			(await getResourceToCategoryByRelationalQuery(
+				["category", "resource"],
+				(schema, { and, eq }) => and(eq(schema.category_id, 1), eq(schema.resource_id, 5))
+			)) || null,
+	});
 }
 
 // To handle a POST request to /api
