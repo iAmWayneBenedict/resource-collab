@@ -66,6 +66,11 @@ export function bindReactHookFormError(
 	});
 }
 
+/**
+ * Checks if a given string is a valid URL or not.
+ * @param {string} url - The URL to check.
+ * @returns {boolean} true if the URL is valid, false otherwise.
+ */
 export function isValidUrl(url: string): boolean {
 	try {
 		new URL(url);
@@ -76,3 +81,54 @@ export function isValidUrl(url: string): boolean {
 }
 
 export const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+/**
+ * Reinitializes the query parameters of the given currentUrl by replacing
+ * or deleting the query parameters with the given objParams.
+ *
+ * @param {string} currentUrl - the current url
+ * @param {Record<string, string>} [objParams] - the object containing the query parameters to be updated
+ * @returns {string} the new url with the query parameters updated
+ */
+export const reInitQueryParams = (currentUrl: string, objParams?: Record<string, string>) => {
+	if (!currentUrl) return "/";
+	const BASE_URL = currentUrl.split("?")[0];
+	const searchParams = new URLSearchParams(new URL(currentUrl).search);
+
+	if (objParams) {
+		Object.entries(objParams).forEach(([paramKey, paramValue]) => {
+			// if empty query param, remove
+			if (!paramValue) {
+				searchParams.delete(paramKey);
+				return;
+			}
+			searchParams.set(paramKey, paramValue);
+		});
+	}
+
+	return BASE_URL + "?" + searchParams.toString();
+};
+
+/**
+ * Toggle the scrollability of the body element. When state is true, this
+ * function sets the overflow of the body to "hidden" and adds a data-lenis-prevent
+ * attribute to the body element to prevent the body from being scrollable.
+ * When state is false, this function sets the overflow of the body to "auto"
+ * and removes the data-lenis-prevent attribute from the body element, allowing
+ * the body to be scrollable again.
+ *
+ * @param {boolean} state - whether the body should be scrollable or not
+ */
+export const toggleScrollBody = (state: boolean) => {
+	if (state) {
+		document.body.style.overflow = "hidden"; // standard no-scroll implementation
+		document.body.setAttribute("data-lenis-prevent", "true"); // Make sure you pass true as string
+	} else {
+		document.body.style.overflowY = "auto";
+		document.body.removeAttribute("data-lenis-prevent"); // Make sure you pass true as string
+	}
+};
+
+export const formatDate = (date: string) => {
+	return new Intl.DateTimeFormat("en-US").format(new Date(date));
+};

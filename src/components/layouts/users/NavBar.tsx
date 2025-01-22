@@ -2,7 +2,7 @@
 "use client";
 
 import Link from "next/link";
-import React, { useRef, useEffect } from "react";
+import React from "react";
 import { cn } from "@/lib/utils";
 import {
 	NavigationMenu,
@@ -20,35 +20,21 @@ import {
 } from "@/components/ui/sheet";
 
 import { Button } from "@/components/ui/button";
-import { useElementSize } from "@/hooks";
 import { usePathname } from "next/navigation";
 import ProfileDropDown from "./Nav/ProfileDropDown";
-import { useQuery } from "@tanstack/react-query";
-import { useGetLoggedUserQuery } from "@/services/api/queries/user";
+import { useAuthUser } from "@/store/useAuthUser";
 
 const NavBar = () => {
-	const rightNavRef = useRef<HTMLDivElement>(null);
-	const { size, setObserveElement } = useElementSize();
-
-	useEffect(() => {
-		if (rightNavRef.current) setObserveElement(rightNavRef.current);
-	}, []);
 	return (
 		<div className="fixed top-[30px] left-1/2 -translate-x-1/2 w-[90%] flex justify-between items-center bg-blur-background py-4 px-10 rounded-full shadow-lg backdrop-blur-md z-50">
-			<div
-				id="nav-left"
-				style={{
-					width: `${size.width}px`,
-				}}
-				className="flex"
-			>
+			<div id="nav-left" style={{ flex: 1 }} className="flex">
 				<div className="flex items-center">
 					<Link href="/" className="flex items-center">
-						<span className="text-xl font-bold">Co.</span>
+						<span className="text-xl font-bold">RCo.</span>
 					</Link>
 				</div>
 			</div>
-			<LargeNav size={size} rightNavRef={rightNavRef} />
+			<LargeNav />
 			<SmallNav />
 		</div>
 	);
@@ -108,94 +94,65 @@ const SmallNav = () => {
 	);
 };
 
-const LargeNav = ({
-	size,
-	rightNavRef,
-}: {
-	size: { width: number; height: number };
-	rightNavRef: React.RefObject<HTMLDivElement>;
-}) => {
-	const { data, isLoading, isSuccess, isError } = useGetLoggedUserQuery();
+const NAV_LINKS = [
+	{
+		name: "home",
+		link: "/",
+	},
+	{
+		name: "resources",
+		link: "/resources",
+	},
+	{
+		name: "portfolios",
+		link: "/portfolios",
+	},
+	{
+		name: "about",
+		link: "/about",
+	},
+	{
+		name: "contact",
+		link: "/contact",
+	},
+	{
+		name: "admin",
+		link: "/admin/dashboard",
+	},
+];
+
+const LargeNav = () => {
+	const { authUser } = useAuthUser();
+	console.log(authUser);
 	return (
-		<>
-			{size.width > 0 && (
-				<div className="hidden lg:flex">
-					<NavigationMenu>
-						<NavigationMenuList>
-							<NavigationMenuItem>
-								<Link href="/" legacyBehavior passHref>
-									<NavigationMenuLink
-										className={cn(
-											navigationMenuTriggerStyle(),
-											"bg-transparent hover:bg-transparent focus:bg-transparent"
-										)}
-									>
-										<NavLinkStyleWrapper name="home">Home</NavLinkStyleWrapper>
-									</NavigationMenuLink>
-								</Link>
-							</NavigationMenuItem>
-							<NavigationMenuItem>
-								<Link href="/resources" legacyBehavior passHref>
-									<NavigationMenuLink
-										className={cn(
-											navigationMenuTriggerStyle(),
-											"bg-transparent hover:bg-transparent focus:bg-transparent"
-										)}
-									>
-										<NavLinkStyleWrapper name="resources">
-											Resources
-										</NavLinkStyleWrapper>
-									</NavigationMenuLink>
-								</Link>
-							</NavigationMenuItem>
-							<NavigationMenuItem>
-								<Link href="/portfolios" legacyBehavior passHref>
-									<NavigationMenuLink
-										className={cn(
-											navigationMenuTriggerStyle(),
-											"bg-transparent hover:bg-transparent focus:bg-transparent"
-										)}
-									>
-										<NavLinkStyleWrapper name="portfolios">
-											Portfolios
-										</NavLinkStyleWrapper>
-									</NavigationMenuLink>
-								</Link>
-							</NavigationMenuItem>
-							<NavigationMenuItem>
-								<Link href="/docs" legacyBehavior passHref>
-									<NavigationMenuLink
-										className={cn(
-											navigationMenuTriggerStyle(),
-											"bg-transparent hover:bg-transparent focus:bg-transparent"
-										)}
-									>
-										<NavLinkStyleWrapper name="about">
-											About
-										</NavLinkStyleWrapper>
-									</NavigationMenuLink>
-								</Link>
-							</NavigationMenuItem>
-							<NavigationMenuItem>
-								<Link href="/contact" legacyBehavior passHref>
-									<NavigationMenuLink
-										className={cn(
-											navigationMenuTriggerStyle(),
-											"bg-transparent hover:bg-transparent focus:bg-transparent"
-										)}
-									>
-										<NavLinkStyleWrapper name="contact">
-											Contact
-										</NavLinkStyleWrapper>
-									</NavigationMenuLink>
-								</Link>
-							</NavigationMenuItem>
-						</NavigationMenuList>
-					</NavigationMenu>
-				</div>
-			)}
-			<div ref={rightNavRef} className="items-center hidden gap-3 lg:flex">
-				{(isLoading || isError) && (
+		<React.Fragment>
+			<div style={{ flex: 1 }} className="hidden lg:flex justify-center">
+				<NavigationMenu>
+					<NavigationMenuList>
+						{NAV_LINKS.map(({ name, link }) => {
+							if (name == "admin" && authUser?.role !== "admin") return null;
+							return (
+								<NavigationMenuItem key={name}>
+									<Link href={link} legacyBehavior passHref>
+										<NavigationMenuLink
+											className={cn(
+												navigationMenuTriggerStyle(),
+												"bg-transparent hover:bg-transparent focus:bg-transparent"
+											)}
+										>
+											<NavLinkStyleWrapper name={name} className="capitalize">
+												{name}
+											</NavLinkStyleWrapper>
+										</NavigationMenuLink>
+									</Link>
+								</NavigationMenuItem>
+							);
+						})}
+					</NavigationMenuList>
+				</NavigationMenu>
+			</div>
+			<div style={{ flex: 1 }} className="items-center justify-end hidden gap-3 lg:flex">
+				{!authUser && (
 					<>
 						<Link href="/auth/signup" passHref>
 							Sign up
@@ -210,8 +167,8 @@ const LargeNav = ({
 						</Button>
 					</>
 				)}
-				{isSuccess && <ProfileDropDown user={data} />}
+				{authUser && <ProfileDropDown />}
 			</div>
-		</>
+		</React.Fragment>
 	);
 };

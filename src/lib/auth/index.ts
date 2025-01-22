@@ -1,15 +1,11 @@
 import { cookies } from "next/headers";
 import { cache } from "react";
-import { redirect } from "next/navigation";
 
 import type { Session, User } from "lucia";
-import { eq } from "drizzle-orm";
 
 import { TimeSpan, createDate } from "oslo";
 import { generateRandomString, alphabet } from "oslo/crypto";
 import { lucia } from "@/config/auth/auth";
-import { db } from "@/data/connection";
-import { emailVerificationCodes } from "@/data/schema";
 import {
 	addVerificationCode,
 	deleteVerificationCode,

@@ -3,10 +3,6 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest): Promise<NextResponse> {
-	if (request.method === "GET") {
-		return NextResponse.next();
-	}
-
 	// Allow requests from localhost in development
 	if (process.env.NODE_ENVIRONMENT === "development") {
 		return NextResponse.next();
@@ -20,5 +16,6 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
 			status: 403,
 		});
 	}
+
 	return NextResponse.next();
 }

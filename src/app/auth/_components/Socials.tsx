@@ -1,7 +1,8 @@
-import { Button } from "@nextui-org/Button";
+import { Button } from "@heroui/react";
 import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import config from "@/config";
 
 type Props = {
 	disabled?: boolean;
@@ -21,13 +22,15 @@ export default function Socials({ disabled = false, setDisabled }: Props): React
 	const router = useRouter();
 	const onClick = (provider: string) => {
 		setDisabled && setDisabled(true);
-		router.push(`${DEFAULT_LOGIN_REDIRECT}api/auth/login/${provider}`);
+		router.push(
+			`${DEFAULT_LOGIN_REDIRECT}api/${config.SERVER_API_VERSION}/${config.SERVER_API_TYPE}/auth/login/${provider}`
+		);
 	};
 	return (
 		<>
 			<Button
 				isDisabled={disabled}
-				onClick={() => onClick("google")}
+				onPress={() => onClick("google")}
 				variant="bordered"
 				type="button"
 				className="relative w-full bg-transparent hover:bg-black text-black hover:text-white dark:text-white dark:hover:text-black dark:hover:bg-white border border-neutral-500 rounded-full py-8 "
@@ -63,7 +66,7 @@ export default function Socials({ disabled = false, setDisabled }: Props): React
 			</Button>
 			<Button
 				isDisabled={disabled}
-				onClick={() => onClick("github")}
+				onPress={() => onClick("github")}
 				variant="bordered"
 				type="button"
 				className="relative w-full bg-transparent hover:bg-green-400 text-black hover:text-black dark:text-white dark:hover:text-black border border-neutral-500 hover:border-green-500 rounded-full py-8 "

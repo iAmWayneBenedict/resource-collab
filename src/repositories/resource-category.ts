@@ -1,7 +1,7 @@
 import { eq, SQLWrapper } from "drizzle-orm";
 import { db } from "../data/connection";
 import { arrToObjSchema } from "./utils";
-import { resourceCategories, TResourceCategories } from "@/data/schema";
+import { resourceCategories, TResourceCategories } from "@/data/models/resource-categories";
 
 /**
  * Adds a new resource category to the database.

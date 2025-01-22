@@ -7,13 +7,14 @@ import { resources } from "./resource";
 import { admins } from "./admin";
 import { userMessages } from "./user-message";
 
-export const usersEnum = pgEnum("users_enum", ["users", "admins", "super_admins", "guests"]);
+export const usersEnum = pgEnum("users_enum", ["user", "admin", "guest"]);
 
 const usersObject = z.object({
 	id: z.string(),
 	name: z.string(),
 	email: z.string(),
-	role: z.enum(["users", "admins", "super_admins", "guests"]),
+	email_verified: z.boolean(),
+	role: z.enum(["user", "admin", "guest"]),
 	password: z.string(),
 	created_at: z.date(),
 	updated_at: z.date(),
@@ -25,7 +26,7 @@ export const users = pgTable("users", {
 	name: varchar("name").notNull(),
 	email: text("email").unique().notNull(),
 	email_verified: boolean("email_verified").notNull().default(false),
-	role: usersEnum("role").notNull().default("users"),
+	role: usersEnum("role").notNull().default("user"),
 	password: text("password"),
 	created_at: timestamp("created_at", { mode: "date" }).defaultNow(),
 	updated_at: timestamp("updated_at", { mode: "date" }).defaultNow(),

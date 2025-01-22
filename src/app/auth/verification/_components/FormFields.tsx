@@ -1,7 +1,7 @@
 "use client";
 
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
-import { Button } from "@nextui-org/Button";
+import { Button } from "@heroui/react";
 import Link from "next/link";
 import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";

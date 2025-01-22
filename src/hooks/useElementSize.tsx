@@ -1,4 +1,4 @@
-import  { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 type TObserveElement = Window | HTMLElement | null;
 type TSize = { height: number; width: number };
@@ -68,7 +68,7 @@ const useElementSize = (target?: TObserveElement): TUseElementSizeResult => {
 		});
 	};
 
-	useEffect(() => {
+	useLayoutEffect(() => {
 		const currentElement = observeElement.current;
 		initialResizeHandler();
 

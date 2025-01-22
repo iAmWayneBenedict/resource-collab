@@ -18,6 +18,7 @@ import { skills, skillRelations } from "./models/skills";
 import { admins, adminUserRelations } from "./models/admin";
 import { externalMessages } from "./models/external-message";
 import { portfolioCategories } from "./models/portfolio-categories";
+import { resourceCategories, TResourceCategories } from "./models/resource-categories";
 import {
 	resourceBookmarkCounts,
 	resourceBookmarkCountsRelations,
@@ -52,6 +53,9 @@ export {
 	// resources
 	resources,
 	resourceRelations,
+
+	// resource categories
+	resourceCategories,
 
 	// resource to category junction
 	resourceToCategories,
@@ -88,4 +92,4 @@ export {
 	portfolioBookmarkCountsRelations,
 };
 
-export type { TUsers, TOauthAccounts, TResources };
+export type { TUsers, TOauthAccounts, TResources, TResourceCategories };

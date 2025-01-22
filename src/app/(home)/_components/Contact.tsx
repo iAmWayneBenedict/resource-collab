@@ -80,6 +80,7 @@ const Contact = () => {
 	useEffect(() => {
 		if (webScraperResponse.isSuccess) {
 			const data = webScraperResponse.data.data;
+			console.log(data);
 			setScrapedData({
 				title: data.title || data.site_name,
 				description: data.description,
@@ -167,7 +168,7 @@ const Contact = () => {
 							<button
 								type="submit"
 								title="Submit"
-								className="w-full py-8 text-lg text-white rounded-full bg-violet"
+								className="w-full py-5 text-lg text-white rounded-full bg-violet"
 							>
 								Message
 							</button>

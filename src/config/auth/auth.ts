@@ -37,6 +37,6 @@ declare module "lucia" {
 interface DatabaseUserAttributes {
 	name: string;
 	email: string;
-	role: "users" | "admins" | "super_admins" | "guests";
+	role: "user" | "admin" | "guest";
 	email_verified: boolean;
 }

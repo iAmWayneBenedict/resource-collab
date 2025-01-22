@@ -23,7 +23,7 @@ type LinkType = {
  */
 const Aside: React.FC<Props> = ({ links }) => {
 	const params = useSearchParams();
-	const filter = params.get("filter") || "all";
+	const category = params.get("category") || "all";
 	const activeStyle =
 		"bg-black text-white hover:bg-black dark:hover:bg-white dark:bg-white dark:text-black";
 
@@ -31,11 +31,11 @@ const Aside: React.FC<Props> = ({ links }) => {
 		<aside className={cn("hidden lg:flex min-w-[15rem] 2xl:min-w-[18rem] pr-10 2xl:pr-16")}>
 			<ul className="flex flex-col gap-1 w-full">
 				<li className="mb-5 pb-5 border-b border-neutral-400 dark:border-neutral-500">
-					<Link href={`${links[0].href}?filter=bookmark`} scroll={false}>
+					<Link href={`${links[0].href}?category=bookmark`} scroll={false}>
 						<Badge
 							variant={"secondary"}
 							className={cn(
-								filter === "bookmark" ? activeStyle : "",
+								category === "bookmark" ? activeStyle : "",
 								"flex items-center gap-2"
 							)}
 						>
@@ -49,7 +49,7 @@ const Aside: React.FC<Props> = ({ links }) => {
 							<Badge
 								variant={"secondary"}
 								className={cn(
-									filter === link.title.toLocaleLowerCase() ? activeStyle : ""
+									category === link.title.toLocaleLowerCase() ? activeStyle : ""
 								)}
 							>
 								{link.title}

@@ -10,8 +10,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import ENDPOINTS from "@/services/api/EndPoints";
+import { useAuthUser } from "@/store/useAuthUser";
+import ApiMethods from "@/services/api/ApiMethods";
 
-const ProfileDropDown = ({ user }: { user: TSuccessAPIResponse<any> }) => {
+const ProfileDropDown = () => {
+	const { setAuthUser } = useAuthUser();
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
@@ -49,7 +52,10 @@ const ProfileDropDown = ({ user }: { user: TSuccessAPIResponse<any> }) => {
 				<DropdownMenuSeparator />
 				<DropdownMenuItem
 					className="text-red-500 focus:bg-red-100 focus:text-red-500"
-					onClick={handleLogout}
+					onClick={async () => {
+						await handleLogout();
+						setAuthUser(null);
+					}}
 				>
 					<LogOut className="mr-2 h-4 w-4" />
 					<span>Log out</span>
@@ -63,13 +69,7 @@ export default ProfileDropDown;
 
 const handleLogout = async () => {
 	try {
-		const logoutUrl = ENDPOINTS.LOGOUT();
-		const response = await fetch("/api" + logoutUrl);
-		if (!response.ok) {
-			throw new Error(`Logout failed with status: ${response.status}`);
-		}
-
-		await response.json();
+		await ApiMethods.get(ENDPOINTS.LOGOUT());
 
 		// redirect to home page
 		location.href = "/";

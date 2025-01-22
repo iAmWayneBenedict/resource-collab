@@ -6,7 +6,23 @@ import {
 	getResourceToCategoryByRelationalQuery,
 } from "@/repositories/resource-to-category";
 
-export const postResource = async (resourceData: any) => {
+/**
+ * Adds a new resource to the database, or throws an error if the resource
+ * name already exists. If the resource has a category, it is also added to
+ * the resource-to-category junction table. If the category does not already
+ * exist, it will be created first.
+ *
+ * @param {object} resourceData - The resource data to add, containing
+ *                                name, category, and user_id.
+ *
+ * @returns {Promise<array>} - A promise that resolves to an array containing
+ *                             the inserted resource data, with the fields
+ *                             specified in the returning parameter.
+ *
+ * @throws {CustomError} - If the resource with the given name already exists,
+ *                         or if the category does not exist.
+ */
+export const createResource = async (resourceData: any): Promise<Array<any>> => {
 	const { name, category, userId } = resourceData;
 
 	const existingResource = await getResourceBy("name", name);

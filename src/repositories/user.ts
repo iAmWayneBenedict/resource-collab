@@ -1,7 +1,8 @@
-import { eq } from "drizzle-orm";
+import { asc, count, desc, eq, ilike } from "drizzle-orm";
 import { db } from "../data/connection";
 import { TUsers, users } from "../data/schema";
 import { arrToObjSchema } from "./utils";
+import { usersEnum } from "../data/models/user";
 
 /**
  * Adds a new user to the database.
@@ -10,14 +11,8 @@ import { arrToObjSchema } from "./utils";
  * @returns A promise that resolves to the inserted user data if `returning` is specified, otherwise resolves to nothing.
  */
 
-export const addUser = async (values: TUsers, returning?: (keyof TUsers)[]) => {
-	if (returning) {
-		const returnedField = arrToObjSchema(returning, users);
-
-		return await db.insert(users).values(values).returning(returnedField);
-	} else {
-		return await db.insert(users).values(values);
-	}
+export const save = async (values: TUsers) => {
+	return await db.insert(users).values(values).returning();
 };
 
 /**
@@ -26,8 +21,8 @@ export const addUser = async (values: TUsers, returning?: (keyof TUsers)[]) => {
  * @param values The values to update the user with.
  * @returns A promise that resolves to the number of affected rows.
  */
-export const updateUser = async (id: string, values: Partial<TUsers>) => {
-	return await db.update(users).set(values).where(eq(users.id, id));
+export const update = async (id: string, values: Partial<TUsers>) => {
+	return await db.update(users).set(values).where(eq(users.id, id)).returning({ id: users.id });
 };
 
 /**
@@ -35,8 +30,8 @@ export const updateUser = async (id: string, values: Partial<TUsers>) => {
  * @param id The id of the user to delete.
  * @returns A promise that resolves to the number of affected rows.
  */
-export const deleteUser = async (id: string) => {
-	return await db.delete(users).where(eq(users.id, id));
+export const remove = async (id: string) => {
+	return await db.delete(users).where(eq(users.id, id)).returning({ id: users.id });
 };
 
 /**
@@ -47,7 +42,7 @@ export const deleteUser = async (id: string) => {
  * @param selectFields Optional parameter specifying which fields to return.
  * @returns A promise that resolves to the user data, with the fields specified by `selectFields` if provided.
  */
-export const getUserBy = async <K extends keyof TUsers>(
+export const findUserBy = async <K extends keyof TUsers>(
 	by: K,
 	value: TUsers[K],
 	selectFields?: (keyof TUsers)[]
@@ -60,12 +55,61 @@ export const getUserBy = async <K extends keyof TUsers>(
 	return await query.where(eq(users[by], value));
 };
 
+type TGetAllUsersProps = {
+	page?: number;
+	limit?: number;
+	search?: string;
+	sortBy?: string;
+	sortType?: string;
+	filter?: string;
+};
+
 /**
- * Retrieves all users from the database.
+ * Retrieves a list of users from the database, with optional pagination, search, sorting, and filtering.
  *
+ * @param page Optional. The page number for pagination.
+ * @param limit Optional. The number of users to display per page.
+ * @param search Optional. A search term to filter users by name.
+ * @param sortBy Optional. The field by which to sort the users.
+ * @param sortType Optional. The order of sorting, either "asc" or "desc".
+ * @param filter Optional. A filter to apply based on user role.
  * @returns A promise that resolves to an array of user data.
  */
 
-export const getAllUsers = async () => {
-	return await db.select().from(users);
+export const findAllUsers = async ({
+	page,
+	limit,
+	search,
+	sortBy,
+	sortType,
+	filter,
+}: TGetAllUsersProps) => {
+	const query = db
+		.select({
+			id: users.id,
+			name: users.name,
+			email: users.email,
+			role: users.role,
+			email_verified: users.email_verified,
+			created_at: users.created_at,
+			updated_at: users.updated_at,
+		})
+		.from(users);
+	if (page && limit) {
+		query.limit(limit).offset((page - 1) * limit);
+	}
+	if (search) {
+		query.where(ilike(users.name, `%${search}%`));
+	}
+	if (sortBy && sortType) {
+		const sortFn = sortType === "ascending" ? asc : desc;
+		query.orderBy(sortFn(users[sortBy as keyof TUsers]));
+	}
+	if (filter) {
+		query.where(eq(users.role, filter as (typeof usersEnum.enumValues)[number]));
+	}
+
+	const countData = await db.select({ userCount: count() }).from(users);
+
+	return { rows: await query, count: countData[0].userCount };
 };

@@ -6,6 +6,8 @@ import LenisWrapper from "@/components/layouts/LenisWrapper";
 import Providers from "./_providers/Providers";
 import { Toaster } from "@/components/ui/sonner";
 import React from "react";
+import { cn } from "@/lib/utils";
+import { validateRequest } from "@/lib/auth";
 
 export const metadata: Metadata = {
 	title: "RCollabs",
@@ -15,14 +17,16 @@ export const metadata: Metadata = {
 	},
 };
 
-export default function RootLayout({
+export default async function RootLayout({
 	children,
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
+	const user = await validateRequest();
+
 	return (
 		<html lang="en" suppressHydrationWarning={true}>
-			<body className={GeistSans.className}>
+			<body className={cn(GeistSans.className)}>
 				<ThemeProvider
 					attribute="class"
 					defaultTheme="system"
@@ -30,7 +34,7 @@ export default function RootLayout({
 					disableTransitionOnChange
 				>
 					<Toaster richColors position="top-center" />
-					<Providers>
+					<Providers data={user.user}>
 						<LenisWrapper>{children}</LenisWrapper>
 					</Providers>
 				</ThemeProvider>

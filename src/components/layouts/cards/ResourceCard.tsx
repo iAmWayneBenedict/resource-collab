@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useLayoutEffect, useMemo, useState } from "react";
 import { Bookmark } from "lucide-react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
@@ -11,17 +11,20 @@ const ResourceCard = () => {
 	const { theme } = useTheme(); // Get the current theme using useTheme hook
 
 	// Function to determine icon colors based on theme
-	const getIconColors = () => {
+	const getIconColors = useMemo(() => {
 		if (theme === "light") {
 			return { fill: "#000000", stroke: "#000000" }; // Light theme colors
 		} else {
 			return { fill: "#ffffff", stroke: "#ffffff" }; // Dark theme colors
 		}
-	};
-	const [iconColors, setIconColors] = useState<{ fill: string; stroke: string }>(getIconColors());
-	useEffect(() => {
-		setIconColors(getIconColors());
 	}, [theme]);
+	const [iconColors, setIconColors] = useState<{ fill: string; stroke: string }>({
+		fill: "none",
+		stroke: "none",
+	});
+	useLayoutEffect(() => {
+		setIconColors(getIconColors);
+	}, [getIconColors]);
 	const handleClickBookmark = () => {
 		setIconColors({
 			...iconColors,
@@ -29,7 +32,7 @@ const ResourceCard = () => {
 		});
 	};
 	return (
-		<div className="relative flex-1 min-w-[25rem] bg-white dark:bg-black rounded-2xl shadow-md">
+		<div className="relative flex-1 min-w-[21rem] md:min-w-[25rem] bg-white dark:bg-black rounded-2xl shadow-md">
 			<div className="absolute top-7 left-7">
 				<Button
 					onClick={handleClickBookmark}

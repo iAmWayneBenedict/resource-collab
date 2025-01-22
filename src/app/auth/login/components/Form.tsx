@@ -6,19 +6,18 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import ControlledInput from "@/components/custom/ControlledInput";
 import { Form } from "@/components/ui/form";
-import { Checkbox } from "@nextui-org/checkbox";
+import { Checkbox, Button } from "@heroui/react";
 import Socials from "../../_components/Socials";
 import { LoginFormSchema, TLoginForm } from "@/types/zod/forms";
 import { bindReactHookFormError } from "@/lib/utils";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
-import { Button } from "@nextui-org/Button";
 import { useRouter } from "next/navigation";
 import { usePostLoginMutation } from "@/services/api/mutations/users";
 
 const LoginForm = () => {
 	const router = useRouter();
-	const [isDisabledBtn, setDisabledBtn] = useState(false);
+	const [isDisabledBtn, setIsDisabledBtn] = useState(false);
 	const form = useForm<TLoginForm>({
 		resolver: zodResolver(LoginFormSchema),
 	});
@@ -35,17 +34,17 @@ const LoginForm = () => {
 
 	const loginMutation = usePostLoginMutation({
 		onSuccess: (res) => {
-			setDisabledBtn(false);
+			setIsDisabledBtn(false);
 			router.push("/");
 			// router.push("/auth/verification?email=" + form.getValues("email"));
 		},
 		onError: (err) => {
-			setDisabledBtn(false);
+			setIsDisabledBtn(false);
 			bindReactHookFormError(err, setError);
 		},
 	});
 	const onSubmit: SubmitHandler<TLoginForm> = (data) => {
-		setDisabledBtn(true);
+		setIsDisabledBtn(true);
 		loginMutation.mutate(data);
 	};
 	return (
@@ -88,7 +87,7 @@ const LoginForm = () => {
 					</div>
 					<br />
 					<br />
-					<Socials />
+					<Socials setDisabled={setIsDisabledBtn} disabled={isDisabledBtn} />
 					<br />
 					<Button
 						type="submit"

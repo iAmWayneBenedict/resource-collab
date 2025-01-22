@@ -1,7 +1,8 @@
 import axios from "axios";
 import { errorApiResponseExtractor, getHeaders, successApiResponseExtractor } from "./utils";
+import config from "@/config";
 
-export const BASE_URL = (process.env.BASE_URL! || "http://localhost:8080") + "/api";
+export const BASE_URL = `${config.BASE_URL}/api/${config.SERVER_API_VERSION}/${config.SERVER_API_TYPE}`;
 
 type Method = "get" | "post" | "put" | "delete";
 
@@ -27,6 +28,7 @@ class ApiMethods {
 		body,
 	}: TApiRequestParams): Promise<TSuccessAPIResponse<T>> {
 		url = `${BASE_URL}${url}`;
+		console.log(url);
 		try {
 			const response = await axios[method](url, body, { headers: getHeaders() });
 			return successApiResponseExtractor<T>(response);

@@ -6,6 +6,7 @@ import Section from "@/components/layouts/Section";
 import ResourceCard from "@/components/layouts/cards/ResourceCard";
 import React, { Suspense } from "react";
 import Container from "@/components/layouts/Container";
+import ControlledMultipleChipFilter from "@/components/custom/ControlledMultipleChipFilter";
 
 const Resources = () => {
 	return (
@@ -26,14 +27,15 @@ const Resources = () => {
 						<Aside
 							links={[
 								{ title: "All", href: "/resources" },
-								{ title: "Design", href: "/resources?filter=design" },
-								{ title: "Development", href: "/resources?filter=development" },
-								{ title: "Marketing", href: "/resources?filter=marketing" },
-								{ title: "Productivity", href: "/resources?filter=productivity" },
+								{ title: "Design", href: "/resources?category=design" },
+								{ title: "Development", href: "/resources?category=development" },
+								{ title: "Marketing", href: "/resources?category=marketing" },
+								{ title: "Productivity", href: "/resources?category=productivity" },
 							]}
 						/>
 						<div className="w-full">
-							<div className="mt-16 gap-6 flex flex-wrap">
+							<ControlledMultipleChipFilter />
+							<div className="mt-10 gap-6 flex flex-wrap">
 								{[1, 2, 3, 4, 5, 6].map((el) => (
 									<ResourceCard key={el} />
 								))}

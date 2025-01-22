@@ -1,6 +1,6 @@
 import type { Config } from "tailwindcss";
 const { default: flattenColorPalette } = require("tailwindcss/lib/util/flattenColorPalette");
-import { nextui } from "@nextui-org/react";
+import { heroui } from "@heroui/react";
 import {
 	fluidExtractor,
 	fluidCorePlugins,
@@ -11,7 +11,7 @@ import {
 const config = {
 	darkMode: "class",
 	content: [
-		"./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}",
+		"./node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}",
 		"./pages/**/*.{ts,tsx}",
 		"./components/**/*.{ts,tsx}",
 		"./app/**/*.{ts,tsx}",
@@ -76,6 +76,7 @@ const config = {
 				"violet-foreground": "hsl(var(--violet-foreground))",
 			},
 			borderRadius: {
+				"4xl": "calc(var(--radius) * 7)",
 				lg: "var(--radius)",
 				md: "calc(var(--radius) - 2px)",
 				sm: "calc(var(--radius) - 4px)",
@@ -106,7 +107,7 @@ const config = {
 		require("tailwindcss-animate"),
 		addVariablesForColors,
 		fluidCorePlugins,
-		nextui({
+		heroui({
 			prefix: "nextui", // prefix for themes variables
 			addCommonColors: false, // override common colors (e.g. "blue", "green", "pink").
 			defaultTheme: "light", // default theme from the themes object

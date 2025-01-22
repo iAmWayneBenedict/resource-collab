@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Button } from "@nextui-org/Button";
+import { Button } from "@heroui/react";
 import { MoveLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 

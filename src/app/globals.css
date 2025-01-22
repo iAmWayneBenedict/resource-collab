@@ -96,6 +96,25 @@
 		background: linear-gradient(93deg, rgba(0, 0, 0, 0) 0.47%, rgba(0, 0, 0, 0.33) 99.68%);
 	}
 
+	.custom-scrollbar {
+		@apply transition-all duration-300;
+	}
+	.custom-scrollbar::-webkit-scrollbar {
+		@apply w-[8px];
+	}
+
+	.custom-scrollbar::-webkit-scrollbar-track {
+		@apply bg-transparent;
+	}
+
+	.custom-scrollbar::-webkit-scrollbar-thumb {
+		@apply bg-violet rounded-full;
+	}
+
+	.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+		@apply bg-black/70 dark:bg-white/70;
+	}
+
 	/* custom  input */
 	.input-label {
 		@apply top-[2.5rem] text-xl text-black dark:text-white;

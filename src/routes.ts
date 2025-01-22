@@ -1,3 +1,5 @@
+import config from "./config";
+
 /**
  * Public routes are routes that are accessible to everyone, even if they are not authenticated.
  *
@@ -18,7 +20,7 @@ export const authRoutes: string[] = ["/auth/login", "/auth/signup"];
  * - example: /api/auth/login
  * @type {string}
  */
-export const apiAuthPrefix: string = "/api/auth";
+export const apiAuthPrefix: string = `/api/${config.SERVER_API_VERSION}/${config.SERVER_API_TYPE}/auth`;
 
 /**
  * Admin routes are routes that are only accessible to users with the admin role.

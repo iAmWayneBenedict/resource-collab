@@ -12,12 +12,25 @@ const ENDPOINTS = {
 	IS_EMAIL_EXISTS: (params: string) => `/auth/validate/is-email-exist${params || ""}`,
 	VERIFY_EMAIL: () => "/auth/validate/email",
 	VERIFY_EXPIRED_CODE: () => "/auth/validate/is-code-expired",
-	
+
 	// web-scraper
-	SCRAPER: (params:string) => `/scrape${params}`,
+	SCRAPER: (params: string) => `/scrape${params}`,
 
 	/**
 	 * * AUTH (end) -----------
+	 *
+	 */
+
+	/**
+	 * * USERS (start) --------------
+	 *
+	 */
+
+	USERS: (params: string) => "/users" + params,
+	USER: (id: string) => `/users/${id}`,
+
+	/**
+	 * * USERS (end) -----------
 	 *
 	 */
 
