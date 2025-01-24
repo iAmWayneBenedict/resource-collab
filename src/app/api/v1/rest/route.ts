@@ -1,5 +1,6 @@
 import { NextResponse, NextRequest } from "next/server";
-import { getResourceToCategoryByRelationalQuery } from "@/repositories/resource-to-category";
+import { resourceToCategoryRepository } from "@/repositories";
+import { db } from "@/data/connection";
 
 // To handle a GET request to /api
 export async function GET(request: NextRequest, response: NextResponse) {
@@ -22,11 +23,7 @@ export async function GET(request: NextRequest, response: NextResponse) {
 	// );
 
 	return NextResponse.json({
-		data:
-			(await getResourceToCategoryByRelationalQuery(
-				["category", "resource"],
-				(schema, { and, eq }) => and(eq(schema.category_id, 1), eq(schema.resource_id, 6))
-			)) || null,
+		data: await db.query.resources.findMany({ with: { category: true } }),
 	});
 }
 

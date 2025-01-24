@@ -11,10 +11,7 @@ import { resourceCategories, TResourceCategories } from "@/data/models/resource-
  *
  * @returns A promise that resolves to the inserted resource category data if `returning` is specified, otherwise resolves to nothing.
  */
-export const addResourceCategory = async (
-	values: any,
-	returning?: (keyof TResourceCategories)[]
-) => {
+export const save = async (values: any, returning?: (keyof TResourceCategories)[]) => {
 	if (returning) {
 		const returnedFields = arrToObjSchema(returning, resourceCategories);
 
@@ -32,7 +29,7 @@ export const addResourceCategory = async (
  *
  * @returns A promise that resolves to the number of affected rows.
  */
-export const updateResourceCategory = async (id: number | SQLWrapper, values: Partial<any>) => {
+export const update = async (id: number | SQLWrapper, values: Partial<any>) => {
 	return await db.update(resourceCategories).set(values).where(eq(resourceCategories.id, id));
 };
 
@@ -43,7 +40,7 @@ export const updateResourceCategory = async (id: number | SQLWrapper, values: Pa
  *
  * @returns A promise that resolves to the number of affected rows.
  */
-export const deleteResourceCategory = async (id: number | SQLWrapper) => {
+export const remove = async (id: number | SQLWrapper) => {
 	return await db.delete(resourceCategories).where(eq(resourceCategories.id, id));
 };
 
@@ -56,7 +53,7 @@ export const deleteResourceCategory = async (id: number | SQLWrapper) => {
  * @returns A promise that resolves to the resource category data, with the fields specified by `selectFields` if provided.
  */
 
-export const getResourceCategoryBy = async <K extends keyof TResourceCategories>(
+export const findBy = async <K extends keyof TResourceCategories>(
 	by: K,
 	value: TResourceCategories[K],
 	selectFields?: (keyof TResourceCategories)[]
@@ -75,6 +72,6 @@ export const getResourceCategoryBy = async <K extends keyof TResourceCategories>
  *
  * @returns A promise that resolves to an array of resource category data.
  */
-export const getAllResourceCategories = async () => {
+export const findAll = async () => {
 	return await db.select().from(resourceCategories);
 };

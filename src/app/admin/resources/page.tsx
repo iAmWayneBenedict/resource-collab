@@ -3,9 +3,9 @@ import { Container } from "../_components";
 import UserTable from "./_components/table";
 import UserFormModal from "./_components/modal";
 
-export default function Users() {
+export default function Page() {
 	return (
-		<Container title={"Users"} description={"asdasd"}>
+		<Container title={"Resources"} description={"asdasd"}>
 			<UserTable />
 			<UserFormModal />
 		</Container>

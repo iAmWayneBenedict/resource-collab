@@ -2,6 +2,7 @@ import { pgTable, serial, text, timestamp, varchar } from "drizzle-orm/pg-core";
 import { z } from "zod";
 import { users } from "./user";
 import { relations } from "drizzle-orm";
+import { resourceToCategories } from "./resource-to-category";
 
 const resourcesObject = z.object({
 	id: z.number(),
@@ -26,9 +27,13 @@ export const resources = pgTable("resources", {
 	updated_at: timestamp("updated_at", { mode: "date" }).defaultNow(),
 });
 
-export const resourceRelations = relations(resources, ({ one }) => ({
+export const resourceUserRelations = relations(resources, ({ one }) => ({
 	user: one(users, {
 		fields: [resources.user_id],
 		references: [users.id],
 	}),
+}));
+
+export const resourceToCategoryRelations = relations(resources, ({ many }) => ({
+	resourceToCategory: many(resourceToCategories),
 }));

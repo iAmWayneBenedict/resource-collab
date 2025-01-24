@@ -3,6 +3,7 @@ import ApiMethods from "@/services/api/ApiMethods";
 
 type MutationFactoryOptions = TMutationOptions & {
 	endpoint: string;
+	method?: "get" | "post" | "put" | "delete";
 };
 
 /**
@@ -30,7 +31,7 @@ export const useHookMutation = ({
 			if (!body || typeof body !== "object")
 				throw new Error("Invalid body: must be an object");
 
-			return ApiMethods.post(endpoint, body);
+			return ApiMethods[options?.method || "post"](endpoint, body);
 		},
 		onSuccess(data) {
 			console.log(data);

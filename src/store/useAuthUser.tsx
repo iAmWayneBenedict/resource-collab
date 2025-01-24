@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-interface UserState {
+interface TUserState {
 	authUser: User | null;
 	setAuthUser: (authUser: User | null) => void;
 }
@@ -13,7 +13,7 @@ interface User {
 	role: string;
 }
 
-export const useAuthUser = create<UserState>((set) => ({
+export const useAuthUser = create<TUserState>((set) => ({
 	authUser: null,
 	setAuthUser: (authUser: User | null) => set({ authUser }),
 

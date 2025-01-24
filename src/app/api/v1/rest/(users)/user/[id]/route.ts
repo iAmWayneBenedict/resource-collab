@@ -1,3 +1,6 @@
+import { TUsers } from "@/data/schema";
+import { CustomError } from "@/lib/error";
+import { userService } from "@/services/handler";
 import { NextRequest, NextResponse } from "next/server";
 
 export const GET = async (req: NextRequest, { params }: { params: { id: string } }) => {
@@ -24,3 +27,23 @@ export const GET = async (req: NextRequest, { params }: { params: { id: string }
 //         return NextResponse.json({ message: "Error", data: null }, { status: 500 });
 //     }
 // };
+
+export const PUT = async (req: NextRequest) => {
+	try {
+		const body: Partial<TUsers> = await req.json();
+
+		await userService.updateUser(body);
+
+		return NextResponse.json(
+			{ message: "User updated successfully", data: null },
+			{ status: 200 }
+		);
+	} catch (error: CustomError | any) {
+		console.log(error);
+
+		return NextResponse.json(
+			{ message: error.message, data: error.data },
+			{ status: error.code }
+		);
+	}
+};

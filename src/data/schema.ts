@@ -10,7 +10,12 @@ import {
 import { sessionTable } from "./models/session";
 import { oauthAccounts, TOauthAccounts } from "./models/oauth-account";
 import { emailVerificationCodes } from "./models/email-verification-code";
-import { resources, TResources, resourceRelations } from "./models/resource";
+import {
+	resources,
+	TResources,
+	resourceUserRelations,
+	resourceToCategoryRelations,
+} from "./models/resource";
 import { resourceToCategories, resourceToCategoriesRelations } from "./models/resource-to-category";
 import { portfolios, portfolioRelations } from "./models/portfolio";
 import { portfolioToSkills, portfolioToSkillsRelations } from "./models/portfolio-to-skills";
@@ -52,7 +57,8 @@ export {
 
 	// resources
 	resources,
-	resourceRelations,
+	resourceUserRelations,
+	resourceToCategoryRelations,
 
 	// resource categories
 	resourceCategories,

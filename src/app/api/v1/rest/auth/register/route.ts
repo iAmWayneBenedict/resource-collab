@@ -35,6 +35,8 @@ export async function POST(request: NextRequest) {
 
 	// register user
 	try {
+		await authService.validateFromAdminRequest();
+
 		await authService.register(body);
 
 		return NextResponse.json(

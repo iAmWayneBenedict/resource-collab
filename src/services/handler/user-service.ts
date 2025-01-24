@@ -62,3 +62,13 @@ export const createUser = async (user: TUsers) => {
 		throw new CustomError("Error creating user", null, 500);
 	}
 };
+
+export const updateUser = async (user: Partial<TUsers>) => {
+	try {
+		await userRepository.update(user.id as string, user);
+	} catch (err) {
+		console.log(err);
+
+		throw new CustomError("Error updating user", null, 400);
+	}
+};

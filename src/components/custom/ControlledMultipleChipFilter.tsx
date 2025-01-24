@@ -68,9 +68,6 @@ const ControlledMultipleChipFilter = () => {
 					<Chip
 						key={key}
 						variant="solid"
-						classNames={{
-							base: "dark:text-black text-white dark:bg-white bg-black",
-						}}
 						className="capitalize"
 						onClose={() => handleCloseChip(key as string)}
 					>

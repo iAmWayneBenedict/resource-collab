@@ -5,7 +5,7 @@ type ChecklistItem = {
 	list: unknown[];
 };
 
-type ChecklistState = {
+type TChecklistState = {
 	checklist: ChecklistItem[];
 	isExists: (id: string | number) => boolean;
 	addChecklist: (id: string, list: unknown[]) => void;
@@ -15,7 +15,7 @@ type ChecklistState = {
 	reset: () => void;
 };
 
-export const useChecklist = create<ChecklistState>((set, get) => ({
+export const useChecklist = create<TChecklistState>((set, get) => ({
 	checklist: [],
 
 	/**

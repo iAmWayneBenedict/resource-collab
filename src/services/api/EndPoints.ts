@@ -27,7 +27,7 @@ const ENDPOINTS = {
 	 */
 
 	USERS: (params: string) => "/users" + params,
-	USER: (id: string) => `/users/${id}`,
+	USER: (id: string) => `/user/${id}`,
 
 	/**
 	 * * USERS (end) -----------

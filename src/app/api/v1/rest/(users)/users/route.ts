@@ -1,4 +1,4 @@
-import { showPaginatedUsers, TPaginatedUsers } from "@/services/handler/user-service";
+import { showPaginatedUsers } from "@/services/handler/user-service";
 import { NextRequest, NextResponse } from "next/server";
 
 export const GET = async (req: NextRequest) => {
@@ -10,7 +10,7 @@ export const GET = async (req: NextRequest) => {
 		sortBy: searchParams.get("sort_by") || undefined,
 		sortType: searchParams.get("sort_type") || undefined,
 		filter: searchParams.get("filter_by") || undefined,
-	} as TPaginatedUsers;
+	} as TPaginatedProps;
 
 	try {
 		const users = await showPaginatedUsers(queryParams);

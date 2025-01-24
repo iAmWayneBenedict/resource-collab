@@ -6,9 +6,9 @@ import { HeroUIProvider } from "@heroui/react";
 import { useAppTheme } from "@/hooks";
 import { useAuthUser } from "@/store/useAuthUser";
 
+const queryClient = new QueryClient();
 const Providers = ({ data, children }: any) => {
 	const { setAuthUser } = useAuthUser();
-	const queryClient = new QueryClient();
 	useAppTheme();
 
 	useLayoutEffect(() => {

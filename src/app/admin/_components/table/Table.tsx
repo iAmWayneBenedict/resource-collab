@@ -8,10 +8,10 @@ import {
 	TableRow,
 	Selection,
 	SortDescriptor,
-	Spinner,
 } from "@heroui/react";
 import { useChecklist } from "@/store";
 import { useSortTable } from "@/store/useSort";
+import Spinner from "@/components/ui/spinner";
 
 type TColumn = {
 	[key: string]: any;
@@ -87,7 +87,7 @@ const CustomTable = ({
 			</TableHeader>
 			<TableBody
 				emptyContent={`No ${title?.toLowerCase()} found`}
-				loadingContent={<Spinner label="Loading..." />}
+				loadingContent={<Spinner className="w-[30px] h-[30px]">Retrieving data...</Spinner>}
 				items={rows}
 				isLoading={isLoading}
 			>

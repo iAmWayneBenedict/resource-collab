@@ -11,17 +11,8 @@ import { resourceToCategories, TResourceToCategories } from "@/data/models/resou
  *
  * @returns A promise that resolves to the inserted resource-to-category mapping data if `returning` is specified, otherwise resolves to nothing.
  */
-export const addResourceToCategory = async (
-	values: any,
-	returning?: (keyof TResourceToCategories)[]
-) => {
-	if (returning) {
-		const returnedFields = arrToObjSchema(returning, resourceToCategories);
-
-		return await db.insert(resourceToCategories).values(values).returning(returnedFields);
-	} else {
-		return await db.insert(resourceToCategories).values(values);
-	}
+export const save = async (values: any) => {
+	return await db.insert(resourceToCategories).values(values).onConflictDoNothing().returning();
 };
 
 /**
@@ -31,8 +22,12 @@ export const addResourceToCategory = async (
  * @param values The values to update the resource-to-category mapping with, as a partial object.
  * @returns A promise that resolves to the number of affected rows.
  */
-export const updateResourceToCategory = async (id: number | SQLWrapper, values: Partial<any>) => {
-	return await db.update(resourceToCategories).set(values).where(eq(resourceToCategories.id, id));
+export const update = async (id: number | SQLWrapper, values: Partial<any>) => {
+	return await db
+		.update(resourceToCategories)
+		.set(values)
+		.where(eq(resourceToCategories.id, id))
+		.returning();
 };
 
 /**
@@ -40,7 +35,7 @@ export const updateResourceToCategory = async (id: number | SQLWrapper, values: 
  * @param id The id of the resource-to-category mapping to delete.
  * @returns A promise that resolves to the number of affected rows.
  */
-export const deleteResourceToCategory = async (id: number | SQLWrapper) => {
+export const remove = async (id: number | SQLWrapper) => {
 	return await db.delete(resourceToCategories).where(eq(resourceToCategories.id, id));
 };
 
@@ -54,7 +49,7 @@ export const deleteResourceToCategory = async (id: number | SQLWrapper) => {
  * @returns A promise that resolves to the resource-to-category mapping data,
  *          with the fields specified by `selectFields` if provided.
  */
-export const getResourceToCategoryBy = async <K extends keyof TResourceToCategories>(
+export const findBy = async <K extends keyof TResourceToCategories>(
 	by: K | null,
 	value: TResourceToCategories[K] | null,
 	selectFields?: (keyof TResourceToCategories)[] | null,
@@ -89,14 +84,14 @@ type TWithColumns = ("category" | "resource")[];
  * @returns A promise that resolves to the resource-to-category mapping data, with the
  *          fields specified in withColumns if provided.
  */
-export const getResourceToCategoryByRelationalQuery = async (
+export const findByWith = async (
 	withColumns: TWithColumns,
 	where: (schema: typeof resourceToCategories, helper: Record<string, Function>) => any
 ) => {
 	// make the withColumns object with default true value
 	const withSelectedFields = Object.fromEntries(withColumns.map((key) => [key, true]) || []);
 
-	return await db.query.resourceToCategories.findFirst({
+	return await db.query.resourceToCategories.findMany({
 		with: withSelectedFields,
 		where: where(resourceToCategories, { and, eq }), // add helper functions if needed e.g. (gt, lt)
 	});

@@ -1,4 +1,5 @@
 type TMutationOptions = {
-    onSuccess?: (data: any) => void;
-    onError?: (error: any) => void;
-}
+	params?: any;
+	onSuccess?: (data: any) => void;
+	onError?: (error: any) => void;
+};
