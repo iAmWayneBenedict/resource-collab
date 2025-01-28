@@ -1,6 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { globalErrorFormatter } from "../../../utils";
-import { CustomError } from "@/lib/error";
 import { db } from "@/data/connection";
 import { eq, inArray, sql } from "drizzle-orm";
 import { resourceCategories, resources } from "@/data/schema";
@@ -22,8 +20,10 @@ export async function GET(request: NextRequest, { params }: { params: { id: numb
 	} catch (error: any) {
 		console.log("Error", error.message);
 
-		const [body, status] = globalErrorFormatter(error as CustomError);
-		return NextResponse.json(body, status);
+		return NextResponse.json(
+			{ message: "Error retrieving resource", data: null },
+			{ status: 400 }
+		);
 	}
 }
 

@@ -1,7 +1,5 @@
 import { db } from "@/data/connection";
 import { TUsers, users } from "@/data/schema";
-import { CustomError } from "@/lib/error";
-import { userService } from "@/services/handler";
 import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -44,7 +42,7 @@ export const PUT = async (req: NextRequest) => {
 			{ message: "User updated successfully", data: null },
 			{ status: 200 }
 		);
-	} catch (error: CustomError | any) {
+	} catch (error) {
 		console.log(error);
 
 		return NextResponse.json({ message: "Error updating user", data: null }, { status: 400 });
