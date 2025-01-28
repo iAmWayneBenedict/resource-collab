@@ -3,9 +3,9 @@ import { boolean, pgEnum, pgTable, text, timestamp, varchar } from "drizzle-orm/
 import { z } from "zod";
 import { sessionTable } from "./session";
 import { portfolios } from "./portfolio";
-import { resources } from "./resource";
 import { admins } from "./admin";
 import { userMessages } from "./user-message";
+import { userToResources } from "./user-to-resources";
 
 export const usersEnum = pgEnum("users_enum", ["user", "admin", "guest"]);
 
@@ -32,31 +32,23 @@ export const users = pgTable("users", {
 	updated_at: timestamp("updated_at", { mode: "date" }).defaultNow(),
 });
 
-export const userSessionRelations = relations(users, ({ one }) => ({
+export const userRelations = relations(users, ({ many, one }) => ({
 	session: one(sessionTable, {
 		fields: [users.id],
 		references: [sessionTable.userId],
 	}),
-}));
 
-export const userPortfolioRelations = relations(users, ({ one }) => ({
 	portfolio: one(portfolios, {
 		fields: [users.id],
 		references: [portfolios.user_id],
 	}),
-}));
 
-export const userResourceRelations = relations(users, ({ many }) => ({
-	resource: many(resources),
-}));
+	resourcesToResources: many(userToResources),
 
-export const userAdminRelations = relations(users, ({ one }) => ({
 	admin: one(admins, {
 		fields: [users.id],
 		references: [admins.user_id],
 	}),
-}));
 
-export const userMessagesRelations = relations(users, ({ many }) => ({
-	message: many(userMessages),
+	messages: many(userMessages),
 }));

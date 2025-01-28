@@ -4,23 +4,15 @@ import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import { Bottom, CustomTable, Top } from "../../../_components/table";
 import { columns } from "./helper";
 import Row from "./Row";
-import {
-	Button,
-	Dropdown,
-	DropdownItem,
-	DropdownMenu,
-	DropdownTrigger,
-	Input,
-} from "@heroui/react";
+import { Button, Input } from "@heroui/react";
 import { useSortTable } from "@/store/useSort";
-import { ChevronDown, Plus, Search, Trash } from "lucide-react";
+import { Plus, Search, Trash } from "lucide-react";
 import { useDebounce } from "@/hooks";
 import { useChecklist, useModal } from "@/store";
-import { useGetPaginatedUsersQuery } from "@/services/api/queries/user";
+import { useGetPaginatedResourcesQuery } from "@/services/api/queries/resources";
 
-const UserTable = () => {
+const ResourcesTable = () => {
 	const [searchValue, setSearchValue] = useState("");
-	const [roleFilter, setRoleFilter] = useState(new Set([""]));
 	const [rowsPerPage, setRowsPerPage] = useState(10);
 	const [page, setPage] = useState(1);
 	const [totalPages, setTotalPages] = useState(1);
@@ -33,18 +25,17 @@ const UserTable = () => {
 
 	const hasCheckedInList = getChecklistById("User")?.list?.length || 0 > 0;
 
-	const { data, isLoading, refetch, isRefetching } = useGetPaginatedUsersQuery({
+	const { data, isLoading, refetch, isRefetching } = useGetPaginatedResourcesQuery({
 		limit: rowsPerPage,
 		page: page,
 		sort_by: sort.column,
 		sort_type: sort.direction,
-		filter_by: [...roleFilter][0],
 		search: debouncedSearchValue,
 	});
 
 	useEffect(() => {
 		refetch();
-	}, [sort, page, rowsPerPage, debouncedSearchValue, roleFilter, refetch]);
+	}, [sort, page, rowsPerPage, debouncedSearchValue, refetch]);
 
 	useEffect(() => {
 		if (data) setTotalPages(Math.ceil(data?.data?.count / rowsPerPage));
@@ -71,37 +62,6 @@ const UserTable = () => {
 						onClear={() => setSearchValue("")}
 						onChange={(e) => setSearchValue(e.target.value)}
 					/>
-					<Dropdown>
-						<DropdownTrigger className="hidden sm:flex">
-							<Button
-								endContent={<ChevronDown className="text-small" />}
-								variant="flat"
-								className="capitalize"
-							>
-								{[...roleFilter][0] ? [...roleFilter].join("") : "Roles"}
-							</Button>
-						</DropdownTrigger>
-						<DropdownMenu
-							aria-label="Table Roles"
-							closeOnSelect={true}
-							selectedKeys={roleFilter}
-							selectionMode="single"
-							onSelectionChange={(keys) => {
-								const hasSelected = [...keys][0];
-								if (hasSelected) {
-									setRoleFilter(new Set(keys as unknown as any[]));
-								} else {
-									setRoleFilter(new Set([""]));
-								}
-							}}
-						>
-							{["admin", "user", "guest"].map((column) => (
-								<DropdownItem key={column} className="capitalize">
-									{column}
-								</DropdownItem>
-							))}
-						</DropdownMenu>
-					</Dropdown>
 				</div>
 				<div className="flex gap-3">
 					<Button
@@ -114,7 +74,7 @@ const UserTable = () => {
 					</Button>
 					<Button
 						color="primary"
-						onPress={() => onOpenModal("userForm", null)}
+						onPress={() => onOpenModal("resourcesForm", null)}
 						className="bg-violet"
 						endContent={<Plus className="w-7 h-7" />}
 					>
@@ -124,14 +84,14 @@ const UserTable = () => {
 			</div>
 			<CustomTable
 				containerProps={{
-					title: "User",
+					title: "Resources",
 					columns: columns,
 					rows: Array.isArray(data?.data?.rows) ? data.data.rows : [],
 				}}
 				bodyProps={{ RowComponent: Row, isLoading: isRefetching || isLoading }}
 				bottomComponent={
 					<Bottom
-						id="User"
+						id="Resources"
 						data={data?.data?.rows || []}
 						page={page}
 						setPage={setPage}
@@ -146,4 +106,4 @@ const UserTable = () => {
 	);
 };
 
-export default UserTable;
+export default ResourcesTable;

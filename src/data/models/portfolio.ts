@@ -1,6 +1,7 @@
 import { boolean, pgTable, serial, text, timestamp, varchar } from "drizzle-orm/pg-core";
 import { users } from "./user";
 import { relations } from "drizzle-orm";
+import { skills } from "./skills";
 import { portfolioToSkills } from "./portfolio-to-skills";
 
 export const portfolios = pgTable("portfolios", {

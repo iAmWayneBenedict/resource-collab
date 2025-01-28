@@ -8,7 +8,7 @@ type Props = {
 const Top = ({ data, onRowsPerPageChange }: Props) => {
 	return (
 		<div className="flex justify-between items-center">
-			<span className="text-default-400 text-small">Total {data} users</span>
+			<span className="text-default-400 text-small">Total {data} rows</span>
 			<label className="flex items-center text-default-400 text-small">
 				Rows per page:
 				<select

@@ -19,7 +19,7 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { InvalidateQueryFilters, useQueryClient } from "@tanstack/react-query";
 import { Lock, Mail, User } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -110,26 +110,19 @@ const UserFormModal = () => {
 		},
 	});
 
-	const updateMutation = usePutUserMutation(
-		useMemo(
-			() => ({
-				params: dataModal?.id,
-				onSuccess: (data: any) => {
-					console.log("success");
-					queryClient.invalidateQueries(["users"] as InvalidateQueryFilters);
-				},
-				onError: (err: any) => {
-					bindReactHookFormError(err, setError);
-					console.log("error");
-				},
-			}),
-			[dataModal, setError]
-		) as any
-	);
+	const updateMutation = usePutUserMutation({
+		params: dataModal?.id,
+		onSuccess: (data: any) => {
+			console.log("success");
+			queryClient.invalidateQueries(["users"] as InvalidateQueryFilters);
+		},
+		onError: (err: any) => {
+			bindReactHookFormError(err, setError);
+			console.log("error");
+		},
+	});
 
-	const [isSubmitting, setIsSubmitting] = useState(
-		createMutation.isPending || updateMutation.isPending
-	);
+	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	useEffect(() => {
 		setIsSubmitting(createMutation.isPending || updateMutation.isPending);
@@ -245,7 +238,7 @@ const UserFormModal = () => {
 								)}
 							/>
 							{type === "create" && (
-								<>
+								<Fragment>
 									<Controller
 										name="password"
 										control={control}
@@ -309,7 +302,7 @@ const UserFormModal = () => {
 											Show Password
 										</Checkbox>
 									</div>
-								</>
+								</Fragment>
 							)}
 						</ModalBody>
 						<ModalFooter>

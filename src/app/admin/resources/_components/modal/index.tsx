@@ -19,7 +19,7 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { InvalidateQueryFilters, useQueryClient } from "@tanstack/react-query";
 import { Lock, Mail, User } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -58,7 +58,14 @@ const updateSchema = baseSchema.extend({
 	confirm_password: z.string().optional(),
 });
 
-const UserFormModal = () => {
+const DEFAULT_VALUES = {
+	name: "",
+	email: "",
+	role: "user",
+	password: "",
+	confirm_password: "",
+};
+const ResourceFormModal = () => {
 	const { isOpen, onOpen, onOpenChange } = useDisclosure();
 	const [showPassword, setShowPassword] = useState(false);
 	const queryClient = useQueryClient();
@@ -68,25 +75,13 @@ const UserFormModal = () => {
 	const schema = type === "create" ? createSchema : updateSchema;
 
 	const { control, handleSubmit, setError, reset } = useForm({
-		defaultValues: {
-			name: "",
-			email: "",
-			role: "user",
-			password: "",
-			confirm_password: "",
-		},
+		defaultValues: DEFAULT_VALUES,
 		resolver: zodResolver(schema),
 	});
 
 	useEffect(() => {
 		if (!dataModal) {
-			reset({
-				name: "",
-				email: "",
-				role: "user",
-				password: "",
-				confirm_password: "",
-			});
+			reset(DEFAULT_VALUES);
 			return;
 		}
 
@@ -110,26 +105,19 @@ const UserFormModal = () => {
 		},
 	});
 
-	const updateMutation = usePutUserMutation(
-		useMemo(
-			() => ({
-				params: dataModal?.id,
-				onSuccess: (data: any) => {
-					console.log("success");
-					queryClient.invalidateQueries(["users"] as InvalidateQueryFilters);
-				},
-				onError: (err: any) => {
-					bindReactHookFormError(err, setError);
-					console.log("error");
-				},
-			}),
-			[dataModal, setError]
-		) as any
-	);
+	const updateMutation = usePutUserMutation({
+		params: dataModal?.id,
+		onSuccess: (data: any) => {
+			console.log("success");
+			queryClient.invalidateQueries(["users"] as InvalidateQueryFilters);
+		},
+		onError: (err: any) => {
+			bindReactHookFormError(err, setError);
+			console.log("error");
+		},
+	});
 
-	const [isSubmitting, setIsSubmitting] = useState(
-		createMutation.isPending || updateMutation.isPending
-	);
+	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	useEffect(() => {
 		setIsSubmitting(createMutation.isPending || updateMutation.isPending);
@@ -245,7 +233,7 @@ const UserFormModal = () => {
 								)}
 							/>
 							{type === "create" && (
-								<>
+								<Fragment>
 									<Controller
 										name="password"
 										control={control}
@@ -309,7 +297,7 @@ const UserFormModal = () => {
 											Show Password
 										</Checkbox>
 									</div>
-								</>
+								</Fragment>
 							)}
 						</ModalBody>
 						<ModalFooter>
@@ -336,4 +324,4 @@ const UserFormModal = () => {
 		</Modal>
 	);
 };
-export default UserFormModal;
+export default ResourceFormModal;

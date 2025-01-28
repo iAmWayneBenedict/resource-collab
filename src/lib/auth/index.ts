@@ -6,10 +6,9 @@ import type { Session, User } from "lucia";
 import { TimeSpan, createDate } from "oslo";
 import { generateRandomString, alphabet } from "oslo/crypto";
 import { lucia } from "@/config/auth/auth";
-import {
-	addVerificationCode,
-	deleteVerificationCode,
-} from "@/repositories/email-verification-codes";
+import { db } from "@/data/connection";
+import { emailVerificationCodes } from "@/data/schema";
+import { eq } from "drizzle-orm";
 
 export const validateRequest = cache(
 	async (): Promise<{ user: User; session: Session } | { user: null; session: null }> => {
@@ -66,11 +65,11 @@ export async function generateEmailVerificationCode(
 	userId: string,
 	email: string
 ): Promise<string> {
-	await deleteVerificationCode(userId);
+	await db.delete(emailVerificationCodes).where(eq(emailVerificationCodes.user_id, userId));
 
 	const code = generateRandomString(6, alphabet("0-9"));
 
-	await addVerificationCode({
+	await db.insert(emailVerificationCodes).values({
 		user_id: userId,
 		email,
 		code,

@@ -6,7 +6,6 @@ import { oauthAccounts, TUsers, users } from "@/data/schema";
 import { generateRandomString, alphabet } from "oslo/crypto";
 import { eq, or } from "drizzle-orm";
 import { createSession } from "@/app/api/v1/rest/utils";
-import { getUserBy, updateUser } from "@/repositories/user";
 
 export async function GET(request: Request) {
 	const url = new URL(request.url);
@@ -50,13 +49,13 @@ export async function GET(request: Request) {
 			});
 		}
 
-		const existingUser = await getUserBy("email", githubUser.email);
+		const existingUser = await db.select().from(users).where(eq(users.email, githubUser.email));
 
 		if (existingUser.length > 0) {
 			const user = existingUser[0] as TUsers;
 
-			await updateUser(user.id, { email_verified: true });
-
+			await db.update(users).set({ email_verified: true }).where(eq(users.id, user.id));
+			
 			await db.insert(oauthAccounts).values({
 				provider_id: "google",
 				provider_user_id: githubUser.id,

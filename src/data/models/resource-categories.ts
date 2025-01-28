@@ -1,7 +1,7 @@
 import { relations } from "drizzle-orm";
 import { pgTable, serial, timestamp, varchar } from "drizzle-orm/pg-core";
 import { z } from "zod";
-import { resources } from "./resource";
+import { resourceToCategories } from "./resource-to-category";
 
 const resourceCategoriesObject = z.object({
 	id: z.number(),
@@ -20,5 +20,5 @@ export const resourceCategories = pgTable("resource_categories", {
 });
 
 export const resourceCategoryRelations = relations(resourceCategories, ({ many }) => ({
-	resources: many(resources),
+	resourceToCategory: many(resourceToCategories),
 }));

@@ -1,10 +1,10 @@
 {
-  "id": "588d242e-97d3-4a36-bcbf-1093c656a4b5",
+  "id": "aab8ff00-e1fd-4e70-bfdc-ce95e152ca38",
   "prevId": "00000000-0000-0000-0000-000000000000",
-  "version": "5",
-  "dialect": "pg",
+  "version": "7",
+  "dialect": "postgresql",
   "tables": {
-    "admins": {
+    "public.admins": {
       "name": "admins",
       "schema": "",
       "columns": {
@@ -52,9 +52,12 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
     },
-    "email_verification_codes": {
+    "public.email_verification_codes": {
       "name": "email_verification_codes",
       "schema": "",
       "columns": {
@@ -113,9 +116,12 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
     },
-    "external_messages": {
+    "public.external_messages": {
       "name": "external_messages",
       "schema": "",
       "columns": {
@@ -167,9 +173,12 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
     },
-    "oauth_account": {
+    "public.oauth_account": {
       "name": "oauth_account",
       "schema": "",
       "columns": {
@@ -224,9 +233,12 @@
           ]
         }
       },
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
     },
-    "portfolio_bookmark_counts": {
+    "public.portfolio_bookmark_counts": {
       "name": "portfolio_bookmark_counts",
       "schema": "",
       "columns": {
@@ -281,9 +293,12 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
     },
-    "portfolio_categories": {
+    "public.portfolio_categories": {
       "name": "portfolio_categories",
       "schema": "",
       "columns": {
@@ -317,9 +332,12 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
     },
-    "portfolio_to_skills": {
+    "public.portfolio_to_skills": {
       "name": "portfolio_to_skills",
       "schema": "",
       "columns": {
@@ -386,9 +404,12 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
     },
-    "portfolios": {
+    "public.portfolios": {
       "name": "portfolios",
       "schema": "",
       "columns": {
@@ -474,9 +495,12 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
     },
-    "resource_bookmark_counts": {
+    "public.resource_bookmark_counts": {
       "name": "resource_bookmark_counts",
       "schema": "",
       "columns": {
@@ -531,9 +555,12 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
     },
-    "resource_categories": {
+    "public.resource_categories": {
       "name": "resource_categories",
       "schema": "",
       "columns": {
@@ -567,18 +594,15 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
     },
-    "resource_to_categories": {
+    "public.resource_to_categories": {
       "name": "resource_to_categories",
       "schema": "",
       "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        },
         "resource_id": {
           "name": "resource_id",
           "type": "serial",
@@ -590,20 +614,6 @@
           "type": "serial",
           "primaryKey": false,
           "notNull": true
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
         }
       },
       "indexes": {},
@@ -618,8 +628,8 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         },
         "resource_to_categories_category_id_resource_categories_id_fk": {
           "name": "resource_to_categories_category_id_resource_categories_id_fk",
@@ -631,14 +641,32 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         }
       },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "compositePrimaryKeys": {
+        "resource_to_categories_resource_id_category_id_pk": {
+          "name": "resource_to_categories_resource_id_category_id_pk",
+          "columns": [
+            "resource_id",
+            "category_id"
+          ]
+        },
+        "resource_to_categories_pk": {
+          "name": "resource_to_categories_pk",
+          "columns": [
+            "resource_id",
+            "category_id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
     },
-    "resources": {
+    "public.resources": {
       "name": "resources",
       "schema": "",
       "columns": {
@@ -646,12 +674,6 @@
           "name": "id",
           "type": "serial",
           "primaryKey": true,
-          "notNull": true
-        },
-        "user_id": {
-          "name": "user_id",
-          "type": "text",
-          "primaryKey": false,
           "notNull": true
         },
         "name": {
@@ -688,25 +710,14 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {
-        "resources_user_id_users_id_fk": {
-          "name": "resources_user_id_users_id_fk",
-          "tableFrom": "resources",
-          "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
     },
-    "session": {
+    "public.session": {
       "name": "session",
       "schema": "",
       "columns": {
@@ -746,9 +757,12 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
     },
-    "skills": {
+    "public.skills": {
       "name": "skills",
       "schema": "",
       "columns": {
@@ -782,9 +796,79 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
     },
-    "users": {
+    "public.user_to_resources": {
+      "name": "user_to_resources",
+      "schema": "",
+      "columns": {
+        "user_id": {
+          "name": "user_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "resource_id": {
+          "name": "resource_id",
+          "type": "serial",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "user_to_resources_user_id_users_id_fk": {
+          "name": "user_to_resources_user_id_users_id_fk",
+          "tableFrom": "user_to_resources",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "user_to_resources_resource_id_resources_id_fk": {
+          "name": "user_to_resources_resource_id_resources_id_fk",
+          "tableFrom": "user_to_resources",
+          "tableTo": "resources",
+          "columnsFrom": [
+            "resource_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {
+        "user_to_resources_user_id_resource_id_pk": {
+          "name": "user_to_resources_user_id_resource_id_pk",
+          "columns": [
+            "user_id",
+            "resource_id"
+          ]
+        },
+        "user_to_resources_pk": {
+          "name": "user_to_resources_pk",
+          "columns": [
+            "user_id",
+            "resource_id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.users": {
       "name": "users",
       "schema": "",
       "columns": {
@@ -816,6 +900,7 @@
         "role": {
           "name": "role",
           "type": "users_enum",
+          "typeSchema": "public",
           "primaryKey": false,
           "notNull": true,
           "default": "'user'"
@@ -852,20 +937,28 @@
             "email"
           ]
         }
-      }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
     }
   },
   "enums": {
-    "users_enum": {
+    "public.users_enum": {
       "name": "users_enum",
-      "values": {
-        "user": "user",
-        "admin": "admin",
-        "guest": "guest"
-      }
+      "schema": "public",
+      "values": [
+        "user",
+        "admin",
+        "guest"
+      ]
     }
   },
   "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
   "_meta": {
     "columns": {},
     "schemas": {},

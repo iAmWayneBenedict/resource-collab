@@ -2,7 +2,6 @@ import { createSession } from "@/app/api/v1/rest/utils";
 import { google } from "@/config/auth/auth.config";
 import { db } from "@/data/connection";
 import { oauthAccounts, TUsers, users } from "@/data/schema";
-import { userRepository } from "@/repositories";
 import { OAuth2RequestError } from "arctic";
 import { eq, or } from "drizzle-orm";
 import { NextRequest } from "next/server";
@@ -61,15 +60,16 @@ export const GET = async (request: NextRequest) => {
 			});
 		}
 
-		const existingUser = await userRepository.findUserBy("email", googleUser.email);
+		const existingUser = await db.select().from(users).where(eq(users.email, googleUser.email));
 
 		if (existingUser.length > 0) {
 			const user = existingUser[0] as TUsers;
 			await createSession(user.id);
-			await userRepository.update(user.id, {
-				role: user.role,
-				email_verified: googleUser.email_verified || true,
-			});
+
+			await db
+				.update(users)
+				.set({ role: user.role, email_verified: googleUser.email_verified || true })
+				.where(eq(users.id, user.id));
 
 			await db.insert(oauthAccounts).values({
 				provider_id: "google",

@@ -1,21 +1,9 @@
 import { z } from "zod";
-import {
-	usersEnum,
-	TUsers,
-	users,
-	userSessionRelations,
-	userPortfolioRelations,
-	userResourceRelations,
-} from "./models/user";
+import { usersEnum, TUsers, users } from "./models/user";
 import { sessionTable } from "./models/session";
 import { oauthAccounts, TOauthAccounts } from "./models/oauth-account";
 import { emailVerificationCodes } from "./models/email-verification-code";
-import {
-	resources,
-	TResources,
-	resourceUserRelations,
-	resourceToCategoryRelations,
-} from "./models/resource";
+import { resources, TResources } from "./models/resource";
 import { resourceToCategories, resourceToCategoriesRelations } from "./models/resource-to-category";
 import { portfolios, portfolioRelations } from "./models/portfolio";
 import { portfolioToSkills, portfolioToSkillsRelations } from "./models/portfolio-to-skills";
@@ -23,7 +11,14 @@ import { skills, skillRelations } from "./models/skills";
 import { admins, adminUserRelations } from "./models/admin";
 import { externalMessages } from "./models/external-message";
 import { portfolioCategories } from "./models/portfolio-categories";
-import { resourceCategories, TResourceCategories } from "./models/resource-categories";
+import {
+	resourceCategories,
+	TResourceCategories,
+	resourceCategoryRelations,
+} from "./models/resource-categories";
+import { userRelations } from "./models/user";
+import { resourceRelations } from "./models/resource";
+import { userToResources, userToResourcesRelations } from "./models/user-to-resources";
 import {
 	resourceBookmarkCounts,
 	resourceBookmarkCountsRelations,
@@ -42,9 +37,7 @@ export {
 	// users
 	usersEnum,
 	users,
-	userSessionRelations,
-	userPortfolioRelations,
-	userResourceRelations,
+	userRelations,
 
 	// session
 	sessionTable,
@@ -55,13 +48,17 @@ export {
 	// email verification
 	emailVerificationCodes,
 
+	// user to resources
+	userToResources,
+	userToResourcesRelations,
+
 	// resources
 	resources,
-	resourceUserRelations,
-	resourceToCategoryRelations,
+	resourceRelations,
 
 	// resource categories
 	resourceCategories,
+	resourceCategoryRelations,
 
 	// resource to category junction
 	resourceToCategories,

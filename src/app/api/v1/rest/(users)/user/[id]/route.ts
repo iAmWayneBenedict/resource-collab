@@ -1,6 +1,8 @@
-import { TUsers } from "@/data/schema";
+import { db } from "@/data/connection";
+import { TUsers, users } from "@/data/schema";
 import { CustomError } from "@/lib/error";
 import { userService } from "@/services/handler";
+import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
 export const GET = async (req: NextRequest, { params }: { params: { id: string } }) => {
@@ -32,7 +34,11 @@ export const PUT = async (req: NextRequest) => {
 	try {
 		const body: Partial<TUsers> = await req.json();
 
-		await userService.updateUser(body);
+		await db
+			.update(users)
+			.set(body)
+			.where(eq(users.id, body.id as string))
+			.returning();
 
 		return NextResponse.json(
 			{ message: "User updated successfully", data: null },
@@ -41,9 +47,6 @@ export const PUT = async (req: NextRequest) => {
 	} catch (error: CustomError | any) {
 		console.log(error);
 
-		return NextResponse.json(
-			{ message: error.message, data: error.data },
-			{ status: error.code }
-		);
+		return NextResponse.json({ message: "Error updating user", data: null }, { status: 400 });
 	}
 };

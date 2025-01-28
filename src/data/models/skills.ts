@@ -1,6 +1,6 @@
 import { relations } from "drizzle-orm";
 import { pgTable, serial, timestamp, varchar } from "drizzle-orm/pg-core";
-import { portfolios } from "./portfolio";
+import { portfolioToSkills } from "./portfolio-to-skills";
 
 export const skills = pgTable("skills", {
 	id: serial("id").primaryKey(),
@@ -10,5 +10,5 @@ export const skills = pgTable("skills", {
 });
 
 export const skillRelations = relations(skills, ({ many }) => ({
-	portfolios: many(portfolios),
+	portfolios: many(portfolioToSkills),
 }));

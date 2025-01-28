@@ -34,6 +34,19 @@ const ENDPOINTS = {
 	 *
 	 */
 
+	/**
+	 * * USERS (start) --------------
+	 *
+	 */
+
+	RESOURCES: (params: string) => "/resources" + params,
+	RESOURCE: (id: string) => `/resource/${id}`,
+
+	/**
+	 * * USERS (end) -----------
+	 *
+	 */
+
 	// API
 	API: (query: string) => `/api${query || ""}`,
 };

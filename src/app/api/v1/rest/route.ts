@@ -1,8 +1,5 @@
 import { NextResponse, NextRequest } from "next/server";
-import { resourceToCategoryRepository } from "@/repositories";
-import { db } from "@/data/connection";
 
-// To handle a GET request to /api
 export async function GET(request: NextRequest, response: NextResponse) {
 	// sample using relations
 	// return NextResponse.json(
@@ -23,7 +20,7 @@ export async function GET(request: NextRequest, response: NextResponse) {
 	// );
 
 	return NextResponse.json({
-		data: await db.query.resources.findMany({ with: { category: true } }),
+		data: "Hello World",
 	});
 }
 
