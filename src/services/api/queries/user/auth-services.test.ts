@@ -2,9 +2,8 @@ import { describe, it, expect, vi, afterEach } from "vitest";
 import { renderHook } from "@testing-library/react-hooks";
 import { useQuery } from "@tanstack/react-query";
 import { useGetLoggedUserQuery } from "@/services/api/queries/user";
-import ApiMethods from "@/services/api/ApiMethods";
-import ENDPOINTS from "@/services/api/EndPoints";
 import { NextResponse } from "next/server";
+import request from "@/config/axios/axios-config";
 
 // Mock useQuery
 vi.mock("@tanstack/react-query", () => ({
@@ -36,7 +35,7 @@ describe("useGetLoggedUserQuery", () => {
 			data: { id: 1, name: "Test User" },
 		};
 
-		vi.mocked(ApiMethods.get).mockResolvedValue(mockResponse);
+		vi.mocked(request).mockResolvedValue(mockResponse);
 
 		vi.mocked(useQuery).mockImplementation(({ queryKey, queryFn }) => {
 			expect(queryKey).toEqual(["logged-user"]);
@@ -57,7 +56,7 @@ describe("useGetLoggedUserQuery", () => {
 				retry: 1,
 			})
 		);
-		expect(ApiMethods.get).toHaveBeenCalledWith(ENDPOINTS.VERIFY_LOGGED_USER());
+		expect(request).toHaveBeenCalledWith("/auth/validate");
 	});
 
 	it("should handle successful API response", async () => {
@@ -67,7 +66,7 @@ describe("useGetLoggedUserQuery", () => {
 			data: { id: 1, name: "Test User" },
 		};
 
-		vi.mocked(ApiMethods.get).mockResolvedValue(mockResponse);
+		vi.mocked(request).mockResolvedValue(mockResponse);
 
 		vi.mocked(useQuery).mockImplementation(({ queryKey, queryFn }) => {
 			expect(queryKey).toEqual(["logged-user"]);
@@ -84,7 +83,7 @@ describe("useGetLoggedUserQuery", () => {
 
 		const { result } = renderHook(() => useGetLoggedUserQuery());
 
-		expect(ApiMethods.get).toHaveBeenCalledWith(ENDPOINTS.VERIFY_LOGGED_USER());
+		expect(request).toHaveBeenCalledWith("/auth/validate");
 		expect(result.current.data).toEqual(mockResponse);
 		expect(result.current.isLoading).toBe(false);
 	});
@@ -92,7 +91,7 @@ describe("useGetLoggedUserQuery", () => {
 	it("should handle API error response", async () => {
 		const responseError = NextResponse.json({ data: null, message: "Error" }, { status: 500 });
 
-		vi.mocked(ApiMethods.get).mockRejectedValue(responseError);
+		vi.mocked(request).mockRejectedValue(responseError);
 
 		vi.mocked(useQuery).mockImplementation(({ queryKey, queryFn }) => {
 			expect(queryKey).toEqual(["logged-user"]);
@@ -109,7 +108,7 @@ describe("useGetLoggedUserQuery", () => {
 
 		const { result } = renderHook(() => useGetLoggedUserQuery());
 
-		expect(ApiMethods.get).toHaveBeenCalledWith(ENDPOINTS.VERIFY_LOGGED_USER());
+		expect(request).toHaveBeenCalledWith("/auth/validate");
 		expect(result.current.data).toEqual(responseError);
 		expect(result.current.isLoading).toBe(false);
 		expect(result.current.isError).toBe(true);

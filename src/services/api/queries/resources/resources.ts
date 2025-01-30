@@ -1,11 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import ApiMethods from "../../ApiMethods";
-import ENDPOINTS from "../../EndPoints";
+import request from "@/config/axios/axios-config";
 
 export const useGetPaginatedResourcesQuery = (filters: any): any => {
 	const searchParams = new URLSearchParams(filters);
 	return useQuery({
 		queryKey: ["paginated-resources"],
-		queryFn: () => ApiMethods.get(ENDPOINTS.RESOURCES("?" + searchParams.toString())),
+		queryFn: () => request({ url: "/resources?" + searchParams.toString() }),
 	});
 };

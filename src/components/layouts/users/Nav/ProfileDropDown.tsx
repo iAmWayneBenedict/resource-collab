@@ -9,9 +9,8 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import ENDPOINTS from "@/services/api/EndPoints";
 import { useAuthUser } from "@/store/useAuthUser";
-import ApiMethods from "@/services/api/ApiMethods";
+import request from "@/config/axios/axios-config";
 
 const ProfileDropDown = () => {
 	const { setAuthUser } = useAuthUser();
@@ -69,7 +68,7 @@ export default ProfileDropDown;
 
 const handleLogout = async () => {
 	try {
-		await ApiMethods.get(ENDPOINTS.LOGOUT());
+		await request({ url: "/auth/logout" });
 
 		// redirect to home page
 		location.href = "/";

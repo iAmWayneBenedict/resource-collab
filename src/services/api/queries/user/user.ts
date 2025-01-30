@@ -1,11 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import ApiMethods from "../../ApiMethods";
-import ENDPOINTS from "../../EndPoints";
+import request from "@/config/axios/axios-config";
 
 export const useGetPaginatedUsersQuery = (filters: any): any => {
 	const searchParams = new URLSearchParams(filters);
 	return useQuery({
 		queryKey: ["users"],
-		queryFn: () => ApiMethods.get(ENDPOINTS.USERS("?" + searchParams.toString())),
+		queryFn: () => request({ url: "/users?" + searchParams.toString() }),
 	});
 };

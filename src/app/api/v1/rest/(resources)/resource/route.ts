@@ -1,6 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { globalErrorFormatter } from "../../utils";
-import { CustomError } from "@/lib/error";
 import { db } from "@/data/connection";
 import { resourceCategories, resources, resourceToCategories } from "@/data/schema";
 import { eq, inArray } from "drizzle-orm";

@@ -1,5 +1,6 @@
 import { useMutation, UseMutationResult } from "@tanstack/react-query";
 import ApiMethods from "@/services/api/ApiMethods";
+import request from "@/config/axios/axios-config";
 
 type MutationFactoryOptions = TMutationOptions & {
 	endpoint: string;
@@ -31,7 +32,7 @@ export const useHookMutation = ({
 			if (!body || typeof body !== "object")
 				throw new Error("Invalid body: must be an object");
 
-			return ApiMethods[options?.method || "post"](endpoint, body);
+			return request({ url: endpoint, method: options.method || "post" });
 		},
 		onSuccess(data) {
 			console.log(data);

@@ -1,6 +1,5 @@
 import { db } from "@/data/connection";
 import { TUsers, users, usersEnum } from "@/data/schema";
-import { showPaginatedUsers } from "@/services/handler/user-service";
 import { asc, count, desc, eq, ilike } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
