@@ -1,6 +1,6 @@
 import { pgTable, primaryKey, text } from "drizzle-orm/pg-core";
 import { z } from "zod";
-import { users } from "./user";
+import { users } from "./users";
 
 const oauthAccountsObject = z.object({
 	provider_id: z.string(),

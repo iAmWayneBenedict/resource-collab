@@ -1,32 +1,30 @@
 import { z } from "zod";
-import { usersEnum, TUsers, users } from "./models/user";
-import { sessionTable } from "./models/session";
+import { usersEnum, TUsers, users, usersStatusEnum } from "./models/users";
+import { sessionTable } from "./models/sessions";
 import { oauthAccounts, TOauthAccounts } from "./models/oauth-account";
-import { emailVerificationCodes } from "./models/email-verification-code";
-import { resources, TResources } from "./models/resource";
-import { resourceToCategories, resourceToCategoriesRelations } from "./models/resource-to-category";
-import { portfolios, portfolioRelations } from "./models/portfolio";
-import { portfolioToSkills, portfolioToSkillsRelations } from "./models/portfolio-to-skills";
+import { emailVerificationCodes } from "./models/email-verification-codes";
+import { resources, TResources, resourceRelations } from "./models/resources";
+import { portfolios, portfolioRelations } from "./models/portfolios";
+import { portfolioSkills, portfolioSkillsRelations } from "./models/portfolio-skills";
 import { skills, skillRelations } from "./models/skills";
-import { admins, adminUserRelations } from "./models/admin";
+import { admins, adminUserRelations } from "./models/admins";
 import { externalMessages } from "./models/external-message";
-import { portfolioCategories } from "./models/portfolio-categories";
+import { categories, TCategories, categoryRelations } from "./models/categories";
+import { userRelations } from "./models/users";
+import { userResources, userResourcesRelations } from "./models/user-resources";
+import { bookmarks, bookmarksRelations } from "./models/bookmarks";
 import {
-	resourceCategories,
-	TResourceCategories,
-	resourceCategoryRelations,
-} from "./models/resource-categories";
-import { userRelations } from "./models/user";
-import { resourceRelations } from "./models/resource";
-import { userToResources, userToResourcesRelations } from "./models/user-to-resources";
-import {
-	resourceBookmarkCounts,
-	resourceBookmarkCountsRelations,
-} from "./models/resource-bookmark-count";
-import {
-	portfolioBookmarkCounts,
-	portfolioBookmarkCountsRelations,
-} from "./models/portfolio-bookmark-count";
+	bookmarkFolders,
+	bookmarkFoldersRelations,
+	bookmarkFoldersVisibility,
+} from "./models/bookmark-folders";
+import { folderAccess, folderAccessRelations } from "./models/folder-access";
+import { likeResourcesRelations, likeResources } from "./models/like-resources";
+import { tags, tagsRelations } from "./models/tags";
+import { resourceTags, resourceTagsRelations } from "./models/resource-tags";
+import { portfolioTags, portfolioTagsRelations } from "./models/portfolio-tags";
+import { subscriptions, subscriptionsRelations, subscriptionEnum } from "./models/subscriptions";
+import { userSubscription, userSubscriptionRelations } from "./models/user-subscriptions";
 
 export const loginSchema = z.object({
 	email: z.string().email().min(5).max(255),
@@ -36,8 +34,18 @@ export const loginSchema = z.object({
 export {
 	// users
 	usersEnum,
+	usersStatusEnum,
 	users,
 	userRelations,
+
+	// subscriptions
+	subscriptions,
+	subscriptionsRelations,
+	subscriptionEnum,
+
+	// user subscription
+	userSubscription,
+	userSubscriptionRelations,
 
 	// session
 	sessionTable,
@@ -49,28 +57,49 @@ export {
 	emailVerificationCodes,
 
 	// user to resources
-	userToResources,
-	userToResourcesRelations,
+	userResources,
+	userResourcesRelations,
 
 	// resources
 	resources,
 	resourceRelations,
 
 	// resource categories
-	resourceCategories,
-	resourceCategoryRelations,
-
-	// resource to category junction
-	resourceToCategories,
-	resourceToCategoriesRelations,
+	categories,
+	categoryRelations,
 
 	// portfolio
 	portfolios,
 	portfolioRelations,
 
 	// portfolio to skills
-	portfolioToSkills,
-	portfolioToSkillsRelations,
+	portfolioSkills,
+	portfolioSkillsRelations,
+
+	// bookmarks
+	bookmarks,
+	bookmarksRelations,
+
+	// bookmark folders
+	bookmarkFolders,
+	bookmarkFoldersRelations,
+	bookmarkFoldersVisibility,
+
+	// folder access
+	folderAccess,
+	folderAccessRelations,
+
+	// like resources
+	likeResources,
+	likeResourcesRelations,
+
+	// tags
+	tags,
+	tagsRelations,
+	resourceTags,
+	resourceTagsRelations,
+	portfolioTags,
+	portfolioTagsRelations,
 
 	// skills
 	skills,
@@ -82,17 +111,6 @@ export {
 
 	// external message
 	externalMessages,
-
-	// portfolio categories
-	portfolioCategories,
-
-	// resource bookmark count
-	resourceBookmarkCounts,
-	resourceBookmarkCountsRelations,
-
-	// portfolio bookmark count
-	portfolioBookmarkCounts,
-	portfolioBookmarkCountsRelations,
 };
 
-export type { TUsers, TOauthAccounts, TResources, TResourceCategories };
+export type { TUsers, TOauthAccounts, TResources, TCategories };

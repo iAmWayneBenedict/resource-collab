@@ -1,5 +1,5 @@
 {
-  "id": "aab8ff00-e1fd-4e70-bfdc-ce95e152ca38",
+  "id": "5006e13d-914e-48a4-a7da-55981833df10",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -51,6 +51,194 @@
           "onUpdate": "no action"
         }
       },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.bookmark_folders": {
+      "name": "bookmark_folders",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "visibility": {
+          "name": "visibility",
+          "type": "bookmark_folders_visibility",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'private'"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "bookmark_folders_user_id_users_id_fk": {
+          "name": "bookmark_folders_user_id_users_id_fk",
+          "tableFrom": "bookmark_folders",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.bookmarks": {
+      "name": "bookmarks",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bookmark_folder_id": {
+          "name": "bookmark_folder_id",
+          "type": "serial",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "resource_id": {
+          "name": "resource_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "portfolio_id": {
+          "name": "portfolio_id",
+          "type": "serial",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "bookmarks_user_id_users_id_fk": {
+          "name": "bookmarks_user_id_users_id_fk",
+          "tableFrom": "bookmarks",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "bookmarks_bookmark_folder_id_bookmark_folders_id_fk": {
+          "name": "bookmarks_bookmark_folder_id_bookmark_folders_id_fk",
+          "tableFrom": "bookmarks",
+          "tableTo": "bookmark_folders",
+          "columnsFrom": [
+            "bookmark_folder_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "bookmarks_resource_id_resources_id_fk": {
+          "name": "bookmarks_resource_id_resources_id_fk",
+          "tableFrom": "bookmarks",
+          "tableTo": "resources",
+          "columnsFrom": [
+            "resource_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "bookmarks_portfolio_id_portfolios_id_fk": {
+          "name": "bookmarks_portfolio_id_portfolios_id_fk",
+          "tableFrom": "bookmarks",
+          "tableTo": "portfolios",
+          "columnsFrom": [
+            "portfolio_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.categories": {
+      "name": "categories",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
@@ -178,6 +366,105 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
+    "public.folder_access": {
+      "name": "folder_access",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "bookmark_folder_id": {
+          "name": "bookmark_folder_id",
+          "type": "serial",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "is_viewed": {
+          "name": "is_viewed",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "folder_access_bookmark_folder_id_bookmark_folders_id_fk": {
+          "name": "folder_access_bookmark_folder_id_bookmark_folders_id_fk",
+          "tableFrom": "folder_access",
+          "tableTo": "bookmark_folders",
+          "columnsFrom": [
+            "bookmark_folder_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.like_resources": {
+      "name": "like_resources",
+      "schema": "",
+      "columns": {
+        "user_id": {
+          "name": "user_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "resource_id": {
+          "name": "resource_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "liked_at": {
+          "name": "liked_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "like_resources_user_id_resource_id_pk": {
+          "name": "like_resources_user_id_resource_id_pk",
+          "columns": [
+            "user_id",
+            "resource_id"
+          ]
+        },
+        "like_resources_pk": {
+          "name": "like_resources_pk",
+          "columns": [
+            "user_id",
+            "resource_id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.oauth_account": {
       "name": "oauth_account",
       "schema": "",
@@ -238,115 +525,10 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.portfolio_bookmark_counts": {
-      "name": "portfolio_bookmark_counts",
+    "public.portfolio_skills": {
+      "name": "portfolio_skills",
       "schema": "",
       "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "portfolio_id": {
-          "name": "portfolio_id",
-          "type": "serial",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "count": {
-          "name": "count",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "default": 0
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "portfolio_bookmark_counts_portfolio_id_portfolios_id_fk": {
-          "name": "portfolio_bookmark_counts_portfolio_id_portfolios_id_fk",
-          "tableFrom": "portfolio_bookmark_counts",
-          "tableTo": "portfolios",
-          "columnsFrom": [
-            "portfolio_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.portfolio_categories": {
-      "name": "portfolio_categories",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "category": {
-          "name": "category",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.portfolio_to_skills": {
-      "name": "portfolio_to_skills",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        },
         "portfolio_id": {
           "name": "portfolio_id",
           "type": "serial",
@@ -358,27 +540,13 @@
           "type": "serial",
           "primaryKey": false,
           "notNull": true
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
         }
       },
       "indexes": {},
       "foreignKeys": {
-        "portfolio_to_skills_portfolio_id_portfolios_id_fk": {
-          "name": "portfolio_to_skills_portfolio_id_portfolios_id_fk",
-          "tableFrom": "portfolio_to_skills",
+        "portfolio_skills_portfolio_id_portfolios_id_fk": {
+          "name": "portfolio_skills_portfolio_id_portfolios_id_fk",
+          "tableFrom": "portfolio_skills",
           "tableTo": "portfolios",
           "columnsFrom": [
             "portfolio_id"
@@ -389,9 +557,9 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "portfolio_to_skills_skill_id_skills_id_fk": {
-          "name": "portfolio_to_skills_skill_id_skills_id_fk",
-          "tableFrom": "portfolio_to_skills",
+        "portfolio_skills_skill_id_skills_id_fk": {
+          "name": "portfolio_skills_skill_id_skills_id_fk",
+          "tableFrom": "portfolio_skills",
           "tableTo": "skills",
           "columnsFrom": [
             "skill_id"
@@ -403,7 +571,89 @@
           "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {},
+      "compositePrimaryKeys": {
+        "portfolio_skills_portfolio_id_skill_id_pk": {
+          "name": "portfolio_skills_portfolio_id_skill_id_pk",
+          "columns": [
+            "portfolio_id",
+            "skill_id"
+          ]
+        },
+        "portfolio_skills_pk": {
+          "name": "portfolio_skills_pk",
+          "columns": [
+            "portfolio_id",
+            "skill_id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.portfolio_tags": {
+      "name": "portfolio_tags",
+      "schema": "",
+      "columns": {
+        "portfolio_id": {
+          "name": "portfolio_id",
+          "type": "serial",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tag_id": {
+          "name": "tag_id",
+          "type": "serial",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "portfolio_tags_portfolio_id_portfolios_id_fk": {
+          "name": "portfolio_tags_portfolio_id_portfolios_id_fk",
+          "tableFrom": "portfolio_tags",
+          "tableTo": "portfolios",
+          "columnsFrom": [
+            "portfolio_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "portfolio_tags_tag_id_tags_id_fk": {
+          "name": "portfolio_tags_tag_id_tags_id_fk",
+          "tableFrom": "portfolio_tags",
+          "tableTo": "tags",
+          "columnsFrom": [
+            "tag_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {
+        "portfolio_tags_portfolio_id_tag_id_pk": {
+          "name": "portfolio_tags_portfolio_id_tag_id_pk",
+          "columns": [
+            "portfolio_id",
+            "tag_id"
+          ]
+        },
+        "portfolio_tags_pk": {
+          "name": "portfolio_tags_pk",
+          "columns": [
+            "portfolio_id",
+            "tag_id"
+          ]
+        }
+      },
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
@@ -425,6 +675,12 @@
           "primaryKey": false,
           "notNull": true
         },
+        "category_id": {
+          "name": "category_id",
+          "type": "serial",
+          "primaryKey": false,
+          "notNull": true
+        },
         "name": {
           "name": "name",
           "type": "varchar",
@@ -433,6 +689,12 @@
         },
         "icon": {
           "name": "icon",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "thumbnail": {
+          "name": "thumbnail",
           "type": "text",
           "primaryKey": false,
           "notNull": true
@@ -492,60 +754,13 @@
           ],
           "onDelete": "no action",
           "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.resource_bookmark_counts": {
-      "name": "resource_bookmark_counts",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
         },
-        "resource_id": {
-          "name": "resource_id",
-          "type": "serial",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "count": {
-          "name": "count",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "default": 0
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "resource_bookmark_counts_resource_id_resources_id_fk": {
-          "name": "resource_bookmark_counts_resource_id_resources_id_fk",
-          "tableFrom": "resource_bookmark_counts",
-          "tableTo": "resources",
+        "portfolios_category_id_categories_id_fk": {
+          "name": "portfolios_category_id_categories_id_fk",
+          "tableFrom": "portfolios",
+          "tableTo": "categories",
           "columnsFrom": [
-            "resource_id"
+            "category_id"
           ],
           "columnsTo": [
             "id"
@@ -560,47 +775,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.resource_categories": {
-      "name": "resource_categories",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "category": {
-          "name": "category",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.resource_to_categories": {
-      "name": "resource_to_categories",
+    "public.resource_tags": {
+      "name": "resource_tags",
       "schema": "",
       "columns": {
         "resource_id": {
@@ -609,8 +785,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "category_id": {
-          "name": "category_id",
+        "tag_id": {
+          "name": "tag_id",
           "type": "serial",
           "primaryKey": false,
           "notNull": true
@@ -618,9 +794,9 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "resource_to_categories_resource_id_resources_id_fk": {
-          "name": "resource_to_categories_resource_id_resources_id_fk",
-          "tableFrom": "resource_to_categories",
+        "resource_tags_resource_id_resources_id_fk": {
+          "name": "resource_tags_resource_id_resources_id_fk",
+          "tableFrom": "resource_tags",
           "tableTo": "resources",
           "columnsFrom": [
             "resource_id"
@@ -631,12 +807,12 @@
           "onDelete": "cascade",
           "onUpdate": "cascade"
         },
-        "resource_to_categories_category_id_resource_categories_id_fk": {
-          "name": "resource_to_categories_category_id_resource_categories_id_fk",
-          "tableFrom": "resource_to_categories",
-          "tableTo": "resource_categories",
+        "resource_tags_tag_id_tags_id_fk": {
+          "name": "resource_tags_tag_id_tags_id_fk",
+          "tableFrom": "resource_tags",
+          "tableTo": "tags",
           "columnsFrom": [
-            "category_id"
+            "tag_id"
           ],
           "columnsTo": [
             "id"
@@ -646,18 +822,18 @@
         }
       },
       "compositePrimaryKeys": {
-        "resource_to_categories_resource_id_category_id_pk": {
-          "name": "resource_to_categories_resource_id_category_id_pk",
+        "resource_tags_resource_id_tag_id_pk": {
+          "name": "resource_tags_resource_id_tag_id_pk",
           "columns": [
             "resource_id",
-            "category_id"
+            "tag_id"
           ]
         },
-        "resource_to_categories_pk": {
-          "name": "resource_to_categories_pk",
+        "resource_tags_pk": {
+          "name": "resource_tags_pk",
           "columns": [
             "resource_id",
-            "category_id"
+            "tag_id"
           ]
         }
       },
@@ -676,23 +852,41 @@
           "primaryKey": true,
           "notNull": true
         },
+        "category_id": {
+          "name": "category_id",
+          "type": "serial",
+          "primaryKey": false,
+          "notNull": true
+        },
         "name": {
           "name": "name",
           "type": "varchar",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "icon": {
           "name": "icon",
           "type": "text",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
+        },
+        "thumbnail": {
+          "name": "thumbnail",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
         },
         "description": {
           "name": "description",
           "type": "text",
           "primaryKey": false,
           "notNull": false
+        },
+        "view_count": {
+          "name": "view_count",
+          "type": "serial",
+          "primaryKey": false,
+          "notNull": true
         },
         "created_at": {
           "name": "created_at",
@@ -710,7 +904,21 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "resources_category_id_categories_id_fk": {
+          "name": "resources_category_id_categories_id_fk",
+          "tableFrom": "resources",
+          "tableTo": "categories",
+          "columnsFrom": [
+            "category_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
@@ -772,8 +980,8 @@
           "primaryKey": true,
           "notNull": true
         },
-        "skill": {
-          "name": "skill",
+        "name": {
+          "name": "name",
           "type": "varchar",
           "primaryKey": false,
           "notNull": true
@@ -801,8 +1009,80 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.user_to_resources": {
-      "name": "user_to_resources",
+    "public.subscriptions": {
+      "name": "subscriptions",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "type": {
+          "name": "type",
+          "type": "subscription_enum",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'early access'"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.tags": {
+      "name": "tags",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "category_id": {
+          "name": "category_id",
+          "type": "serial",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "tags_category_id_categories_id_fk": {
+          "name": "tags_category_id_categories_id_fk",
+          "tableFrom": "tags",
+          "tableTo": "categories",
+          "columnsFrom": [
+            "category_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.user_resources": {
+      "name": "user_resources",
       "schema": "",
       "columns": {
         "user_id": {
@@ -820,9 +1100,9 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "user_to_resources_user_id_users_id_fk": {
-          "name": "user_to_resources_user_id_users_id_fk",
-          "tableFrom": "user_to_resources",
+        "user_resources_user_id_users_id_fk": {
+          "name": "user_resources_user_id_users_id_fk",
+          "tableFrom": "user_resources",
           "tableTo": "users",
           "columnsFrom": [
             "user_id"
@@ -833,9 +1113,9 @@
           "onDelete": "cascade",
           "onUpdate": "cascade"
         },
-        "user_to_resources_resource_id_resources_id_fk": {
-          "name": "user_to_resources_resource_id_resources_id_fk",
-          "tableFrom": "user_to_resources",
+        "user_resources_resource_id_resources_id_fk": {
+          "name": "user_resources_resource_id_resources_id_fk",
+          "tableFrom": "user_resources",
           "tableTo": "resources",
           "columnsFrom": [
             "resource_id"
@@ -848,21 +1128,93 @@
         }
       },
       "compositePrimaryKeys": {
-        "user_to_resources_user_id_resource_id_pk": {
-          "name": "user_to_resources_user_id_resource_id_pk",
+        "user_resources_user_id_resource_id_pk": {
+          "name": "user_resources_user_id_resource_id_pk",
           "columns": [
             "user_id",
             "resource_id"
           ]
         },
-        "user_to_resources_pk": {
-          "name": "user_to_resources_pk",
+        "user_resources_pk": {
+          "name": "user_resources_pk",
           "columns": [
             "user_id",
             "resource_id"
           ]
         }
       },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.user_subscriptions": {
+      "name": "user_subscriptions",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "subscription_id": {
+          "name": "subscription_id",
+          "type": "serial",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "user_subscriptions_user_id_users_id_fk": {
+          "name": "user_subscriptions_user_id_users_id_fk",
+          "tableFrom": "user_subscriptions",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "user_subscriptions_subscription_id_subscriptions_id_fk": {
+          "name": "user_subscriptions_subscription_id_subscriptions_id_fk",
+          "tableFrom": "user_subscriptions",
+          "tableTo": "subscriptions",
+          "columnsFrom": [
+            "subscription_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
@@ -905,6 +1257,14 @@
           "notNull": true,
           "default": "'user'"
         },
+        "status": {
+          "name": "status",
+          "type": "users_status_enum",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'active'"
+        },
         "password": {
           "name": "password",
           "type": "text",
@@ -944,6 +1304,25 @@
     }
   },
   "enums": {
+    "public.bookmark_folders_visibility": {
+      "name": "bookmark_folders_visibility",
+      "schema": "public",
+      "values": [
+        "public",
+        "private",
+        "shared"
+      ]
+    },
+    "public.subscription_enum": {
+      "name": "subscription_enum",
+      "schema": "public",
+      "values": [
+        "early access",
+        "free",
+        "premium",
+        "enterprise"
+      ]
+    },
     "public.users_enum": {
       "name": "users_enum",
       "schema": "public",
@@ -951,6 +1330,15 @@
         "user",
         "admin",
         "guest"
+      ]
+    },
+    "public.users_status_enum": {
+      "name": "users_status_enum",
+      "schema": "public",
+      "values": [
+        "active",
+        "inactive",
+        "archived"
       ]
     }
   },

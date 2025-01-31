@@ -1,18 +1,18 @@
 import { relations } from "drizzle-orm";
-import { pgTable, primaryKey, serial, timestamp, varchar } from "drizzle-orm/pg-core";
+import { pgTable, primaryKey, serial, varchar } from "drizzle-orm/pg-core";
 import { z } from "zod";
-import { users } from "./user";
-import { resources } from "./resource";
+import { users } from "./users";
+import { resources } from "./resources";
 
-const userToCategoriesObject = z.object({
+const userCategoriesObject = z.object({
 	user_id: z.number(),
 	resource_id: z.number(),
 });
 
-export type TUserToResources = z.infer<typeof userToCategoriesObject>;
+export type TUserResources = z.infer<typeof userCategoriesObject>;
 
-export const userToResources = pgTable(
-	"user_to_resources",
+export const userResources = pgTable(
+	"user_resources",
 	{
 		user_id: varchar("user_id")
 			.references(() => users.id, { onDelete: "cascade", onUpdate: "cascade" })
@@ -24,19 +24,19 @@ export const userToResources = pgTable(
 	(table) => ({
 		pk: primaryKey({ columns: [table.user_id, table.resource_id] }),
 		pkWithCustomName: primaryKey({
-			name: "user_to_resources_pk",
+			name: "user_resources_pk",
 			columns: [table.user_id, table.resource_id],
 		}),
 	})
 );
 
-export const userToResourcesRelations = relations(userToResources, ({ one }) => ({
+export const userResourcesRelations = relations(userResources, ({ one }) => ({
 	user: one(users, {
-		fields: [userToResources.user_id],
+		fields: [userResources.user_id],
 		references: [users.id],
 	}),
 	resource: one(resources, {
-		fields: [userToResources.resource_id],
+		fields: [userResources.resource_id],
 		references: [resources.id],
 	}),
 }));

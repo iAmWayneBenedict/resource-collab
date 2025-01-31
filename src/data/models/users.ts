@@ -1,13 +1,16 @@
 import { relations } from "drizzle-orm";
 import { boolean, pgEnum, pgTable, text, timestamp, varchar } from "drizzle-orm/pg-core";
 import { z } from "zod";
-import { sessionTable } from "./session";
-import { portfolios } from "./portfolio";
-import { admins } from "./admin";
+import { sessionTable } from "./sessions";
+import { portfolios } from "./portfolios";
 import { userMessages } from "./user-message";
-import { userToResources } from "./user-to-resources";
+import { userResources } from "./user-resources";
+import { admins } from "./admins";
+import { bookmarks } from "./bookmarks";
+import { userSubscription } from "./user-subscriptions";
 
 export const usersEnum = pgEnum("users_enum", ["user", "admin", "guest"]);
+export const usersStatusEnum = pgEnum("users_status_enum", ["active", "inactive", "archived"]);
 
 const usersObject = z.object({
 	id: z.string(),
@@ -15,6 +18,7 @@ const usersObject = z.object({
 	email: z.string(),
 	email_verified: z.boolean(),
 	role: z.enum(["user", "admin", "guest"]),
+	status: z.enum(["active", "inactive", "archived"]),
 	password: z.string(),
 	created_at: z.date(),
 	updated_at: z.date(),
@@ -27,6 +31,7 @@ export const users = pgTable("users", {
 	email: text("email").unique().notNull(),
 	email_verified: boolean("email_verified").notNull().default(false),
 	role: usersEnum("role").notNull().default("user"),
+	status: usersStatusEnum("status").notNull().default("active"),
 	password: text("password"),
 	created_at: timestamp("created_at", { mode: "date" }).defaultNow(),
 	updated_at: timestamp("updated_at", { mode: "date" }).defaultNow(),
@@ -43,7 +48,7 @@ export const userRelations = relations(users, ({ many, one }) => ({
 		references: [portfolios.user_id],
 	}),
 
-	resourcesToResources: many(userToResources),
+	userResources: many(userResources),
 
 	admin: one(admins, {
 		fields: [users.id],
@@ -51,4 +56,6 @@ export const userRelations = relations(users, ({ many, one }) => ({
 	}),
 
 	messages: many(userMessages),
+	bookmarks: many(bookmarks),
+	userSubscriptions: many(userSubscription),
 }));

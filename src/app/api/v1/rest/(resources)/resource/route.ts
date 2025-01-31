@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/data/connection";
-import { resourceCategories, resources, resourceToCategories } from "@/data/schema";
+import { category, resources, category } from "@/data/schema";
 import { eq, inArray } from "drizzle-orm";
 
 export async function POST(request: NextRequest) {
@@ -15,8 +15,8 @@ export async function POST(request: NextRequest) {
 
 		const existingCategories = await db
 			.select()
-			.from(resourceCategories)
-			.where(inArray(resourceCategories.id, categories));
+			.from(category)
+			.where(inArray(category.id, categories));
 
 		if (existingResource.length == 0) {
 			return NextResponse.json({ message: "No category found", data: null }, { status: 404 });
@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
 		}));
 
 		try {
-			await db.insert(resourceToCategories).values(junctionQueryValues).returning();
+			await db.insert(category).values(junctionQueryValues).returning();
 		} catch (error) {
 			console.log(error);
 

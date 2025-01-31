@@ -89,6 +89,9 @@
 	body {
 		@apply bg-[var(--background-body)] text-foreground !important;
 	}
+	.bg-custom-overlay {
+		background: linear-gradient(93deg, rgba(0, 0, 0, 0) 0.47%, rgba(0, 0, 0, 0.1) 99.68%);
+	}
 	.light .bg-overlay {
 		background: linear-gradient(93deg, rgba(0, 0, 0, 0) 0.47%, rgba(0, 0, 0, 0.1) 99.68%);
 	}

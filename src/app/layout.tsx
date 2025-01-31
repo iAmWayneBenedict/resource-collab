@@ -28,10 +28,10 @@ export default async function RootLayout({
 		<html lang="en" suppressHydrationWarning={true}>
 			<body className={cn(GeistSans.className)}>
 				<ThemeProvider
-					attribute="class"
-					defaultTheme="system"
-					enableSystem
-					disableTransitionOnChange
+				// attribute="class"
+				// defaultTheme="system"
+				// enableSystem
+				// disableTransitionOnChange
 				>
 					<Toaster richColors position="top-center" />
 					<Providers data={user.user}>
