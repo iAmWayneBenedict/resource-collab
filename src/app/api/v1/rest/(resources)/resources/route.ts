@@ -54,7 +54,7 @@ export const GET = async (req: NextRequest) => {
 			: asc(resources.id);
 
 		const query = await db.query.resources.findMany({
-			with: { resourceToCategory: { with: { category: true } } },
+			with: { category: true, resourceTags: { with: { tag: true } } },
 			where: searchValue ? searchValue : filterValueQuery,
 			offset: (page - 1) * limit,
 			limit: Number(limit),

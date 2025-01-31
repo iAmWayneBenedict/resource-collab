@@ -1,3 +1,4 @@
+import { db } from "@/data/connection";
 import { NextResponse, NextRequest } from "next/server";
 
 export async function GET(request: NextRequest, response: NextResponse) {
@@ -20,7 +21,9 @@ export async function GET(request: NextRequest, response: NextResponse) {
 	// );
 
 	return NextResponse.json({
-		data: "Hello World",
+		data: await db.query.resources.findMany({
+			with: { category: true, resourceTags: { with: { tag: true } } },
+		}),
 	});
 }
 

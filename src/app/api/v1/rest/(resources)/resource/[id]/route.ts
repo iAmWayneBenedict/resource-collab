@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/data/connection";
-import { eq, inArray, sql } from "drizzle-orm";
-import { category, resources } from "@/data/schema";
+import { eq, inArray } from "drizzle-orm";
+import { categories as categoriesTable, resources } from "@/data/schema";
 
 export async function GET(request: NextRequest, { params }: { params: { id: number } }) {
 	if (!params.id)
@@ -48,10 +48,10 @@ export const PUT = async (request: NextRequest) => {
 		}
 
 		if (categories.delete.length) {
-			await db.delete(category).where(inArray(category.id, categories.delete));
+			await db.delete(categoriesTable).where(inArray(categoriesTable.id, categories.delete));
 		}
 		if (categories.add.length) {
-			await db.insert(category).values(categories.add);
+			await db.insert(categoriesTable).values(categories.add);
 		}
 
 		const updatedResource = await db
