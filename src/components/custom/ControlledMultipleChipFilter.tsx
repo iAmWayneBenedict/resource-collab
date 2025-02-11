@@ -56,14 +56,8 @@ const ControlledMultipleChipFilter = () => {
 	};
 
 	return (
-		<div
-			id="filter-container"
-			className="flex-col sm:flex-row flex justify-end items-end sm:items-center gap-4 h-fit"
-		>
-			<div
-				id="filter-chip-container"
-				className="order-2 sm:order-1 flex justify-end gap-2 flex-wrap"
-			>
+		<div id="filter-container" className="flex-col flex justify-end items-start gap-4 h-fit">
+			<div id="filter-chip-container" className="order-2 flex justify-start gap-2 flex-wrap">
 				{[...selectedKeys].map((key) => (
 					<Chip
 						key={key}
@@ -75,13 +69,36 @@ const ControlledMultipleChipFilter = () => {
 					</Chip>
 				))}
 			</div>
-			{[...selectedKeys].length > 0 && (
-				<Divider
-					orientation="vertical"
-					className="dark:bg-white bg-black hidden h-[1rem] sm:flex order-4 sm:order-2"
-				/>
-			)}
-			<div id="filter-selector" className="order-1 sm:order-3 flex items-center gap-2">
+			<div id="filter-selector" className="order-1 flex items-start gap-2 w-full">
+				<Dropdown onOpenChange={toggleScrollBody}>
+					<DropdownTrigger>
+						<Button
+							className="capitalize w-full"
+							variant="ghost"
+							color="primary"
+							radius="full"
+							size="md"
+							startContent={<Filter color="currentColor" size={20} />}
+						>
+							Select Tags
+						</Button>
+					</DropdownTrigger>
+					<DropdownMenu
+						aria-label="Multiple selection example"
+						closeOnSelect={false}
+						selectedKeys={selectedKeys}
+						selectionMode="multiple"
+						variant="flat"
+						onSelectionChange={handleSelect}
+						classNames={{ base: "max-h-[15rem] overflow-y-auto" }}
+					>
+						<DropdownItem key="text">Text</DropdownItem>
+						<DropdownItem key="number">Number</DropdownItem>
+						<DropdownItem key="date">Date</DropdownItem>
+						<DropdownItem key="single date">Single Date</DropdownItem>
+						<DropdownItem key="iteration">Iteration</DropdownItem>
+					</DropdownMenu>
+				</Dropdown>
 				{[...selectedKeys].length > 0 && (
 					<Button
 						className="capitalize underline"
@@ -93,37 +110,6 @@ const ControlledMultipleChipFilter = () => {
 						Clear
 					</Button>
 				)}
-				<Dropdown onOpenChange={toggleScrollBody} placement="bottom-end">
-					<DropdownTrigger>
-						<Button
-							className="capitalize"
-							variant="ghost"
-							color="primary"
-							radius="full"
-							size="md"
-							startContent={<Filter color="currentColor" size={20} />}
-						>
-							Tags
-						</Button>
-					</DropdownTrigger>
-					<DropdownMenu
-						aria-label="Multiple selection example"
-						closeOnSelect={false}
-						selectedKeys={selectedKeys}
-						selectionMode="multiple"
-						variant="flat"
-						onSelectionChange={handleSelect}
-						classNames={{
-							base: "max-h-[15rem] overflow-y-auto",
-						}}
-					>
-						<DropdownItem key="text">Text</DropdownItem>
-						<DropdownItem key="number">Number</DropdownItem>
-						<DropdownItem key="date">Date</DropdownItem>
-						<DropdownItem key="single date">Single Date</DropdownItem>
-						<DropdownItem key="iteration">Iteration</DropdownItem>
-					</DropdownMenu>
-				</Dropdown>
 			</div>
 		</div>
 	);

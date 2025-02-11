@@ -6,9 +6,18 @@ import Section from "@/components/layouts/Section";
 import ResourceCard from "@/components/layouts/cards/ResourceCard";
 import React, { Suspense } from "react";
 import Container from "@/components/layouts/Container";
-import ControlledMultipleChipFilter from "@/components/custom/ControlledMultipleChipFilter";
+import { FilterFormModal, SearchFormModal } from "./_components/modal";
+import { FilterModalTrigger, SearchModalTrigger } from "./_components/filter";
 
-const Resources = () => {
+const ASIDE_LINKS = [
+	{ title: "All", href: "/resources" },
+	{ title: "Design", href: "/resources?category=design" },
+	{ title: "Development", href: "/resources?category=development" },
+	{ title: "Marketing", href: "/resources?category=marketing" },
+	{ title: "Productivity", href: "/resources?category=productivity" },
+];
+
+const Page = () => {
 	return (
 		<Suspense fallback={<div>Loading...</div>}>
 			<Layout className="mt-36">
@@ -24,17 +33,12 @@ const Resources = () => {
 					</Section>
 
 					<Section className="flex flex-col lg:flex-row">
-						<Aside
-							links={[
-								{ title: "All", href: "/resources" },
-								{ title: "Design", href: "/resources?category=design" },
-								{ title: "Development", href: "/resources?category=development" },
-								{ title: "Marketing", href: "/resources?category=marketing" },
-								{ title: "Productivity", href: "/resources?category=productivity" },
-							]}
-						/>
+						<Aside links={ASIDE_LINKS} />
 						<div className="w-full">
-							<ControlledMultipleChipFilter />
+							<div className="flex gap-2 justify-end items-center">
+								<SearchModalTrigger />
+								<FilterModalTrigger />
+							</div>
 							<div className="mt-10 gap-6 flex flex-wrap">
 								{[1, 2, 3, 4, 5, 6].map((el) => (
 									<ResourceCard key={el} />
@@ -43,9 +47,11 @@ const Resources = () => {
 						</div>
 					</Section>
 				</Container>
+				<FilterFormModal />
+				<SearchFormModal />
 			</Layout>
 		</Suspense>
 	);
 };
 
-export default Resources;
+export default Page;

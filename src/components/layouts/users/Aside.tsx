@@ -26,7 +26,7 @@ const Aside: React.FC<Props> = ({ links }) => {
 	const category = params.get("category") || "all";
 	const activeStyle =
 		"bg-black text-white hover:bg-black dark:hover:bg-white dark:bg-white dark:text-black";
-
+	console.log(category);
 	return (
 		<aside className={cn("hidden lg:flex min-w-[15rem] 2xl:min-w-[18rem] pr-10 2xl:pr-16")}>
 			<ul className="flex flex-col gap-1 w-full">

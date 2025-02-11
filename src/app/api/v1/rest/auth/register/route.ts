@@ -38,12 +38,6 @@ export async function POST(request: NextRequest) {
 		);
 	}
 
-	const session = await validateRequest();
-
-	if (!session || !session.user || session.user.role !== "admin") {
-		return NextResponse.json({ message: "Unauthorized", data: null }, { status: 401 });
-	}
-
 	// register user
 	try {
 		// await authService.register(body);

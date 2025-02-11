@@ -26,7 +26,7 @@ const UserTable = () => {
 	const [totalPages, setTotalPages] = useState(1);
 
 	const { sort } = useSortTable();
-	const { onOpen: onOpenModal } = useModal();
+	const onOpen = useModal((state) => state.onOpen);
 
 	const debouncedSearchValue = useDebounce(searchValue, 500);
 	const { getChecklistById } = useChecklist();
@@ -114,7 +114,7 @@ const UserTable = () => {
 					</Button>
 					<Button
 						color="primary"
-						onPress={() => onOpenModal("userForm", null)}
+						onPress={() => onOpen("userForm", null)}
 						className="bg-violet"
 						endContent={<Plus className="w-7 h-7" />}
 					>

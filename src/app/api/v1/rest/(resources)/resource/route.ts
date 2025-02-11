@@ -1,53 +1,46 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/data/connection";
-import { categories, resources } from "@/data/schema";
+import { categories as categoriesTable, resources } from "@/data/schema";
 import { eq, inArray } from "drizzle-orm";
+import { validateRequest } from "@/lib/auth";
 
 export async function POST(request: NextRequest) {
 	const body = await request.json();
+	const userSession = await validateRequest();
 	try {
 		const validationResponse = validate(body);
 		if (validationResponse) return validationResponse;
 
-		const { name, categories } = body;
+		const { name, category, tags } = body;
 
 		const existingResource = await db.select().from(resources).where(eq(resources.name, name));
 
 		const existingCategories = await db
 			.select()
-			.from(categories)
-			.where(inArray(categories.id, categories));
+			.from(categoriesTable)
+			.where(eq(categoriesTable.id, category));
+
+		const existingTags = await db.select().from(tags).where(inArray(tags.id, tags));
 
 		if (existingResource.length == 0) {
 			return NextResponse.json({ message: "No category found", data: null }, { status: 404 });
 		}
 
-		const categoryIdsFound = existingCategories.map((category) => category.id);
+		// const junctionQueryValues = categories.map((category: number) => ({
+		// 	resource_id: existingResource[0].id,
+		// 	category_id: category,
+		// }));
 
-		// check if categories exist
-		for (const category of categories) {
-			if (!categoryIdsFound.includes(category)) {
-				return NextResponse.json(
-					{ message: "No category found", data: null },
-					{ status: 404 }
-				);
-			}
-		}
-		const junctionQueryValues = categories.map((category: number) => ({
-			resource_id: existingResource[0].id,
-			category_id: category,
-		}));
+		// try {
+		// 	await db.insert(categoriesTable).values(junctionQueryValues).returning();
+		// } catch (error) {
+		// 	console.log(error);
 
-		try {
-			await db.insert(categories).values(junctionQueryValues).returning();
-		} catch (error) {
-			console.log(error);
-
-			return NextResponse.json(
-				{ message: "Error creating resource", data: null },
-				{ status: 500 }
-			);
-		}
+		// 	return NextResponse.json(
+		// 		{ message: "Error creating resource", data: null },
+		// 		{ status: 500 }
+		// 	);
+		// }
 
 		return NextResponse.json(
 			{ message: "Resource created", data: existingCategories },
@@ -64,7 +57,7 @@ export async function POST(request: NextRequest) {
 }
 
 const validate = (body: any) => {
-	const requiredFields = ["name", "icon"];
+	const requiredFields = ["name", "icon", "category", "tags"];
 	const missingFields = requiredFields.filter((field) => !body[field]);
 
 	if (missingFields.length > 0) {
@@ -78,5 +71,6 @@ const validate = (body: any) => {
 			{ status: 400 }
 		);
 	}
+
 	return null;
 };
