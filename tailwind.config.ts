@@ -1,22 +1,20 @@
 import type { Config } from "tailwindcss";
 const { default: flattenColorPalette } = require("tailwindcss/lib/util/flattenColorPalette");
 import { heroui } from "@heroui/react";
-import {
-	fluidExtractor,
-	fluidCorePlugins,
-	defaultThemeFontSizeInRems,
-	defaultThemeScreensInRems,
-} from "fluid-tailwind";
+import fluid, {extract, screens, fontSize} from "fluid-tailwind";
 
 const config = {
 	darkMode: "class",
-	content: [
-		"./node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}",
-		"./pages/**/*.{ts,tsx}",
-		"./components/**/*.{ts,tsx}",
-		"./app/**/*.{ts,tsx}",
-		"./src/**/*.{ts,tsx}",
-	],
+	content: {
+		files: [
+			"./node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}",
+			"./pages/**/*.{ts,tsx}",
+			"./components/**/*.{ts,tsx}",
+			"./app/**/*.{ts,tsx}",
+			"./src/**/*.{ts,tsx}",
+		],
+		extract
+	},
 	prefix: "",
 	theme: {
 		fontFamily: {
@@ -29,8 +27,8 @@ const config = {
 				"2xl": "1400px",
 			},
 		},
-		fontSize: defaultThemeFontSizeInRems,
-		screens: defaultThemeScreensInRems,
+		fontSize,
+		screens,
 		extend: {
 			colors: {
 				border: "hsl(var(--border))",
@@ -102,11 +100,10 @@ const config = {
 			},
 		},
 	},
-	extract: fluidExtractor(),
 	plugins: [
 		require("tailwindcss-animate"),
 		addVariablesForColors,
-		fluidCorePlugins,
+		fluid,
 		heroui({
 			prefix: "heroui", // prefix for themes variables
 			addCommonColors: false, // override common colors (e.g. "blue", "green", "pink").

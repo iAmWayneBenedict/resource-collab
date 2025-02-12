@@ -1,116 +1,136 @@
 import { z } from "zod";
 import { usersEnum, TUsers, users, usersStatusEnum } from "./models/users";
-import { sessionTable } from "./models/sessions";
+import { sessions, sessionsRelations } from "./models/sessions";
 import { oauthAccounts, TOauthAccounts } from "./models/oauth-account";
 import { emailVerificationCodes } from "./models/email-verification-codes";
 import { resources, TResources, resourceRelations } from "./models/resources";
 import { portfolios, portfolioRelations } from "./models/portfolios";
-import { portfolioSkills, portfolioSkillsRelations } from "./models/portfolio-skills";
+import {
+  portfolioSkills,
+  portfolioSkillsRelations,
+} from "./models/portfolio-skills";
 import { skills, skillRelations } from "./models/skills";
 import { admins, adminUserRelations } from "./models/admins";
 import { externalMessages } from "./models/external-message";
-import { categories, TCategories, categoryRelations } from "./models/categories";
+import {
+  categories,
+  TCategories,
+  categoryRelations,
+} from "./models/categories";
 import { userRelations } from "./models/users";
 import { userResources, userResourcesRelations } from "./models/user-resources";
 import { bookmarks, bookmarksRelations } from "./models/bookmarks";
 import {
-	bookmarkFolders,
-	bookmarkFoldersRelations,
-	bookmarkFoldersVisibility,
+  bookmarkFolders,
+  bookmarkFoldersRelations,
+  bookmarkFoldersVisibility,
 } from "./models/bookmark-folders";
 import { folderAccess, folderAccessRelations } from "./models/folder-access";
 import { likeResourcesRelations, likeResources } from "./models/like-resources";
 import { tags, tagsRelations } from "./models/tags";
 import { resourceTags, resourceTagsRelations } from "./models/resource-tags";
 import { portfolioTags, portfolioTagsRelations } from "./models/portfolio-tags";
-import { subscriptions, subscriptionsRelations, subscriptionEnum } from "./models/subscriptions";
-import { userSubscription, userSubscriptionRelations } from "./models/user-subscriptions";
+import {
+  subscriptions,
+  subscriptionsRelations,
+  subscriptionEnum,
+} from "./models/subscriptions";
+import {
+  userSubscription,
+  userSubscriptionRelations,
+} from "./models/user-subscriptions";
+import { accountRelations, accounts } from "./models/accounts";
 
 export const loginSchema = z.object({
-	email: z.string().email().min(5).max(255),
-	password: z.string().min(8).max(255),
+  email: z.string().email().min(5).max(255),
+  password: z.string().min(8).max(255),
 });
 
 export {
-	// users
-	usersEnum,
-	usersStatusEnum,
-	users,
-	userRelations,
+  // users
+  usersEnum,
+  usersStatusEnum,
+  users,
+  userRelations,
 
-	// subscriptions
-	subscriptions,
-	subscriptionsRelations,
-	subscriptionEnum,
+  // accounts
+  accounts,
+  accountRelations,
 
-	// user subscription
-	userSubscription,
-	userSubscriptionRelations,
+  // subscriptions
+  subscriptions,
+  subscriptionsRelations,
+  subscriptionEnum,
 
-	// session
-	sessionTable,
+  // user subscription
+  userSubscription,
+  userSubscriptionRelations,
 
-	// oauth
-	oauthAccounts,
+  // session
+  sessions,
+  sessionsRelations,
 
-	// email verification
-	emailVerificationCodes,
+  // oauth
+  oauthAccounts,
 
-	// user to resources
-	userResources,
-	userResourcesRelations,
+  // email verification
+  emailVerificationCodes,
 
-	// resources
-	resources,
-	resourceRelations,
+  // user to resources
+  userResources,
+  userResourcesRelations,
 
-	// resource categories
-	categories,
-	categoryRelations,
+  // resources
+  resources,
+  resourceRelations,
 
-	// portfolio
-	portfolios,
-	portfolioRelations,
+  // resource categories
+  categories,
+  categoryRelations,
 
-	// portfolio to skills
-	portfolioSkills,
-	portfolioSkillsRelations,
+  // portfolio
+  portfolios,
+  portfolioRelations,
 
-	// bookmarks
-	bookmarks,
-	bookmarksRelations,
+  // portfolio to skills
+  portfolioSkills,
+  portfolioSkillsRelations,
 
-	// bookmark folders
-	bookmarkFolders,
-	bookmarkFoldersRelations,
-	bookmarkFoldersVisibility,
+  // bookmarks
+  bookmarks,
+  bookmarksRelations,
 
-	// folder access
-	folderAccess,
-	folderAccessRelations,
+  // bookmark folders
+  bookmarkFolders,
+  bookmarkFoldersRelations,
+  bookmarkFoldersVisibility,
 
-	// like resources
-	likeResources,
-	likeResourcesRelations,
+  // folder access
+  folderAccess,
+  folderAccessRelations,
 
-	// tags
-	tags,
-	tagsRelations,
-	resourceTags,
-	resourceTagsRelations,
-	portfolioTags,
-	portfolioTagsRelations,
+  // like resources
+  likeResources,
+  likeResourcesRelations,
 
-	// skills
-	skills,
-	skillRelations,
+  // tags
+  tags,
+  tagsRelations,
+  resourceTags,
+  resourceTagsRelations,
+  portfolioTags,
+  portfolioTagsRelations,
 
-	// admins
-	admins,
-	adminUserRelations,
+  // skills
+  skills,
+  skillRelations,
 
-	// external message
-	externalMessages,
+  // admins
+  admins,
+  adminUserRelations,
+
+  // external message
+  externalMessages,
 };
 
 export type { TUsers, TOauthAccounts, TResources, TCategories };

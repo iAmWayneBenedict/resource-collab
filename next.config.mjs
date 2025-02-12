@@ -10,6 +10,12 @@ const nextConfig = {
 	},
 	webpack: (config) => {
 		config.externals.push("@node-rs/argon2", "@node-rs/bcrypt");
+
+		config.cache = {
+			type: "filesystem",
+			store: "pack",
+			compression: "gzip",
+		};
 		return config;
 	},
 };

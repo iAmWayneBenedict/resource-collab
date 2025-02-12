@@ -7,7 +7,7 @@ import Providers from "./_providers/Providers";
 import { Toaster } from "@/components/ui/sonner";
 import React from "react";
 import { cn } from "@/lib/utils";
-import { validateRequest } from "@/lib/auth";
+import { getSession } from "@/lib/auth";
 
 export const metadata: Metadata = {
 	title: "RCollabs",
@@ -22,7 +22,7 @@ export default async function RootLayout({
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
-	const user = await validateRequest();
+	const session = await getSession();
 
 	return (
 		<html lang="en" suppressHydrationWarning={true}>
@@ -34,7 +34,7 @@ export default async function RootLayout({
 				// disableTransitionOnChange
 				>
 					<Toaster richColors position="top-center" />
-					<Providers data={user.user}>
+					<Providers data={session?.user}>
 						<LenisWrapper>{children}</LenisWrapper>
 					</Providers>
 				</ThemeProvider>

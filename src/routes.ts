@@ -5,7 +5,13 @@ import config from "./config";
  *
  * @type {string[]}
  */
-export const publicRoutes: string[] = ["/", "/resources", "/portfolios", "/about", "/contact"];
+export const publicRoutes: string[] = [
+	"/",
+	"/resources",
+	"/portfolios",
+	"/about",
+	"/contact",
+];
 
 /**
  * Auth routes are routes that are only accessible to authenticated users.
@@ -23,11 +29,17 @@ export const authRoutes: string[] = ["/auth/login", "/auth/signup"];
 export const apiAuthPrefix: string = `/api/${config.SERVER_API_VERSION}/${config.SERVER_API_TYPE}/auth`;
 
 /**
- * Admin routes are routes that are only accessible to users with the admin role.
+ * Admin routes are routes that are only accessible to authenticated users.
  *
  * @type {string[]}
  */
-export const adminRoutes: string[] = [];
+export const protectedRoutes: string[] = [
+	apiAuthPrefix + "/admin",
+	apiAuthPrefix + "/admin/users",
+	apiAuthPrefix + "/admin/resources",
+	apiAuthPrefix + "/admin/portfolios",
+	apiAuthPrefix + "/auth/logout",
+];
 
 /**
  * Default login redirect path.

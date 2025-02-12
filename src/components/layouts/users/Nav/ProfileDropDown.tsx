@@ -1,4 +1,11 @@
-import { CreditCard, Github, LifeBuoy, LogOut, Settings, User } from "lucide-react";
+import {
+	CreditCard,
+	Github,
+	LifeBuoy,
+	LogOut,
+	Settings,
+	User,
+} from "lucide-react";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -10,10 +17,23 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuthUser } from "@/store/useAuthUser";
-import request from "@/config/axios/axios-config";
+import { authClient } from "@/config/auth";
+import { useRouter } from "next/navigation";
 
 const ProfileDropDown = () => {
 	const { setAuthUser } = useAuthUser();
+	const router = useRouter();
+
+	const handleLogout = async () => {
+		await authClient.signOut({
+			fetchOptions: {
+				onSuccess: () => {
+					setAuthUser(null);
+					router.push("/");
+				},
+			},
+		});
+	};
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
@@ -51,10 +71,7 @@ const ProfileDropDown = () => {
 				<DropdownMenuSeparator />
 				<DropdownMenuItem
 					className="text-red-500 focus:bg-red-100 focus:text-red-500"
-					onClick={async () => {
-						await handleLogout();
-						setAuthUser(null);
-					}}
+					onClick={handleLogout}
 				>
 					<LogOut className="mr-2 h-4 w-4" />
 					<span>Log out</span>
@@ -65,14 +82,3 @@ const ProfileDropDown = () => {
 };
 
 export default ProfileDropDown;
-
-const handleLogout = async () => {
-	try {
-		await request({ url: "/auth/logout" });
-
-		// redirect to home page
-		location.href = "/";
-	} catch (error) {
-		console.error("Error:", error);
-	}
-};

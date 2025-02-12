@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef } from "react";
 import { gsap } from "gsap";
-import { ReactLenis, useLenis } from "@studio-freight/react-lenis";
+import { ReactLenis } from "lenis/react";
 
 type LenisType = {
 	lenis: {
@@ -10,7 +10,11 @@ type LenisType = {
 	};
 };
 
-export default function LenisWrapper({ children }: { children: React.ReactNode }) {
+export default function LenisWrapper({
+	children,
+}: {
+	children: React.ReactNode;
+}) {
 	const lenisRef = useRef(null);
 
 	useEffect(() => {
@@ -26,7 +30,11 @@ export default function LenisWrapper({ children }: { children: React.ReactNode }
 	}, []);
 
 	return (
-		<ReactLenis ref={lenisRef} autoRaf={false} root options={{ lerp: 0.1, duration: 1.5 }}>
+		<ReactLenis
+			ref={lenisRef}
+			root
+			options={{ lerp: 0.1, duration: 1.5, autoRaf: false }}
+		>
 			{children}
 		</ReactLenis>
 	);

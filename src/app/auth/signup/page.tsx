@@ -3,15 +3,11 @@ import BannerContent from "@/components/layouts/users/BannerContent";
 import Layout from "@/components/layouts/users/Layout";
 import Container from "@/components/layouts/Container";
 import SignUpForm from "./components/Form";
-import { validateRequest } from "@/lib/auth";
-import { redirect } from "next/navigation";
 
 export default async function Signup() {
-	const { user } = await validateRequest();
-	if (user) redirect("/");
 	return (
 		<Layout>
-			<Container className="mt-32 lg:mt-48 2xl:mt-52 flex flex-row h-full gap-10 lg:gap-16">
+			<Container className="mt-32 flex h-full flex-row gap-10 lg:mt-48 lg:gap-16 2xl:mt-52">
 				<div className="hidden md:flex">
 					<BannerGradient classNames="w-[25vw] max-w-[25rem] h-full" />
 				</div>

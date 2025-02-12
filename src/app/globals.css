@@ -5,194 +5,206 @@
 @tailwind utilities;
 
 @layer base {
-	:root {
-		--background-body: #f9f8f6;
-		--background: 0 0% 100%;
-		--foreground: 222.2 84% 4.9%;
+  :root {
+    --background-body: #f9f8f6;
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
 
-		--blur-background: 0, 0%, 100%, 0.55;
+    --blur-background: 0, 0%, 100%, 0.55;
 
-		--card: 0 0% 100%;
-		--card-foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
 
-		--popover: 0 0% 100%;
-		--popover-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
 
-		--primary: 222.2 47.4% 11.2%;
-		--primary-foreground: 210 40% 98%;
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
 
-		--secondary: 210 40% 96.1%;
-		--secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
 
-		--muted: 210 40% 96.1%;
-		--muted-foreground: 0 0% 39%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 0 0% 39%;
 
-		--accent: 210 40% 96.1%;
-		--accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
 
-		--destructive: 0 84.2% 60.2%;
-		--destructive-foreground: 210 40% 98%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
 
-		--border: 214.3 31.8% 91.4%;
-		--input: 214.3 31.8% 91.4%;
-		--ring: 222.2 84% 4.9%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
 
-		--radius: 0.5rem;
+    --radius: 0.5rem;
 
-		/* custom */
-		--violet: 264.32 87.96% 57.65%;
-		--violet-foreground: 264.68 100% 75.69%;
+    /* custom */
+    --violet: 264.32 87.96% 57.65%;
+    --violet-foreground: 264.68 100% 75.69%;
 
-		--font-playfair: "Playfair Display", serif;
-	}
+    --font-playfair: "Playfair Display", serif;
+  }
 
-	.dark {
-		--background-body: #191919;
-		--background: 222.2 84% 4.9%;
-		--foreground: 210 40% 98%;
+  .dark {
+    --background-body: #191919;
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
 
-		--blur-background: 0, 0%, 0%, 0.7;
+    --blur-background: 0, 0%, 0%, 0.7;
 
-		--card: 222.2 84% 4.9%;
-		--card-foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
 
-		--popover: 222.2 84% 4.9%;
-		--popover-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
 
-		--primary: 210 40% 98%;
-		--primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
 
-		--secondary: 217.2 32.6% 17.5%;
-		--secondary-foreground: 210 40% 98%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
 
-		--muted: 217.2 32.6% 17.5%;
-		--muted-foreground: 215 1% 63%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 1% 63%;
 
-		--accent: 217.2 32.6% 17.5%;
-		--accent-foreground: 210 40% 98%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
 
-		--destructive: 0 62.8% 30.6%;
-		--destructive-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
 
-		--border: 217.2 32.6% 17.5%;
-		--input: 217.2 32.6% 17.5%;
-		--ring: 212.7 26.8% 83.9%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
 
-		/* custom */
-		--violet: 264.32 87.96% 57.65%;
-		--violet-foreground: 264.68 100% 75.69%;
-	}
+    /* custom */
+    --violet: 264.32 87.96% 57.65%;
+    --violet-foreground: 264.68 100% 75.69%;
+  }
 }
 
 @layer base {
-	html,
-	body {
-		@apply bg-[var(--background-body)] text-foreground !important;
-	}
-	.bg-custom-overlay {
-		background: linear-gradient(93deg, rgba(0, 0, 0, 0) 0.47%, rgba(0, 0, 0, 0.1) 99.68%);
-	}
-	.light .bg-overlay {
-		background: linear-gradient(93deg, rgba(0, 0, 0, 0) 0.47%, rgba(0, 0, 0, 0.1) 99.68%);
-	}
-	.dark .bg-overlay {
-		background: linear-gradient(93deg, rgba(0, 0, 0, 0) 0.47%, rgba(0, 0, 0, 0.33) 99.68%);
-	}
+  html,
+  body {
+    @apply bg-[var(--background-body)] text-foreground !important;
+  }
+  .bg-custom-overlay {
+    background: linear-gradient(
+      93deg,
+      rgba(0, 0, 0, 0) 0.47%,
+      rgba(0, 0, 0, 0.1) 99.68%
+    );
+  }
+  .light .bg-overlay {
+    background: linear-gradient(
+      93deg,
+      rgba(0, 0, 0, 0) 0.47%,
+      rgba(0, 0, 0, 0.1) 99.68%
+    );
+  }
+  .dark .bg-overlay {
+    background: linear-gradient(
+      93deg,
+      rgba(0, 0, 0, 0) 0.47%,
+      rgba(0, 0, 0, 0.33) 99.68%
+    );
+  }
 
-	.custom-scrollbar {
-		@apply transition-all duration-300;
-	}
-	.custom-scrollbar::-webkit-scrollbar {
-		@apply w-[8px];
-	}
+  .custom-scrollbar {
+    @apply transition-all duration-300;
+  }
+  .custom-scrollbar::-webkit-scrollbar {
+    @apply w-[8px];
+  }
 
-	.custom-scrollbar::-webkit-scrollbar-track {
-		@apply bg-transparent;
-	}
+  .custom-scrollbar::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
 
-	.custom-scrollbar::-webkit-scrollbar-thumb {
-		@apply bg-violet rounded-full;
-	}
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply rounded-full bg-violet;
+  }
 
-	.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-		@apply bg-black/70 dark:bg-white/70;
-	}
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    @apply bg-black/70 dark:bg-white/70;
+  }
 
-	/* custom  input */
-	.input-label {
-		@apply top-[2.5rem] text-xl text-black dark:text-white;
-	}
+  /* custom  input */
+  .input-label {
+    @apply top-[2.5rem] text-xl text-black dark:text-white;
+  }
 
-	.input-label ~ div span {
-		@apply -left-full;
-	}
+  .input-label ~ div span {
+    @apply -left-full;
+  }
 
-	.input-label.active {
-		@apply top-[.5rem] text-base text-gray-900 dark:text-gray-400;
-	}
-	.input-label.active ~ div span {
-		@apply left-0;
-	}
+  .input-label.active {
+    @apply top-[.5rem] text-base text-gray-900 dark:text-gray-400;
+  }
+  .input-label.active ~ div span {
+    @apply left-0;
+  }
 
-	/* custom gradient */
-	.container-gradient div:nth-child(1) {
-		height: 90%;
-		width: 80%;
-		background-color: #151c6c;
-		left: -29%;
-		top: -10%;
-	}
-	.container-gradient div:nth-child(2) {
-		height: 80%;
-		width: 70%;
-		background-color: #2d6878;
-		left: -12%;
-		top: -12%;
-		animation-delay: 8s;
-	}
-	.container-gradient div:nth-child(3) {
-		height: 65%;
-		width: 80%;
-		background-color: #61ab66;
-		left: -15%;
-		top: -20%;
-		animation-delay: 0.3s;
-	}
-	.container-gradient div:nth-child(4) {
-		height: 50%;
-		width: 75%;
-		background-color: #3f9077;
-		left: -10%;
-		top: -18%;
-		animation-delay: 1.2s;
-	}
-	.container-gradient::after {
-		content: "";
-		position: absolute;
-		width: 100%;
-		height: 100%;
-		left: 0;
-		top: 0;
-		backdrop-filter: blur(80px);
-	}
+  /* custom gradient */
+  .container-gradient div:nth-child(1) {
+    height: 90%;
+    width: 80%;
+    background-color: #151c6c;
+    left: -29%;
+    top: -10%;
+  }
+  .container-gradient div:nth-child(2) {
+    height: 80%;
+    width: 70%;
+    background-color: #2d6878;
+    left: -12%;
+    top: -12%;
+    animation-delay: 8s;
+  }
+  .container-gradient div:nth-child(3) {
+    height: 65%;
+    width: 80%;
+    background-color: #61ab66;
+    left: -15%;
+    top: -20%;
+    animation-delay: 0.3s;
+  }
+  .container-gradient div:nth-child(4) {
+    height: 50%;
+    width: 75%;
+    background-color: #3f9077;
+    left: -10%;
+    top: -18%;
+    animation-delay: 1.2s;
+  }
+  .container-gradient::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    backdrop-filter: blur(80px);
+  }
 
-	.container-gradient {
-		height: 15rem;
-		width: 100%;
-		position: relative;
-		margin: auto;
-		background: #80aa36;
-		overflow: hidden;
-		border-radius: 10px;
-	}
-	.container-gradient div {
-		position: absolute;
-		border-radius: 50%;
-		animation: gradient 6s infinite;
-	}
-	@keyframes gradient {
-		70% {
-			transform: scale(1.5) translate(100px);
-		}
-	}
+  .container-gradient {
+    height: 15rem;
+    width: 100%;
+    position: relative;
+    margin: auto;
+    background: #80aa36;
+    overflow: hidden;
+    border-radius: 10px;
+  }
+  .container-gradient div {
+    position: absolute;
+    border-radius: 50%;
+    animation: gradient 6s infinite;
+  }
+  @keyframes gradient {
+    70% {
+      transform: scale(1.5) translate(100px);
+    }
+  }
 }

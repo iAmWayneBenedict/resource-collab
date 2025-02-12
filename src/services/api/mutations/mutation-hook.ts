@@ -1,9 +1,9 @@
 import { useMutation, UseMutationResult } from "@tanstack/react-query";
-import request from "@/config/axios/axios-config";
+import request from "@/config/axios";
 
 type MutationFactoryOptions = TMutationOptions & {
-	endpoint: string;
-	method?: "get" | "post" | "put" | "delete";
+  endpoint: string;
+  method?: "get" | "post" | "put" | "delete";
 };
 
 /**
@@ -17,29 +17,37 @@ type MutationFactoryOptions = TMutationOptions & {
  * @returns {UseMutationResult} - The result of the mutation.
  */
 export const useHookMutation = ({
-	endpoint,
-	onSuccess,
-	onError,
-	...options
-}: MutationFactoryOptions): UseMutationResult<TSuccessAPIResponse<any> | TErrorAPIResponse> => {
-	if (!endpoint) {
-		throw new Error("Invalid endpoint: must be a non-empty string");
-	}
+  endpoint,
+  onSuccess,
+  onError,
+  ...options
+}: MutationFactoryOptions): UseMutationResult<
+  TSuccessAPIResponse<any> | TErrorAPIResponse
+> => {
+  if (!endpoint) {
+    throw new Error("Invalid endpoint: must be a non-empty string");
+  }
 
-	return useMutation({
-		mutationFn: (body): Promise<TSuccessAPIResponse<any> | TErrorAPIResponse> => {
-			if (!body || typeof body !== "object")
-				throw new Error("Invalid body: must be an object");
+  return useMutation({
+    mutationFn: (
+      body,
+    ): Promise<TSuccessAPIResponse<any> | TErrorAPIResponse> => {
+      if (!body || typeof body !== "object")
+        throw new Error("Invalid body: must be an object");
 
-			return request({ url: endpoint, method: options.method || "post", data: body });
-		},
-		onSuccess(data) {
-			console.log(data);
-			if (onSuccess) onSuccess(data);
-		},
-		onError(error) {
-			if (onError) onError(error);
-		},
-		...options,
-	});
+      return request({
+        url: endpoint,
+        method: options.method || "post",
+        data: body,
+      });
+    },
+    onSuccess(data) {
+      console.log(data);
+      if (onSuccess) onSuccess(data);
+    },
+    onError(error) {
+      if (onError) onError(error);
+    },
+    ...options,
+  });
 };
