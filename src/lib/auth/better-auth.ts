@@ -5,7 +5,7 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";
 import { headers } from "next/headers";
 import { emailOTP } from "better-auth/plugins";
-import { sendVerificationRequest } from "@/services/email/emailTemplateGenerator";
+import { EmailService } from "@/services/email";
 
 export const auth = betterAuth({
 	// init database
@@ -31,9 +31,13 @@ export const auth = betterAuth({
 		emailOTP({
 			async sendVerificationOTP({ email, otp, type }) {
 				try {
-					await sendVerificationRequest({
-						identifier: email,
-						code: otp,
+					// await sendVerificationRequest({
+					// 	identifier: email,
+					// 	code: otp,
+					// });
+					await EmailService.nodeMailer.sendEmailVerification({
+						emails: [email],
+						otp,
 					});
 				} catch (error) {
 					console.error(error);

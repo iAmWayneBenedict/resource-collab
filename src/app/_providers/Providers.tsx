@@ -12,7 +12,7 @@ const Providers = ({ data, children }: any) => {
 	useAppTheme();
 
 	useLayoutEffect(() => {
-		if (data) setAuthUser(data);
+		if (data?.emailVerified) setAuthUser(data);
 		else setAuthUser(null);
 	}, [data]);
 

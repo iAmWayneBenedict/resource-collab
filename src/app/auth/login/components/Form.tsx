@@ -12,18 +12,20 @@ import { LoginFormSchema, TLoginForm } from "@/types/zod/forms";
 import { bindReactHookFormError } from "@/lib/utils";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { usePostLoginMutation } from "@/services/api/mutations/users";
+import { authClient } from "@/config/auth";
 
 const LoginForm = () => {
-	const router = useRouter();
 	const [isDisabledBtn, setIsDisabledBtn] = useState(false);
 	const form = useForm<TLoginForm>({
 		resolver: zodResolver(LoginFormSchema),
+		defaultValues: {
+			email: "",
+			password: "",
+			alert: "",
+		},
 	});
 
 	const {
-		register,
 		formState: { errors },
 		handleSubmit,
 		control,
@@ -31,31 +33,40 @@ const LoginForm = () => {
 	} = form;
 
 	const [passwordType, setPasswordType] = useState("password");
-
-	const loginMutation = usePostLoginMutation({
-		onSuccess: (res) => {
-			setIsDisabledBtn(false);
-			router.push("/");
-			// router.push("/auth/verification?email=" + form.getValues("email"));
-		},
-		onError: (err) => {
-			setIsDisabledBtn(false);
-			bindReactHookFormError(err, setError);
-		},
-	});
-	const onSubmit: SubmitHandler<TLoginForm> = (data) => {
+	const onSubmit: SubmitHandler<TLoginForm> = async (data) => {
 		setIsDisabledBtn(true);
-		loginMutation.mutate(data);
+		const signinResponse = await authClient.signIn.email({
+			email: data.email,
+			password: data.password,
+		});
+		setIsDisabledBtn(false);
+		if (signinResponse.error) {
+			if (signinResponse.error.code === "INVALID_EMAIL_OR_PASSWORD")
+				bindReactHookFormError(
+					{
+						data: { path: ["alert"] },
+						message: "Invalid email or password",
+					},
+					setError,
+				);
+		} else {
+			location.href = "/";
+		}
 	};
 	return (
 		<Form {...form}>
-			<form onSubmit={handleSubmit(onSubmit)} className="mt-8 max-w-[50rem]">
+			<form
+				onSubmit={handleSubmit(onSubmit)}
+				className="mt-8 max-w-[50rem]"
+			>
 				{errors.alert && (
 					<>
 						<Alert variant="destructive">
 							<AlertCircle className="h-4 w-4" />
 							<AlertTitle>Error</AlertTitle>
-							<AlertDescription>{errors.alert?.message || ""}</AlertDescription>
+							<AlertDescription>
+								{errors.alert?.message || ""}
+							</AlertDescription>
 						</Alert>
 						<br />
 					</>
@@ -87,19 +98,25 @@ const LoginForm = () => {
 					</div>
 					<br />
 					<br />
-					<Socials setDisabled={setIsDisabledBtn} disabled={isDisabledBtn} />
+					<Socials
+						setDisabled={setIsDisabledBtn}
+						disabled={isDisabledBtn}
+					/>
 					<br />
 					<Button
 						type="submit"
 						isLoading={isDisabledBtn}
-						className="w-full bg-violet hover:bg-violet-foreground text-white rounded-full py-8 "
+						className="w-full rounded-full bg-violet py-8 text-white hover:bg-violet-foreground"
 					>
 						Login
 					</Button>
 					<div>
 						<center className="mt-4">
 							Don&apos;t have an account?{" "}
-							<Link href="/auth/signup" className="text-green-500">
+							<Link
+								href="/auth/signup"
+								className="text-green-500"
+							>
 								Sign up
 							</Link>
 						</center>

@@ -14,14 +14,12 @@ import React, { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { Filter } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { reInitQueryParams, toggleScrollBody } from "@/lib/utils";
-import { useLenis } from "@studio-freight/react-lenis";
 
 const ControlledMultipleChipFilter = () => {
 	const searchParams = useSearchParams();
 
 	// State to hold the selected keys
 	const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]));
-	const lenis = useLenis(() => {});
 	const router = useRouter();
 
 	// Memoize the filter query
@@ -37,9 +35,10 @@ const ControlledMultipleChipFilter = () => {
 
 	// When the selected keys change, update the query parameters
 	useEffect(() => {
-		router.push(reInitQueryParams(window.location.href, { filter: filterQuery }), {
-			scroll: false,
-		});
+		router.push(
+			reInitQueryParams(window.location.href, { filter: filterQuery }),
+			{ scroll: false },
+		);
 	}, [filterQuery, router]);
 
 	// Function to handle closing a chip
@@ -56,8 +55,14 @@ const ControlledMultipleChipFilter = () => {
 	};
 
 	return (
-		<div id="filter-container" className="flex-col flex justify-end items-start gap-4 h-fit">
-			<div id="filter-chip-container" className="order-2 flex justify-start gap-2 flex-wrap">
+		<div
+			id="filter-container"
+			className="flex h-fit flex-col items-start justify-end gap-4"
+		>
+			<div
+				id="filter-chip-container"
+				className="order-2 flex flex-wrap justify-start gap-2"
+			>
 				{[...selectedKeys].map((key) => (
 					<Chip
 						key={key}
@@ -69,16 +74,21 @@ const ControlledMultipleChipFilter = () => {
 					</Chip>
 				))}
 			</div>
-			<div id="filter-selector" className="order-1 flex items-start gap-2 w-full">
+			<div
+				id="filter-selector"
+				className="order-1 flex w-full items-start gap-2"
+			>
 				<Dropdown onOpenChange={toggleScrollBody}>
 					<DropdownTrigger>
 						<Button
-							className="capitalize w-full"
+							className="w-full capitalize"
 							variant="ghost"
 							color="primary"
 							radius="full"
 							size="md"
-							startContent={<Filter color="currentColor" size={20} />}
+							startContent={
+								<Filter color="currentColor" size={20} />
+							}
 						>
 							Select Tags
 						</Button>
@@ -95,7 +105,9 @@ const ControlledMultipleChipFilter = () => {
 						<DropdownItem key="text">Text</DropdownItem>
 						<DropdownItem key="number">Number</DropdownItem>
 						<DropdownItem key="date">Date</DropdownItem>
-						<DropdownItem key="single date">Single Date</DropdownItem>
+						<DropdownItem key="single date">
+							Single Date
+						</DropdownItem>
 						<DropdownItem key="iteration">Iteration</DropdownItem>
 					</DropdownMenu>
 				</Dropdown>

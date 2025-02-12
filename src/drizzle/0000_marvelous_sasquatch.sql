@@ -48,11 +48,11 @@ CREATE TABLE "categories" (
 );
 --> statement-breakpoint
 CREATE TABLE "email_verification_codes" (
-	"id" text PRIMARY KEY NOT NULL,
-	"value" text NOT NULL,
-	"identifier" text NOT NULL,
+	"id" serial PRIMARY KEY NOT NULL,
+	"user_id" text NOT NULL,
+	"code" text NOT NULL,
+	"email" text NOT NULL,
 	"created_at" timestamp DEFAULT now(),
-	"updated_at" timestamp DEFAULT now(),
 	"expires_at" timestamp NOT NULL
 );
 --> statement-breakpoint
@@ -189,6 +189,15 @@ CREATE TABLE "users" (
 	CONSTRAINT "users_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint
+CREATE TABLE "verifications" (
+	"id" text PRIMARY KEY NOT NULL,
+	"value" text NOT NULL,
+	"identifier" text NOT NULL,
+	"created_at" timestamp DEFAULT now(),
+	"updated_at" timestamp DEFAULT now(),
+	"expires_at" timestamp NOT NULL
+);
+--> statement-breakpoint
 ALTER TABLE "accounts" ADD CONSTRAINT "accounts_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "admins" ADD CONSTRAINT "admins_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "bookmark_folders" ADD CONSTRAINT "bookmark_folders_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
@@ -196,6 +205,7 @@ ALTER TABLE "bookmarks" ADD CONSTRAINT "bookmarks_user_id_users_id_fk" FOREIGN K
 ALTER TABLE "bookmarks" ADD CONSTRAINT "bookmarks_bookmark_folder_id_bookmark_folders_id_fk" FOREIGN KEY ("bookmark_folder_id") REFERENCES "public"."bookmark_folders"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
 ALTER TABLE "bookmarks" ADD CONSTRAINT "bookmarks_resource_id_resources_id_fk" FOREIGN KEY ("resource_id") REFERENCES "public"."resources"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
 ALTER TABLE "bookmarks" ADD CONSTRAINT "bookmarks_portfolio_id_portfolios_id_fk" FOREIGN KEY ("portfolio_id") REFERENCES "public"."portfolios"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
+ALTER TABLE "email_verification_codes" ADD CONSTRAINT "email_verification_codes_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "folder_access" ADD CONSTRAINT "folder_access_bookmark_folder_id_bookmark_folders_id_fk" FOREIGN KEY ("bookmark_folder_id") REFERENCES "public"."bookmark_folders"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
 ALTER TABLE "oauth_account" ADD CONSTRAINT "oauth_account_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "portfolio_skills" ADD CONSTRAINT "portfolio_skills_portfolio_id_portfolios_id_fk" FOREIGN KEY ("portfolio_id") REFERENCES "public"."portfolios"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint

@@ -8,34 +8,34 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
 	const targetUrl = request.url;
 	const targetPath = request.nextUrl.pathname;
 
-	// Allow requests from localhost in development
-	if (process.env.NODE_ENVIRONMENT === "development") {
-		return NextResponse.next();
-	}
-
 	// Check if the request is for an auth route, if so redirect to home
 	const hasMatchAuthRoute = authRoutes.some((route) =>
 		targetPath.startsWith(route),
 	);
-	if (sessionCookie && hasMatchAuthRoute) {
-		return NextResponse.redirect(new URL("/", request.url), {
-			status: 307,
-		});
-	}
+	// if (sessionCookie && hasMatchAuthRoute) {
+	// 	return NextResponse.redirect(new URL("/", request.url), {
+	// 		status: 307,
+	// 	});
+	// }
 
 	// Check if the request is for a protected route, if so check for session, if no session return 403
 	const hasMatchProtectedRoute = protectedRoutes.some((route) =>
 		targetPath.startsWith(route),
 	);
-	if (!sessionCookie && hasMatchProtectedRoute) {
-		return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-	}
+	// if (!sessionCookie && hasMatchProtectedRoute) {
+	// 	return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+	// }
 
 	// catch callback from social auth
 	if (targetUrl === process.env.NEXT_PUBLIC_BASE_URL + "/api/auth") {
 		return NextResponse.redirect(new URL("/", request.url), {
 			status: 307,
 		});
+	}
+
+	// Allow requests from localhost in development
+	if (process.env.NODE_ENVIRONMENT === "development") {
+		return NextResponse.next();
 	}
 
 	const originHeader = request.headers.get("Origin");

@@ -1,5 +1,5 @@
 {
-  "id": "8aaf478a-50c0-435e-baf9-b08b4909ad98",
+  "id": "c944eb81-4244-41a9-a8af-6a3ebb6e32bd",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -358,31 +358,30 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "text",
+          "type": "serial",
           "primaryKey": true,
           "notNull": true
         },
-        "value": {
-          "name": "value",
+        "user_id": {
+          "name": "user_id",
           "type": "text",
           "primaryKey": false,
           "notNull": true
         },
-        "identifier": {
-          "name": "identifier",
+        "code": {
+          "name": "code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
           "type": "text",
           "primaryKey": false,
           "notNull": true
         },
         "created_at": {
           "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
-        },
-        "updated_at": {
-          "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false,
@@ -396,7 +395,21 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "email_verification_codes_user_id_users_id_fk": {
+          "name": "email_verification_codes_user_id_users_id_fk",
+          "tableFrom": "email_verification_codes",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
@@ -1430,6 +1443,57 @@
           ]
         }
       },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.verifications": {
+      "name": "verifications",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "value": {
+          "name": "value",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "identifier": {
+          "name": "identifier",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "expires_at": {
+          "name": "expires_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false

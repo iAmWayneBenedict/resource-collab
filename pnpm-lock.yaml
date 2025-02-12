@@ -20,12 +20,6 @@ dependencies:
   '@hookform/resolvers':
     specifier: ^4.0.0
     version: 4.0.0(react-hook-form@7.54.2)
-  '@nextui-org/avatar':
-    specifier: ^2.2.6
-    version: 2.2.6(@nextui-org/system@2.4.6)(@nextui-org/theme@2.4.5)(react-dom@19.0.0)(react@19.0.0)
-  '@nextui-org/image':
-    specifier: ^2.2.5
-    version: 2.2.5(@nextui-org/system@2.4.6)(@nextui-org/theme@2.4.5)(react-dom@19.0.0)(react@19.0.0)
   '@node-rs/argon2':
     specifier: ^2.0.2
     version: 2.0.2
@@ -131,6 +125,9 @@ dependencies:
   react-hook-form:
     specifier: ^7.54.2
     version: 7.54.2(react@19.0.0)
+  resend:
+    specifier: ^4.1.2
+    version: 4.1.2(react-dom@19.0.0)(react@19.0.0)
   sonner:
     specifier: ^1.7.4
     version: 1.7.4(react-dom@19.0.0)(react@19.0.0)
@@ -3659,135 +3656,6 @@ packages:
     dev: false
     optional: true
 
-  /@nextui-org/avatar@2.2.6(@nextui-org/system@2.4.6)(@nextui-org/theme@2.4.5)(react-dom@19.0.0)(react@19.0.0):
-    resolution: {integrity: sha512-QRNCAMXnSZrFJYKo78lzRPiAPRq5pn1LIHUVvX/mCRiTvbu1FXrMakAvOWz/n1X1mLndnrfQMRNgmtC8YlHIdg==}
-    deprecated: This package has been deprecated. Please use @heroui/avatar instead.
-    peerDependencies:
-      '@nextui-org/system': '>=2.4.0'
-      '@nextui-org/theme': '>=2.4.0'
-      react: '>=18 || >=19.0.0-rc.0'
-      react-dom: '>=18 || >=19.0.0-rc.0'
-    dependencies:
-      '@nextui-org/react-utils': 2.1.3(react@19.0.0)
-      '@nextui-org/shared-utils': 2.1.2
-      '@nextui-org/system': 2.4.6(@nextui-org/theme@2.4.5)(framer-motion@12.4.2)(react-dom@19.0.0)(react@19.0.0)
-      '@nextui-org/theme': 2.4.5(tailwindcss@3.4.17)
-      '@nextui-org/use-image': 2.1.2(react@19.0.0)
-      '@react-aria/focus': 3.19.0(react@19.0.0)
-      '@react-aria/interactions': 3.22.5(react@19.0.0)
-      '@react-aria/utils': 3.26.0(react@19.0.0)
-      react: 19.0.0
-      react-dom: 19.0.0(react@19.0.0)
-    dev: false
-
-  /@nextui-org/image@2.2.5(@nextui-org/system@2.4.6)(@nextui-org/theme@2.4.5)(react-dom@19.0.0)(react@19.0.0):
-    resolution: {integrity: sha512-A6DnEqG+/cMrfvqFKKJIdGD7gD88tVkqGxRkfysVMJJR96sDIYCJlP1jsAEtYKh4PfhmtJWclUvY/x9fMw0H1w==}
-    deprecated: This package has been deprecated. Please use @heroui/image instead.
-    peerDependencies:
-      '@nextui-org/system': '>=2.4.0'
-      '@nextui-org/theme': '>=2.4.0'
-      react: '>=18 || >=19.0.0-rc.0'
-      react-dom: '>=18 || >=19.0.0-rc.0'
-    dependencies:
-      '@nextui-org/react-utils': 2.1.3(react@19.0.0)
-      '@nextui-org/shared-utils': 2.1.2
-      '@nextui-org/system': 2.4.6(@nextui-org/theme@2.4.5)(framer-motion@12.4.2)(react-dom@19.0.0)(react@19.0.0)
-      '@nextui-org/theme': 2.4.5(tailwindcss@3.4.17)
-      '@nextui-org/use-image': 2.1.2(react@19.0.0)
-      react: 19.0.0
-      react-dom: 19.0.0(react@19.0.0)
-    dev: false
-
-  /@nextui-org/react-rsc-utils@2.1.1(react@19.0.0):
-    resolution: {integrity: sha512-9uKH1XkeomTGaswqlGKt0V0ooUev8mPXtKJolR+6MnpvBUrkqngw1gUGF0bq/EcCCkks2+VOHXZqFT6x9hGkQQ==}
-    peerDependencies:
-      react: '>=18 || >=19.0.0-rc.0'
-    dependencies:
-      react: 19.0.0
-    dev: false
-
-  /@nextui-org/react-utils@2.1.3(react@19.0.0):
-    resolution: {integrity: sha512-o61fOS+S8p3KtgLLN7ub5gR0y7l517l9eZXJabUdnVcZzZjTqEijWjzjIIIyAtYAlL4d+WTXEOROuc32sCmbqw==}
-    peerDependencies:
-      react: '>=18 || >=19.0.0-rc.0'
-    dependencies:
-      '@nextui-org/react-rsc-utils': 2.1.1(react@19.0.0)
-      '@nextui-org/shared-utils': 2.1.2
-      react: 19.0.0
-    dev: false
-
-  /@nextui-org/shared-utils@2.1.2:
-    resolution: {integrity: sha512-5n0D+AGB4P9lMD1TxwtdRSuSY0cWgyXKO9mMU11Xl3zoHNiAz/SbCSTc4VBJdQJ7Y3qgNXvZICzf08+bnjjqqA==}
-    dev: false
-
-  /@nextui-org/system-rsc@2.3.5(@nextui-org/theme@2.4.5)(react@19.0.0):
-    resolution: {integrity: sha512-DpVLNV9LkeP1yDULFCXm2mxA9m4ygS7XYy3lwgcF9M1A8QAWB+ut+FcP+8a6va50oSHOqwvUwPDUslgXTPMBfQ==}
-    peerDependencies:
-      '@nextui-org/theme': '>=2.4.0'
-      react: '>=18 || >=19.0.0-rc.0'
-    dependencies:
-      '@nextui-org/theme': 2.4.5(tailwindcss@3.4.17)
-      '@react-types/shared': 3.26.0(react@19.0.0)
-      clsx: 1.2.1
-      react: 19.0.0
-    dev: false
-
-  /@nextui-org/system@2.4.6(@nextui-org/theme@2.4.5)(framer-motion@12.4.2)(react-dom@19.0.0)(react@19.0.0):
-    resolution: {integrity: sha512-6ujAriBZMfQ16n6M6Ad9g32KJUa1CzqIVaHN/tymadr/3m8hrr7xDw6z50pVjpCRq2PaaA1hT8Hx7EFU3f2z3Q==}
-    peerDependencies:
-      framer-motion: '>=11.5.6 || >=12.0.0-alpha.1'
-      react: '>=18 || >=19.0.0-rc.0'
-      react-dom: '>=18 || >=19.0.0-rc.0'
-    dependencies:
-      '@internationalized/date': 3.6.0
-      '@nextui-org/react-utils': 2.1.3(react@19.0.0)
-      '@nextui-org/system-rsc': 2.3.5(@nextui-org/theme@2.4.5)(react@19.0.0)
-      '@react-aria/i18n': 3.12.4(react@19.0.0)
-      '@react-aria/overlays': 3.24.0(react-dom@19.0.0)(react@19.0.0)
-      '@react-aria/utils': 3.26.0(react@19.0.0)
-      '@react-stately/utils': 3.10.5(react@19.0.0)
-      '@react-types/datepicker': 3.9.0(react@19.0.0)
-      framer-motion: 12.4.2(react-dom@19.0.0)(react@19.0.0)
-      react: 19.0.0
-      react-dom: 19.0.0(react@19.0.0)
-    transitivePeerDependencies:
-      - '@nextui-org/theme'
-    dev: false
-
-  /@nextui-org/theme@2.4.5(tailwindcss@3.4.17):
-    resolution: {integrity: sha512-c7Y17n+hBGiFedxMKfg7Qyv93iY5MteamLXV4Po4c1VF1qZJI6I+IKULFh3FxPWzAoz96r6NdYT7OLFjrAJdWg==}
-    peerDependencies:
-      tailwindcss: '>=3.4.0'
-    dependencies:
-      '@nextui-org/shared-utils': 2.1.2
-      clsx: 1.2.1
-      color: 4.2.3
-      color2k: 2.0.3
-      deepmerge: 4.3.1
-      flat: 5.0.2
-      tailwind-merge: 2.6.0
-      tailwind-variants: 0.1.20(tailwindcss@3.4.17)
-      tailwindcss: 3.4.17
-    dev: false
-
-  /@nextui-org/use-image@2.1.2(react@19.0.0):
-    resolution: {integrity: sha512-I46M5gCJK4rZ0qYHPx3kVSF2M2uGaWPwzb3w4Cmx8K9QS+LbUQtRMbD8KOGTHZGA3kBDPvFbAi53Ert4eACrZQ==}
-    peerDependencies:
-      react: '>=18 || >=19.0.0-rc.0'
-    dependencies:
-      '@nextui-org/react-utils': 2.1.3(react@19.0.0)
-      '@nextui-org/use-safe-layout-effect': 2.1.1(react@19.0.0)
-      react: 19.0.0
-    dev: false
-
-  /@nextui-org/use-safe-layout-effect@2.1.1(react@19.0.0):
-    resolution: {integrity: sha512-p0vezi2eujC3rxlMQmCLQlc8CNbp+GQgk6YcSm7Rk10isWVlUII5T1L3y+rcFYdgTPObCkCngPPciNQhD7Lf7g==}
-    peerDependencies:
-      react: '>=18 || >=19.0.0-rc.0'
-    dependencies:
-      react: 19.0.0
-    dev: false
-
   /@noble/ciphers@0.6.0:
     resolution: {integrity: sha512-mIbq/R9QXk5/cTfESb1OKtyFnk7oc1Om/8onA1158K9/OZUQFDEVy55jVTato+xmp3XX6F6Qh0zz0Nc1AxAlRQ==}
     dev: false
@@ -4113,6 +3981,10 @@ packages:
     resolution: {integrity: sha512-nn5ozdjYQpUCZlWGuxcJY/KpxkWQs4DcbMCmKojjyrYDEAGy4Ce19NN4v5MduafTwJlbKc99UA8YhSVqq9yPZA==}
     engines: {node: '>=12.4.0'}
     dev: true
+
+  /@one-ini/wasm@0.1.1:
+    resolution: {integrity: sha512-XuySG1E38YScSJoMlqovLru4KTUNSjgVTIjyh7qMX6aNN5HY5Ct5LhRJdxO79JtTzKfzV/bnWpz+zquYrISsvw==}
+    dev: false
 
   /@panva/hkdf@1.2.1:
     resolution: {integrity: sha512-6oclG6Y3PiDFcoyk8srjLfVKyMfVCKJ27JwNPViuXziFpmdz+MZnZN/aKY0JGXgYuO/VghU0jcOAZgWXZ1Dmrw==}
@@ -5796,6 +5668,20 @@ packages:
       react: 19.0.0
     dev: false
 
+  /@react-email/render@1.0.1(react-dom@19.0.0)(react@19.0.0):
+    resolution: {integrity: sha512-W3gTrcmLOVYnG80QuUp22ReIT/xfLsVJ+n7ghSlG2BITB8evNABn1AO2rGQoXuK84zKtDAlxCdm3hRyIpZdGSA==}
+    engines: {node: '>=18.0.0'}
+    peerDependencies:
+      react: ^18.0 || ^19.0 || ^19.0.0-rc
+      react-dom: ^18.0 || ^19.0 || ^19.0.0-rc
+    dependencies:
+      html-to-text: 9.0.5
+      js-beautify: 1.15.3
+      react: 19.0.0
+      react-dom: 19.0.0(react@19.0.0)
+      react-promise-suspense: 0.3.4
+    dev: false
+
   /@react-email/render@1.0.5(react-dom@19.0.0)(react@19.0.0):
     resolution: {integrity: sha512-CA69HYXPk21HhtAXATIr+9JJwpDNmAFCvdMUjWmeoD1+KhJ9NAxusMRxKNeibdZdslmq3edaeOKGbdQ9qjK8LQ==}
     engines: {node: '>=18.0.0'}
@@ -7131,6 +7017,11 @@ packages:
     resolution: {integrity: sha512-/hnE/qP5ZoGpol0a5mDi45bOd7t3tjYJBjsgCsivow7D48cJeV5l05RD82lPqi7gRiphZM37rnhW1l6ZoCNNnQ==}
     dev: true
 
+  /abbrev@3.0.0:
+    resolution: {integrity: sha512-+/kfrslGQ7TNV2ecmQwMJj/B65g5KVq1/L3SGVZ3tCYGqlzFuFCGBZJtMP99wH3NpEUyAjn0zPdPUg0D+DwrOA==}
+    engines: {node: ^18.17.0 || >=20.5.0}
+    dev: false
+
   /accepts@1.3.8:
     resolution: {integrity: sha512-PYAthTa2m2VKxuvSD3DPC/Gy+U+sOA1LAuT8mkmRuvw+NACSaeXEQ+NHcVF7rONl6qcaxV3Uuemwawk+7+SJLw==}
     engines: {node: '>= 0.6'}
@@ -7748,6 +7639,11 @@ packages:
     dependencies:
       delayed-stream: 1.0.0
 
+  /commander@10.0.1:
+    resolution: {integrity: sha512-y4Mg2tXshplEbSGzx7amzPwKKOCGuoSRP/CjEdwwk0FOGlUbq6lKuoyDZTNZkmxHdJtp54hdfY/JUrdL7Xfdug==}
+    engines: {node: '>=14'}
+    dev: false
+
   /commander@11.1.0:
     resolution: {integrity: sha512-yPVavfyCcRhmorC7rWlkHn15b4wDVgVmBA7kV4QVBsF7kv/9TKJAbAXVTxvTnwP8HHKjRCJDClKbciiYS7p0DQ==}
     engines: {node: '>=16'}
@@ -7764,6 +7660,13 @@ packages:
   /concat-map@0.0.1:
     resolution: {integrity: sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==}
     dev: true
+
+  /config-chain@1.1.13:
+    resolution: {integrity: sha512-qj+f8APARXHrM0hraqXYb2/bOVSV4PvJQlNZ/DVj0QrmNM2q2euizkeuVckQ57J+W0mRH6Hvi+k50M4Jul2VRQ==}
+    dependencies:
+      ini: 1.3.8
+      proto-list: 1.2.4
+    dev: false
 
   /convert-source-map@2.0.0:
     resolution: {integrity: sha512-Kvp459HrV2FEJ1CAsi1Ku+MY3kasH19TFykTz2xWmMeq6bk2NU3XXvfJ+Q61m0xktWwt+1HSYf3JZsTms3aRJg==}
@@ -8177,6 +8080,17 @@ packages:
 
   /eastasianwidth@0.2.0:
     resolution: {integrity: sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==}
+
+  /editorconfig@1.0.4:
+    resolution: {integrity: sha512-L9Qe08KWTlqYMVvMcTIvMAdl1cDUubzRNYL+WfA4bLDMHe4nemKkpmYzkznE1FwLKu0EEmy6obgQKzMJrg4x9Q==}
+    engines: {node: '>=14'}
+    hasBin: true
+    dependencies:
+      '@one-ini/wasm': 0.1.1
+      commander: 10.0.1
+      minimatch: 9.0.1
+      semver: 7.7.1
+    dev: false
 
   /electron-to-chromium@1.5.97:
     resolution: {integrity: sha512-HKLtaH02augM7ZOdYRuO19rWDeY+QSJ1VxnXFa/XDFLf07HvM90pALIJFgrO+UVaajI3+aJMMpojoUTLZyQ7JQ==}
@@ -9357,7 +9271,6 @@ packages:
 
   /ini@1.3.8:
     resolution: {integrity: sha512-JV/yugV2uzW5iMRSiZAyDtQd+nxtUnjeLt0acNdw98kKLrvuRVyB80tsREOE7yvGVgalhZ6RNXCmEHkUKBKxew==}
-    dev: true
 
   /input-otp@1.4.1(react-dom@19.0.0)(react@19.0.0):
     resolution: {integrity: sha512-+yvpmKYKHi9jIGngxagY9oWiiblPB7+nEO75F2l2o4vs+6vpPZZmUl4tBNYuTCvQjhvEIbdNeJu70bhfYP2nbw==}
@@ -9660,6 +9573,23 @@ packages:
     resolution: {integrity: sha512-AMlnetc9+CV9asI19zHmrgS/WYsWUwCn2R7RzlbJWD7F9eWYUTGyBmU9o6PxngtLGOiDGPRu+Uc4fhKzbpteZQ==}
     dev: false
 
+  /js-beautify@1.15.3:
+    resolution: {integrity: sha512-rKKGuyTxGNlyN4EQKWzNndzXpi0bOl8Gl8YQAW1as/oMz0XhD6sHJO1hTvoBDOSzKuJb9WkwoAb34FfdkKMv2A==}
+    engines: {node: '>=14'}
+    hasBin: true
+    dependencies:
+      config-chain: 1.1.13
+      editorconfig: 1.0.4
+      glob: 10.4.5
+      js-cookie: 3.0.5
+      nopt: 8.1.0
+    dev: false
+
+  /js-cookie@3.0.5:
+    resolution: {integrity: sha512-cEiJEAEoIbWfCZYKWhVwFuvPX1gETRYPw6LlaTKoxD3s2AkXzkCjnp6h0V77ozyqj0jakteJ4YqDJT830+lVGw==}
+    engines: {node: '>=14'}
+    dev: false
+
   /js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
 
@@ -9953,6 +9883,13 @@ packages:
       brace-expansion: 2.0.1
     dev: true
 
+  /minimatch@9.0.1:
+    resolution: {integrity: sha512-0jWhJpD/MdhPXwPuiRkCbfYfSKp2qnn2eOc279qI7f+osl/l+prKSrvhg157zSYvx/1nmgn2NqdT6k2Z7zSH9w==}
+    engines: {node: '>=16 || 14 >=14.17'}
+    dependencies:
+      brace-expansion: 2.0.1
+    dev: false
+
   /minimatch@9.0.5:
     resolution: {integrity: sha512-G6T0ZX48xgozx7587koeX9Ys2NYy6Gmv//P89sEte9V9whIapMNF4idKxnW2QtCcLiTWlb/wfCabAtAFWhhBow==}
     engines: {node: '>=16 || 14 >=14.17'}
@@ -10128,6 +10065,14 @@ packages:
   /nodemailer@6.10.0:
     resolution: {integrity: sha512-SQ3wZCExjeSatLE/HBaXS5vqUOQk6GtBdIIKxiFdmm01mOQZX/POJkO3SUX1wDiYcwUOJwT23scFSC9fY2H8IA==}
     engines: {node: '>=6.0.0'}
+    dev: false
+
+  /nopt@8.1.0:
+    resolution: {integrity: sha512-ieGu42u/Qsa4TFktmaKEwM6MQH0pOWnaB3htzh0JRtx84+Mebc0cbZYN5bC+6WTZ4+77xrL9Pn5m7CV6VIkV7A==}
+    engines: {node: ^18.17.0 || >=20.5.0}
+    hasBin: true
+    dependencies:
+      abbrev: 3.0.0
     dev: false
 
   /normalize-path@3.0.0:
@@ -10706,6 +10651,10 @@ packages:
       react-is: 16.13.1
     dev: true
 
+  /proto-list@1.2.4:
+    resolution: {integrity: sha512-vtK/94akxsTMhe0/cbfpR+syPuszcuwhqVjJq26CuNDgFGj682oRBXOP5MJpv2r7JtE8MsiepGIqvvOTBwn2vA==}
+    dev: false
+
   /proxy-from-env@1.1.0:
     resolution: {integrity: sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg==}
     dev: false
@@ -10927,6 +10876,16 @@ packages:
   /require-package-name@2.0.1:
     resolution: {integrity: sha512-uuoJ1hU/k6M0779t3VMVIYpb2VMJk05cehCaABFhXaibcbvfgR8wKiozLjVFSzJPmQMRqIcO0HMyTFqfV09V6Q==}
     dev: true
+
+  /resend@4.1.2(react-dom@19.0.0)(react@19.0.0):
+    resolution: {integrity: sha512-km0btrAj/BqIaRlS+SoLNMaCAUUWEgcEvZpycfVvoXEwAHCxU+vp/ikxPgKRkyKyiR2iDcdUq5uIBTDK9oSSSQ==}
+    engines: {node: '>=18'}
+    dependencies:
+      '@react-email/render': 1.0.1(react-dom@19.0.0)(react@19.0.0)
+    transitivePeerDependencies:
+      - react
+      - react-dom
+    dev: false
 
   /resolve-dir@1.0.1:
     resolution: {integrity: sha512-R7uiTjECzvOsWSfdM0QKFNBVFcK27aHOUwdvK53BcW8zqnGdYp0Fbj82cy54+2A4P2tFM22J5kRfe1R+lM/1yg==}

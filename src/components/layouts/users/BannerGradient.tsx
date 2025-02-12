@@ -2,19 +2,21 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import backGroundGradient from "../../../../public/assets/img/gradient-bg-4.png";
 import { cn } from "@/lib/utils";
+import { bgGradient4 } from "../../../../public/assets/img";
 
 type Props = {
 	classNames?: string;
 };
 
-const BannerGradient: React.FC<Props> = ({ classNames = "w-full h-[15rem]" }) => {
+const BannerGradient: React.FC<Props> = ({
+	classNames = "w-full h-[15rem]",
+}) => {
 	return (
-		<div className={cn(classNames, "rounded-xl overflow-hidden relative")}>
-			<div className="absolute w-full h-full bg-custom-overlay"></div>
+		<div className={cn(classNames, "relative overflow-hidden rounded-xl")}>
+			<div className="bg-custom-overlay absolute h-full w-full"></div>
 			<Image
-				src={backGroundGradient}
+				src={bgGradient4}
 				className={cn("h-full w-full object-cover object-center")}
 				priority
 				alt={""}
