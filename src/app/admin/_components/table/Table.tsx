@@ -7,7 +7,6 @@ import {
 	TableHeader,
 	TableRow,
 	Selection,
-	SortDescriptor,
 } from "@heroui/react";
 import { useChecklist } from "@/store";
 import { useSortTable } from "@/store/useSort";
@@ -87,7 +86,11 @@ const CustomTable = ({
 			</TableHeader>
 			<TableBody
 				emptyContent={`No ${title?.toLowerCase()} found`}
-				loadingContent={<Spinner className="w-[30px] h-[30px]">Retrieving data...</Spinner>}
+				loadingContent={
+					<Spinner className="h-[30px] w-[30px]">
+						Retrieving data...
+					</Spinner>
+				}
 				items={rows}
 				isLoading={isLoading}
 			>

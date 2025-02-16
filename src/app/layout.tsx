@@ -8,7 +8,6 @@ import { Toaster } from "@/components/ui/sonner";
 import React from "react";
 import { cn } from "@/lib/utils";
 import { getSession } from "@/lib/auth";
-import { authClient } from "@/config/auth";
 
 export const metadata: Metadata = {
 	title: "RCollabs",

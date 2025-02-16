@@ -74,6 +74,7 @@ const FormFields = ({ email }: { email: string | undefined }) => {
 					},
 					setError,
 				);
+			return;
 		}
 
 		toast.success("Successfully verified account!");

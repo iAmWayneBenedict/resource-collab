@@ -4,8 +4,10 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";
 import { headers } from "next/headers";
-import { emailOTP } from "better-auth/plugins";
+import { customSession, emailOTP } from "better-auth/plugins";
 import { EmailService } from "@/services/email";
+import { users } from "@/data/schema";
+import { eq } from "drizzle-orm";
 
 export const auth = betterAuth({
 	// init database
@@ -28,13 +30,22 @@ export const auth = betterAuth({
 	},
 
 	plugins: [
+		customSession(async ({ user, session }) => {
+			const userData = (
+				await db.select().from(users).where(eq(users.id, user.id))
+			)[0];
+			return {
+				user: {
+					...user,
+					role: userData?.role,
+					status: userData?.status,
+				},
+				session,
+			};
+		}),
 		emailOTP({
 			async sendVerificationOTP({ email, otp, type }) {
 				try {
-					// await sendVerificationRequest({
-					// 	identifier: email,
-					// 	code: otp,
-					// });
 					await EmailService.nodeMailer.sendEmailVerification({
 						emails: [email],
 						otp,

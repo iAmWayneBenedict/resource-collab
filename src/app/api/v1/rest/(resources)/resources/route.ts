@@ -1,28 +1,34 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/data/connection";
 import { resources, TResources } from "@/data/schema";
-import { asc, count, desc, ilike, inArray } from "drizzle-orm";
+import { and, asc, count, desc, eq, ilike, inArray } from "drizzle-orm";
 
 export const DELETE = async (request: NextRequest) => {
 	const body = await request.json();
 
 	if (!("ids" in body))
 		return NextResponse.json(
-			{ message: "Please fill in the ids field", data: { path: ["ids"] } },
-			{ status: 400 }
+			{
+				message: "Please fill in the ids field",
+				data: { path: ["ids"] },
+			},
+			{ status: 400 },
 		);
 
 	try {
 		// delete resource through service layer
 		await db.delete(resources).where(inArray(resources.id, body.ids));
 
-		return NextResponse.json({ message: "Resource deleted", data: null }, { status: 200 });
+		return NextResponse.json(
+			{ message: "Resource deleted", data: null },
+			{ status: 200 },
+		);
 	} catch (error) {
 		console.log("Error", error);
 
 		return NextResponse.json(
 			{ message: "Error deleting resource", data: null },
-			{ status: 400 }
+			{ status: 400 },
 		);
 	}
 };
@@ -33,29 +39,32 @@ export const GET = async (req: NextRequest) => {
 	const page = Number(searchParams.get("page")) || 1;
 	const limit = Number(searchParams.get("limit")) || 10;
 	const search = searchParams.get("search") || undefined;
-	const sortBy = (searchParams.get("sort_by") as keyof TResources) || undefined;
+	const sortBy = searchParams.get("sort_by") || undefined;
 	const sortType = searchParams.get("sort_type") || undefined;
 	const filterBy = searchParams.get("filter_by") || undefined;
 	const filterValue = searchParams.get("filter_value") || undefined;
 
 	try {
-		// const resources = await showPaginatedResources(queryParams);
-		const countData = await db.select({ resourceCount: count() }).from(resources);
+		const [{ totalCount }] = await db
+			.select({ totalCount: count() })
+			.from(resources);
 
-		const searchValue = search ? ilike(resources.name, `%${search}%`) : undefined;
-
-		const filterValueQuery =
-			filterBy && filterValue
-				? ilike(resources[filterBy as keyof TResources], `%${filterValue}%`)
-				: undefined;
+		const filters = [];
+		if (search) filters.push(ilike(resources.name, `%${search}%`));
+		if (filterBy && filterValue)
+			filters.push(
+				eq(resources[filterBy as keyof TResources], filterValue),
+			);
 
 		const sortValue = sortBy
-			? (sortType === "ascending" ? asc : desc)(resources[sortBy as keyof TResources])
+			? (sortType === "ascending" ? asc : desc)(
+					resources[sortBy as keyof TResources],
+				)
 			: asc(resources.id);
 
 		const query = await db.query.resources.findMany({
 			with: { category: true, resourceTags: { with: { tag: true } } },
-			where: searchValue ? searchValue : filterValueQuery,
+			where: filters.length ? and(...filters) : undefined,
 			offset: (page - 1) * limit,
 			limit: Number(limit),
 			orderBy: [sortValue],
@@ -66,16 +75,16 @@ export const GET = async (req: NextRequest) => {
 				message: "Successfully retrieved resources",
 				data: {
 					rows: query,
-					count: countData[0].resourceCount,
+					count: totalCount,
 				},
 			},
-			{ status: 200 }
+			{ status: 200 },
 		);
 	} catch (error) {
 		console.log("Error", error);
 		return NextResponse.json(
 			{ message: "Error retrieving resources", data: null },
-			{ status: 500 }
+			{ status: 500 },
 		);
 	}
 };

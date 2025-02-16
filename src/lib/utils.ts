@@ -54,7 +54,7 @@ export function toStr<T>(data: T): string {
  */
 export function bindReactHookFormError(
 	errors: { data: { [key: string]: string[] } } | Error,
-	setError: (name: any, error: { message: string }) => void
+	setError: (name: any, error: { message: string }) => void,
 ): void {
 	//  Cast the errors to TErrorAPIResponse - since the response is originally TErrorAPIResponse
 	const errorTemp = errors as unknown as TErrorAPIResponse;
@@ -80,7 +80,8 @@ export function isValidUrl(url: string): boolean {
 	}
 }
 
-export const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+export const delay = (ms: number) =>
+	new Promise((resolve) => setTimeout(resolve, ms));
 
 /**
  * Reinitializes the query parameters of the given currentUrl by replacing
@@ -90,7 +91,10 @@ export const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve
  * @param {Record<string, string>} [objParams] - the object containing the query parameters to be updated
  * @returns {string} the new url with the query parameters updated
  */
-export const reInitQueryParams = (currentUrl: string, objParams?: Record<string, string>) => {
+export const reInitQueryParams = (
+	currentUrl: string,
+	objParams?: Record<string, string>,
+): string => {
 	if (!currentUrl) return "/";
 	const BASE_URL = currentUrl.split("?")[0];
 	const searchParams = new URLSearchParams(new URL(currentUrl).search);
@@ -131,4 +135,32 @@ export const toggleScrollBody = (state: boolean) => {
 
 export const formatDate = (date: string) => {
 	return new Intl.DateTimeFormat("en-US").format(new Date(date));
+};
+
+/**
+ * Given a URLSearchParams object, returns an object containing the pagination
+ * parameters to be used in a REST API query. The returned object contains the
+ * following properties:
+ * - page: the current page number (default is 1)
+ * - limit: the number of items per page (default is 10)
+ * - search: the search query string (default is undefined)
+ * - sortBy: the field to sort the items by (default is undefined)
+ * - sortType: the type of sorting (default is undefined)
+ * - filterBy: the field to filter the items by (default is undefined)
+ * - filterValue: the value to filter the items by (default is undefined)
+ *
+ * @param {URLSearchParams} searchParams - the URLSearchParams object to be
+ *   used to extract the pagination parameters
+ * @returns {Object} an object containing the pagination parameters
+ */
+export const getApiPaginatedSearchParams = (searchParams: URLSearchParams) => {
+	const page = Number(searchParams.get("page")) || 1;
+	const limit = Number(searchParams.get("limit")) || 10;
+	const search = searchParams.get("search") || undefined;
+	const sortBy = searchParams.get("sort_by") || undefined;
+	const sortType = searchParams.get("sort_type") || undefined;
+	const filterBy = searchParams.get("filter_by") || undefined;
+	const filterValue = searchParams.get("filter_value") || undefined;
+
+	return { page, limit, search, sortBy, sortType, filterBy, filterValue };
 };

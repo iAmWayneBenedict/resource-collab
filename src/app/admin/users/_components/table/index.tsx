@@ -1,7 +1,13 @@
 "use client";
 
-import { ChangeEvent, useCallback, useEffect, useState } from "react";
-import { Bottom, CustomTable, Top } from "../../../_components/table";
+import {
+	ChangeEvent,
+	ComponentType,
+	useCallback,
+	useEffect,
+	useState,
+} from "react";
+import { Bottom, Top } from "../../../_components/table";
 import { columns } from "./helper";
 import Row from "./Row";
 import {
@@ -17,6 +23,17 @@ import { ChevronDown, Plus, Search, Trash } from "lucide-react";
 import { useDebounce } from "@/hooks";
 import { useChecklist, useModal } from "@/store";
 import { useGetPaginatedUsersQuery } from "@/services/api/queries/user";
+import dynamic from "next/dynamic";
+
+// ! DO NOT EDIT this dynamic import. This is a workaround for hydration error between HeroUI and NextJS
+// ! This disables the prerender of the component
+const CustomTable = dynamic(
+	() =>
+		import("../../../_components/table/Table") as unknown as Promise<{
+			default: ComponentType<any>;
+		}>,
+	{ ssr: false },
+);
 
 const UserTable = () => {
 	const [searchValue, setSearchValue] = useState("");
@@ -33,14 +50,16 @@ const UserTable = () => {
 
 	const hasCheckedInList = getChecklistById("User")?.list?.length || 0 > 0;
 
-	const { data, isLoading, refetch, isRefetching } = useGetPaginatedUsersQuery({
-		limit: rowsPerPage,
-		page: page,
-		sort_by: sort.column,
-		sort_type: sort.direction,
-		filter_by: [...roleFilter][0],
-		search: debouncedSearchValue,
-	});
+	const { data, isLoading, refetch, isRefetching } =
+		useGetPaginatedUsersQuery({
+			limit: rowsPerPage,
+			page: page,
+			sort_by: sort.column,
+			sort_type: sort.direction,
+			filter_by: "role",
+			filter_value: [...roleFilter][0],
+			search: debouncedSearchValue,
+		});
 
 	useEffect(() => {
 		refetch();
@@ -50,14 +69,17 @@ const UserTable = () => {
 		if (data) setTotalPages(Math.ceil(data?.data?.count / rowsPerPage));
 	}, [data, isLoading]);
 
-	const onRowsPerPageChange = useCallback((e: ChangeEvent<HTMLSelectElement>) => {
-		setRowsPerPage(Number(e.target.value));
-		setPage(1);
-	}, []);
+	const onRowsPerPageChange = useCallback(
+		(e: ChangeEvent<HTMLSelectElement>) => {
+			setRowsPerPage(Number(e.target.value));
+			setPage(1);
+		},
+		[],
+	);
 	return (
 		<div>
-			<div className="flex justify-between gap-3 items-end mb-5">
-				<div className="flex gap-3 flex-1">
+			<div className="mb-5 flex items-end justify-between gap-3">
+				<div className="flex flex-1 gap-3">
 					<Input
 						isClearable
 						className="w-full sm:max-w-[30%]"
@@ -74,11 +96,15 @@ const UserTable = () => {
 					<Dropdown>
 						<DropdownTrigger className="hidden sm:flex">
 							<Button
-								endContent={<ChevronDown className="text-small" />}
+								endContent={
+									<ChevronDown className="text-small" />
+								}
 								variant="flat"
 								className="capitalize"
 							>
-								{[...roleFilter][0] ? [...roleFilter].join("") : "Roles"}
+								{[...roleFilter][0]
+									? [...roleFilter].join("")
+									: "Roles"}
 							</Button>
 						</DropdownTrigger>
 						<DropdownMenu
@@ -89,14 +115,19 @@ const UserTable = () => {
 							onSelectionChange={(keys) => {
 								const hasSelected = [...keys][0];
 								if (hasSelected) {
-									setRoleFilter(new Set(keys as unknown as any[]));
+									setRoleFilter(
+										new Set(keys as unknown as any[]),
+									);
 								} else {
 									setRoleFilter(new Set([""]));
 								}
 							}}
 						>
 							{["admin", "user", "guest"].map((column) => (
-								<DropdownItem key={column} className="capitalize">
+								<DropdownItem
+									key={column}
+									className="capitalize"
+								>
 									{column}
 								</DropdownItem>
 							))}
@@ -108,7 +139,7 @@ const UserTable = () => {
 						variant="light"
 						color={hasCheckedInList ? "danger" : "default"}
 						isDisabled={!hasCheckedInList}
-						endContent={<Trash className="w-5 h-5" />}
+						endContent={<Trash className="h-5 w-5" />}
 					>
 						Delete
 					</Button>
@@ -116,7 +147,7 @@ const UserTable = () => {
 						color="primary"
 						onPress={() => onOpen("userForm", null)}
 						className="bg-violet"
-						endContent={<Plus className="w-7 h-7" />}
+						endContent={<Plus className="h-7 w-7" />}
 					>
 						Add New
 					</Button>
@@ -128,7 +159,10 @@ const UserTable = () => {
 					columns: columns,
 					rows: Array.isArray(data?.data?.rows) ? data.data.rows : [],
 				}}
-				bodyProps={{ RowComponent: Row, isLoading: isRefetching || isLoading }}
+				bodyProps={{
+					RowComponent: Row,
+					isLoading: isRefetching || isLoading,
+				}}
 				bottomComponent={
 					<Bottom
 						id="User"
@@ -139,7 +173,10 @@ const UserTable = () => {
 					/>
 				}
 				topComponent={
-					<Top data={data?.data?.count || 0} onRowsPerPageChange={onRowsPerPageChange} />
+					<Top
+						data={data?.data?.count || 0}
+						onRowsPerPageChange={onRowsPerPageChange}
+					/>
 				}
 			/>
 		</div>
