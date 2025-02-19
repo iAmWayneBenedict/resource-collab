@@ -1,79 +1,70 @@
 import { NextRequest, NextResponse } from "next/server";
-import * as cheerio from "cheerio";
-import axios from "axios";
 import { isValidUrl } from "@/lib/utils";
-import { hasProfanity } from "@/app/api/v1/rest/scrape/_lib/utils";
+import ScraperService from "@/services/scraper";
 
-type TMetaTags = Record<string, string | undefined>;
-
+const META_TAGS: string[] = [
+	"url",
+	"title",
+	"site_name",
+	"image",
+	"description",
+];
 export const GET = async (request: NextRequest, response: NextResponse) => {
 	// Parse the request URL
 	let requestUrl: URL;
 	try {
 		requestUrl = new URL(request.url);
 	} catch (e) {
-		return NextResponse.json({ message: "Invalid URL", data: null }, { status: 400 });
+		return NextResponse.json(
+			{ message: "Invalid URL", data: null },
+			{ status: 400 },
+		);
 	}
 
-	// Get the 'url' query parameter
 	const urlParam: string | null = requestUrl.searchParams.get("url");
 
-	// If no URL parameter or invalid URL, return an error
 	if (!urlParam || !isValidUrl(urlParam)) {
-		return NextResponse.json({ message: "Invalid URL", data: null }, { status: 400 });
+		return NextResponse.json(
+			{ message: "Invalid URL", data: null },
+			{ status: 400 },
+		);
 	}
 
+	/*
+	 * * NOTE: try first with cheerio for faster scraper.
+	 * This cannot handle sites like TikTok
+	 */
+	console.log("Trying cheerio scraper");
 	try {
-		const res = await axios.get(urlParam as string);
+		const scrapedData = await ScraperService.cheerio(urlParam, META_TAGS);
 
-		const html = res.data;
-		const $ = cheerio.load(html);
-		const scrapedContent = ($("meta[property='og:description']").attr("content") ||
-			$("meta[name='description']").attr("content"))!;
+		return NextResponse.json(
+			{ message: "Success scrapping URL", data: scrapedData },
+			{ status: 200 },
+		);
+	} catch (e) {
+		console.error(e);
+	}
 
-		if (!scrapedContent) {
-			return NextResponse.json(
-				{ message: "No description found", data: null },
-				{ status: 404 }
-			);
-		}
+	/*
+	 * NOTE: if cheerio fails, try puppeteer.
+	 * But this approach is slower
+	 * since it needs to open a browser and wait for the page to load
+	 */
+	console.log("Trying puppeteer scraper");
+	try {
+		const scrapedData = await ScraperService.puppeteer(urlParam, META_TAGS);
 
-		const profanityDetected = await hasProfanity(scrapedContent);
+		return NextResponse.json(
+			{ message: "Success scrapping URL", data: scrapedData },
+			{ status: 200 },
+		);
+	} catch (e) {
+		console.error(e);
 
-		// If profanity is detected, return an error
-		if (profanityDetected) {
-			return NextResponse.json(
-				{ message: "Profanity detected", data: null },
-				{ status: 400 }
-			);
-		}
-
-		// Extract Open Graph meta tags
-		const META_TAGS: string[] = ["url", "title", "site_name", "image", "description"];
-		const metaTags: TMetaTags = META_TAGS.reduce((acc: TMetaTags, tag: string) => {
-			const content: string | undefined =
-				$(`meta[property='og:${tag}']`).attr("content") ||
-				$(`meta[name='${tag}']`).attr("content");
-
-			if (content) acc[tag] = content;
-			if (tag === "image" && !content) acc[tag] = $("link[rel='shortcut icon']").attr("href");
-			return acc;
-		}, {} as TMetaTags);
-
-		// If has meta tags, return them
-		if (Object.keys(metaTags).length) {
-			return NextResponse.json(
-				{ message: "Success scrapping URL", data: metaTags },
-				{ status: 200 }
-			);
-		}
-
-		// If no meta tags, return an error
-		return NextResponse.json({ message: "No meta tags found", data: null }, { status: 404 });
-	} catch (error: any) {
-		console.error("Error fetching URL:", error.message);
-
-		// Return an error response
-		return NextResponse.json({ message: "Error fetching URL", data: null }, { status: 500 });
+		return NextResponse.json(
+			{ message: "Error scrapping URL", data: null },
+			{ status: 400 },
+		);
 	}
 };

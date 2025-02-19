@@ -9,7 +9,8 @@ export default async function Home() {
 		<Layout>
 			<Container>
 				<Banner />
-				<div className="grid grid-cols-1 grid-rows-1 gap-4 mt-16 lg:grid-cols-2 lg:grid-rows-2">
+
+				<div className="mt-16 grid grid-cols-1 grid-rows-1 gap-4 lg:grid-cols-2 lg:grid-rows-2">
 					{[1, 2, 3, 4].map((el) => (
 						<Card key={el} />
 					))}

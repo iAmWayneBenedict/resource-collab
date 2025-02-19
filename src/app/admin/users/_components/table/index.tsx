@@ -1,13 +1,7 @@
 "use client";
 
-import {
-	ChangeEvent,
-	ComponentType,
-	useCallback,
-	useEffect,
-	useState,
-} from "react";
-import { Bottom, Top } from "../../../_components/table";
+import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { Bottom, CustomTable, Top } from "../../../_components/table";
 import { columns } from "./helper";
 import Row from "./Row";
 import {
@@ -22,18 +16,7 @@ import { useSortTable } from "@/store/useSort";
 import { ChevronDown, Plus, Search, Trash } from "lucide-react";
 import { useDebounce } from "@/hooks";
 import { useChecklist, useModal } from "@/store";
-import { useGetPaginatedUsersQuery } from "@/services/api/queries/user";
-import dynamic from "next/dynamic";
-
-// ! DO NOT EDIT this dynamic import. This is a workaround for hydration error between HeroUI and NextJS
-// ! This disables the prerender of the component
-const CustomTable = dynamic(
-	() =>
-		import("../../../_components/table/Table") as unknown as Promise<{
-			default: ComponentType<any>;
-		}>,
-	{ ssr: false },
-);
+import { useGetPaginatedUsersQuery } from "@/lib/queries/user";
 
 const UserTable = () => {
 	const [searchValue, setSearchValue] = useState("");

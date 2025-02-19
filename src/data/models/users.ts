@@ -15,6 +15,7 @@ import { admins } from "./admins";
 import { bookmarks } from "./bookmarks";
 import { userSubscription } from "./user-subscriptions";
 import { sessions } from "./sessions";
+import { resources } from "./resources";
 
 export const usersEnum = pgEnum("users_enum", ["user", "admin", "guest"]);
 export const usersStatusEnum = pgEnum("users_status_enum", [
@@ -70,4 +71,5 @@ export const userRelations = relations(users, ({ many, one }) => ({
 	messages: many(userMessages),
 	bookmarks: many(bookmarks),
 	userSubscriptions: many(userSubscription),
+	ownedResources: many(resources),
 }));

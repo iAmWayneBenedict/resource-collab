@@ -10,13 +10,12 @@ export const likeResources = pgTable(
 		resource_id: varchar("resource_id").notNull(),
 		liked_at: timestamp("liked_at", { mode: "date" }).defaultNow(),
 	},
-	(table) => ({
-		pk: primaryKey({ columns: [table.user_id, table.resource_id] }),
-		pkWithCustomName: primaryKey({
+	(table) => [
+		primaryKey({
 			name: "like_resources_pk",
 			columns: [table.user_id, table.resource_id],
 		}),
-	})
+	],
 );
 
 export const likeResourcesRelations = relations(likeResources, ({ one }) => ({

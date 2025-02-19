@@ -52,7 +52,7 @@ const SearchFormModal = () => {
 			isOpen={isOpen}
 			placement="top-center"
 			onOpenChange={onCloseModal}
-			backdrop="blur"
+			// backdrop="blur"
 			isDismissable={!isSubmitting}
 			size="xl"
 		>

@@ -4,7 +4,7 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";
 import { headers } from "next/headers";
-import { customSession, emailOTP } from "better-auth/plugins";
+import { customSession, emailOTP, openAPI } from "better-auth/plugins";
 import { EmailService } from "@/services/email";
 import { users } from "@/data/schema";
 import { eq } from "drizzle-orm";
@@ -31,9 +31,10 @@ export const auth = betterAuth({
 
 	plugins: [
 		customSession(async ({ user, session }) => {
-			const userData = (
-				await db.select().from(users).where(eq(users.id, user.id))
-			)[0];
+			const [userData] = await db
+				.select()
+				.from(users)
+				.where(eq(users.id, user.id));
 			return {
 				user: {
 					...user,
@@ -55,6 +56,7 @@ export const auth = betterAuth({
 				}
 			},
 		}),
+		openAPI(),
 		nextCookies(), // make sure that this will always be the last plugin
 	],
 
@@ -78,6 +80,11 @@ export const auth = betterAuth({
 			createdAt: "created_at",
 			updatedAt: "updated_at",
 		},
+
+		cookieCache: {
+			enabled: true,
+			maxAge: 5 * 60, // 5 minutes
+		},
 	},
 	account: {
 		modelName: "accounts",
@@ -100,6 +107,28 @@ export const auth = betterAuth({
 			expiresAt: "expires_at",
 			createdAt: "created_at",
 			updatedAt: "updated_at",
+		},
+	},
+
+	// rate limiter
+	rateLimit: {
+		window: 10,
+		max: 5,
+
+		// TODO: add more custom rules
+		customRules: {
+			"/sign-up/email": {
+				window: 10,
+				max: 2,
+			},
+			"/sign-in/email": {
+				window: 10,
+				max: 3,
+			},
+			"/email-otp": {
+				window: 30,
+				max: 1,
+			},
 		},
 	},
 });

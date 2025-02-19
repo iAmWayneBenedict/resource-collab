@@ -19,13 +19,12 @@ export const portfolioTags = pgTable(
 				onUpdate: "cascade",
 			}),
 	},
-	(table) => ({
-		pk: primaryKey({ columns: [table.portfolio_id, table.tag_id] }),
-		pkWithCustomName: primaryKey({
+	(table) => [
+		primaryKey({
 			name: "portfolio_tags_pk",
-			columns: [table.portfolio_id, table.tag_id],
+			columns: [table.tag_id, table.portfolio_id],
 		}),
-	})
+	],
 );
 
 export const portfolioTagsRelations = relations(portfolioTags, ({ one }) => ({

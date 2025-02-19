@@ -1,84 +1,120 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/data/connection";
-import { eq, inArray } from "drizzle-orm";
-import { categories as categoriesTable, resources } from "@/data/schema";
+import { ConsoleLogWriter, inArray } from "drizzle-orm";
+import { resources } from "@/data/schema";
+import {
+	findResource,
+	updateResourceTransaction,
+} from "@/services/resource-service";
+import { auth } from "@/lib/auth";
 
-export async function GET(request: NextRequest, { params }: { params: { id: number } }) {
+export async function GET(
+	_: NextRequest,
+	{ params }: { params: { id: number } },
+) {
 	if (!params.id)
 		return NextResponse.json(
 			{ message: "Resource ID parameter is missing", data: null },
-			{ status: 404 }
+			{ status: 404 },
 		);
 
 	try {
-		const resource = await db.select().from(resources).where(eq(resources.id, params.id));
+		const resource = await findResource({
+			value: params.id,
+			identifier: "id",
+		});
 
 		return NextResponse.json(
 			{ message: "Resource successfully retrieved", data: resource },
-			{ status: 201 }
+			{ status: 201 },
 		);
 	} catch (error: any) {
 		console.log("Error", error.message);
 
 		return NextResponse.json(
 			{ message: "Error retrieving resource", data: null },
-			{ status: 400 }
+			{ status: 400 },
 		);
 	}
 }
 
 export const PUT = async (request: NextRequest) => {
 	const body = await request.json();
+	const session = await auth.api.getSession({ headers: request.headers });
+	const user = session?.user;
+
+	if (!user)
+		return NextResponse.json(
+			{ message: "Unauthorized", data: null },
+			{ status: 403 },
+		);
 
 	try {
 		const validationResponse = validate(body);
 
 		if (validationResponse) return validationResponse;
 
-		const { categories, ...resource } = body;
+		const { tags, category } = body;
 
-		if (!categories.delete || !categories.add) {
+		if (!category.move_to) {
 			return NextResponse.json(
 				{
-					message: "Invalid category. It should have 'deleted' and 'add' properties",
+					message: "Category ID is required",
 					data: null,
 				},
-				{ status: 400 }
+				{ status: 400 },
 			);
 		}
 
-		if (categories.delete.length) {
-			await db.delete(categoriesTable).where(inArray(categoriesTable.id, categories.delete));
-		}
-		if (categories.add.length) {
-			await db.insert(categoriesTable).values(categories.add);
+		if (!tags.delete || !tags.add) {
+			return NextResponse.json(
+				{
+					message:
+						"Invalid tags. It should have 'deleted' and 'add' properties",
+					data: null,
+				},
+				{ status: 400 },
+			);
 		}
 
-		const updatedResource = await db
-			.update(resources)
-			.set(resource)
-			.where(eq(resources.id, body.id))
-			.returning();
+		const updatedResource = await updateResourceTransaction({
+			...body,
+			userId: user.id,
+		});
 
 		return NextResponse.json(
-			{ message: "Resource updated Successfully", data: updatedResource },
-			{ status: 201 }
+			{
+				message: "Resource updated Successfully",
+				data: [updatedResource],
+			},
+			{ status: 201 },
 		);
 	} catch (error) {
 		console.log("Error", error);
 
 		return NextResponse.json(
 			{ message: "Error updating resource", data: null },
-			{ status: 400 }
+			{ status: 400 },
 		);
 	}
 };
 
-export const DELETE = async (request: NextRequest, { params }: { params: { id: number } }) => {
+export const DELETE = async (
+	request: NextRequest,
+	{ params }: { params: { id: number } },
+) => {
+	const session = await auth.api.getSession({ headers: request.headers });
+	const user = session?.user;
+	console.log("user", user);
+	if (!user)
+		return NextResponse.json(
+			{ message: "Unauthorized", data: null },
+			{ status: 403 },
+		);
 	if (!params.id)
 		return NextResponse.json(
 			{ message: "Resource ID parameter is missing", data: null },
-			{ status: 404 }
+			{ status: 404 },
 		);
 
 	try {
@@ -87,13 +123,16 @@ export const DELETE = async (request: NextRequest, { params }: { params: { id: n
 			.where(inArray(resources.id, [params.id]))
 			.returning();
 
-		return NextResponse.json({ message: "Resource deleted", data: null }, { status: 200 });
+		return NextResponse.json(
+			{ message: "Resource deleted", data: null },
+			{ status: 200 },
+		);
 	} catch (error) {
 		console.log("Error", error);
 
 		return NextResponse.json(
 			{ message: "Error deleting resource", data: null },
-			{ status: 400 }
+			{ status: 400 },
 		);
 	}
 };
@@ -108,7 +147,7 @@ const validate = (body: any) => {
 				message: `Please fill in the ${missingFields.join(", ")} field(s)`,
 				data: { path: missingFields },
 			},
-			{ status: 400 }
+			{ status: 400 },
 		);
 	}
 	return null;

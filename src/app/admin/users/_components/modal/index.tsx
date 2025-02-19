@@ -1,7 +1,10 @@
 "use client";
 
 import { bindReactHookFormError, cn } from "@/lib/utils";
-import { usePostRegisterMutation, usePutUserMutation } from "@/services/api/mutations/users";
+import {
+	usePostRegisterMutation,
+	usePutUserMutation,
+} from "@/lib/mutations/users";
 import { useModal } from "@/store";
 import {
 	Modal,
@@ -43,7 +46,10 @@ const passwordSchema = z.object({
 				const hasSpecialCharacter = /[^A-Za-z0-9]/.test(value);
 				return hasUppercase && hasSpecialCharacter;
 			},
-			{ message: "Password must be 8 characters with uppercase and symbol" }
+			{
+				message:
+					"Password must be 8 characters with uppercase and symbol",
+			},
 		),
 	confirm_password: z.string(),
 });
@@ -163,8 +169,9 @@ const UserFormModal = () => {
 					<form onSubmit={handleSubmit(onSubmit)}>
 						<ModalHeader className="flex flex-col gap-1">
 							<span>Create User</span>
-							<p className="text-xs lg:text-sm font-normal">
-								Will override the email verification from register
+							<p className="text-xs font-normal lg:text-sm">
+								Will override the email verification from
+								register
 							</p>
 						</ModalHeader>
 						<ModalBody className="gap-4">
@@ -179,13 +186,16 @@ const UserFormModal = () => {
 										errorMessage={errors.name?.message}
 										label="Name"
 										placeholder="Enter your name"
-										color={!!errors.name ? "danger" : "default"}
+										color={
+											!!errors.name ? "danger" : "default"
+										}
 										isDisabled={isSubmitting}
 										endContent={
 											<User
 												className={cn(
-													"text-2xl text-default-400 pointer-events-none flex-shrink-0",
-													!!errors.name && "text-red-500"
+													"pointer-events-none flex-shrink-0 text-2xl text-default-400",
+													!!errors.name &&
+														"text-red-500",
 												)}
 											/>
 										}
@@ -203,13 +213,18 @@ const UserFormModal = () => {
 										errorMessage={errors.email?.message}
 										label="Email"
 										placeholder="Enter your email"
-										color={!!errors.email ? "danger" : "default"}
+										color={
+											!!errors.email
+												? "danger"
+												: "default"
+										}
 										isDisabled={isSubmitting}
 										endContent={
 											<Mail
 												className={cn(
-													"text-2xl text-default-400 pointer-events-none flex-shrink-0",
-													!!errors.email && "text-red-500"
+													"pointer-events-none flex-shrink-0 text-2xl text-default-400",
+													!!errors.email &&
+														"text-red-500",
 												)}
 											/>
 										}
@@ -222,18 +237,28 @@ const UserFormModal = () => {
 								render={({ field, formState: { errors } }) => (
 									<Select
 										selectedKeys={[field.value]}
-										onChange={(e) => field.onChange(e.target.value)}
+										onChange={(e) =>
+											field.onChange(e.target.value)
+										}
 										isInvalid={!!errors.role}
 										errorMessage={errors.role?.message}
-										color={!!errors.role ? "danger" : "default"}
+										color={
+											!!errors.role ? "danger" : "default"
+										}
 										label="Role"
 										placeholder="Select your role"
 										disallowEmptySelection
 										isDisabled={isSubmitting}
 									>
-										<SelectItem key={"user"}>User</SelectItem>
-										<SelectItem key={"admin"}>Admin</SelectItem>
-										<SelectItem key={"guest"}>Guest</SelectItem>
+										<SelectItem key={"user"}>
+											User
+										</SelectItem>
+										<SelectItem key={"admin"}>
+											Admin
+										</SelectItem>
+										<SelectItem key={"guest"}>
+											Guest
+										</SelectItem>
 									</Select>
 								)}
 							/>
@@ -242,22 +267,36 @@ const UserFormModal = () => {
 									<Controller
 										name="password"
 										control={control}
-										render={({ field, formState: { errors } }) => (
+										render={({
+											field,
+											formState: { errors },
+										}) => (
 											<Input
 												value={field.value}
 												onValueChange={field.onChange}
 												isInvalid={!!errors.password}
-												errorMessage={errors.password?.message}
+												errorMessage={
+													errors.password?.message
+												}
 												label="Password"
-												type={showPassword ? "text" : "password"}
+												type={
+													showPassword
+														? "text"
+														: "password"
+												}
 												placeholder="Enter your password"
-												color={!!errors.password ? "danger" : "default"}
+												color={
+													!!errors.password
+														? "danger"
+														: "default"
+												}
 												isDisabled={isSubmitting}
 												endContent={
 													<Lock
 														className={cn(
-															"text-2xl text-default-400 pointer-events-none flex-shrink-0",
-															!!errors.password && "text-red-500"
+															"pointer-events-none flex-shrink-0 text-2xl text-default-400",
+															!!errors.password &&
+																"text-red-500",
 														)}
 													/>
 												}
@@ -267,32 +306,46 @@ const UserFormModal = () => {
 									<Controller
 										name="confirm_password"
 										control={control}
-										render={({ field, formState: { errors } }) => (
+										render={({
+											field,
+											formState: { errors },
+										}) => (
 											<Input
 												value={field.value}
 												onValueChange={field.onChange}
-												isInvalid={!!errors.confirm_password}
-												errorMessage={errors.confirm_password?.message}
+												isInvalid={
+													!!errors.confirm_password
+												}
+												errorMessage={
+													errors.confirm_password
+														?.message
+												}
 												label="Confirm Password"
-												type={showPassword ? "text" : "password"}
+												type={
+													showPassword
+														? "text"
+														: "password"
+												}
 												placeholder="Enter confirm password"
 												color={
-													!!errors.confirm_password ? "danger" : "default"
+													!!errors.confirm_password
+														? "danger"
+														: "default"
 												}
 												isDisabled={isSubmitting}
 												endContent={
 													<Lock
 														className={cn(
-															"text-2xl text-default-400 pointer-events-none flex-shrink-0",
+															"pointer-events-none flex-shrink-0 text-2xl text-default-400",
 															!!errors.confirm_password &&
-																"text-red-500"
+																"text-red-500",
 														)}
 													/>
 												}
 											/>
 										)}
 									/>
-									<div className="flex py-2 px-1 justify-between">
+									<div className="flex justify-between px-1 py-2">
 										<Checkbox
 											classNames={{ label: "text-small" }}
 											onValueChange={(isChecked) =>
@@ -320,7 +373,9 @@ const UserFormModal = () => {
 								type="submit"
 								isLoading={isSubmitting}
 							>
-								{isSubmitting ? "Creating..." : "Create Account"}
+								{isSubmitting
+									? "Creating..."
+									: "Create Account"}
 							</Button>
 						</ModalFooter>
 					</form>

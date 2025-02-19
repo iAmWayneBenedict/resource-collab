@@ -9,4 +9,15 @@ export const authClient = createAuthClient({
 	baseURL: config.BASE_URL, // the base url of your auth server
 
 	plugins: [emailOTPClient(), customSessionClient<typeof auth>()],
+
+	fetchOptions: {
+		onError: async (context) => {
+			const { response } = context;
+			if (response.status === 429) {
+				console.error(
+					`Rate limit exceeded, retrying after ${response.headers.get("Retry-After")} seconds`,
+				);
+			}
+		},
+	},
 });

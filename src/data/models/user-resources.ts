@@ -15,19 +15,24 @@ export const userResources = pgTable(
 	"user_resources",
 	{
 		user_id: varchar("user_id")
-			.references(() => users.id, { onDelete: "cascade", onUpdate: "cascade" })
+			.references(() => users.id, {
+				onDelete: "cascade",
+				onUpdate: "cascade",
+			})
 			.notNull(),
 		resource_id: serial("resource_id")
-			.references(() => resources.id, { onDelete: "cascade", onUpdate: "cascade" })
+			.references(() => resources.id, {
+				onDelete: "cascade",
+				onUpdate: "cascade",
+			})
 			.notNull(),
 	},
-	(table) => ({
-		pk: primaryKey({ columns: [table.user_id, table.resource_id] }),
-		pkWithCustomName: primaryKey({
+	(table) => [
+		primaryKey({
 			name: "user_resources_pk",
 			columns: [table.user_id, table.resource_id],
 		}),
-	})
+	],
 );
 
 export const userResourcesRelations = relations(userResources, ({ one }) => ({

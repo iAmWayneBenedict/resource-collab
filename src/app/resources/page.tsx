@@ -35,11 +35,11 @@ const Page = () => {
 					<Section className="flex flex-col lg:flex-row">
 						<Aside links={ASIDE_LINKS} />
 						<div className="w-full">
-							<div className="flex gap-2 justify-end items-center">
+							<div className="flex items-center justify-end gap-2">
 								<SearchModalTrigger />
 								<FilterModalTrigger />
 							</div>
-							<div className="mt-10 gap-6 flex flex-wrap">
+							<div className="mt-10 flex flex-wrap gap-6">
 								{[1, 2, 3, 4, 5, 6].map((el) => (
 									<ResourceCard key={el} />
 								))}

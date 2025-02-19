@@ -18,13 +18,10 @@ export const oauthAccounts = pgTable(
 			.notNull()
 			.references(() => users.id),
 	},
-	(table) => {
-		return {
-			pk: primaryKey({ columns: [table.provider_id, table.provider_user_id] }),
-			pkWithCustomName: primaryKey({
-				name: "oauth_constraint",
-				columns: [table.provider_id, table.provider_user_id],
-			}),
-		};
-	}
+	(table) => [
+		primaryKey({
+			name: "oauth_account_pk",
+			columns: [table.provider_id, table.provider_user_id],
+		}),
+	],
 );

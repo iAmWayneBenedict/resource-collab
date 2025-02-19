@@ -13,22 +13,24 @@ export const portfolioSkills = pgTable(
 			.references(() => skills.id)
 			.notNull(),
 	},
-	(table) => ({
-		pk: primaryKey({ columns: [table.portfolio_id, table.skill_id] }),
-		pkWithCustomName: primaryKey({
+	(table) => [
+		primaryKey({
 			name: "portfolio_skills_pk",
 			columns: [table.portfolio_id, table.skill_id],
 		}),
-	})
+	],
 );
 
-export const portfolioSkillsRelations = relations(portfolioSkills, ({ one }) => ({
-	portfolio: one(portfolios, {
-		fields: [portfolioSkills.portfolio_id],
-		references: [portfolios.id],
+export const portfolioSkillsRelations = relations(
+	portfolioSkills,
+	({ one }) => ({
+		portfolio: one(portfolios, {
+			fields: [portfolioSkills.portfolio_id],
+			references: [portfolios.id],
+		}),
+		skill: one(skills, {
+			fields: [portfolioSkills.skill_id],
+			references: [skills.id],
+		}),
 	}),
-	skill: one(skills, {
-		fields: [portfolioSkills.skill_id],
-		references: [skills.id],
-	}),
-}));
+);

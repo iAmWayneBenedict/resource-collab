@@ -19,13 +19,12 @@ export const resourceTags = pgTable(
 				onUpdate: "cascade",
 			}),
 	},
-	(table) => ({
-		pk: primaryKey({ columns: [table.resource_id, table.tag_id] }),
-		pkWithCustomName: primaryKey({
+	(table) => [
+		primaryKey({
 			name: "resource_tags_pk",
-			columns: [table.resource_id, table.tag_id],
+			columns: [table.tag_id, table.resource_id],
 		}),
-	})
+	],
 );
 
 export const resourceTagsRelations = relations(resourceTags, ({ one }) => ({

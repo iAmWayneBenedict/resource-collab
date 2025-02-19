@@ -7,3 +7,5 @@ type TPaginatedProps = {
 	filterBy?: string;
 	filterValue?: string;
 };
+
+type MetaTagTypes = Record<string, string | undefined>;
