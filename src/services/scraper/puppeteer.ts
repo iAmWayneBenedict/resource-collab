@@ -36,8 +36,7 @@ export const Puppeteer = async (url: string, META_TAGS: string[]) => {
 
 			if (content) scrapedData[tag] = content;
 			if (!content && tag === "title")
-				scrapedData[tag] =
-					document.querySelector("head title")?.innerHTML;
+				scrapedData[tag] = await page.evaluate(() => document.title);
 			if (tag === "image") {
 				const image = await page.evaluate(() => {
 					return (
