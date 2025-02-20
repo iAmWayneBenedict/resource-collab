@@ -48,10 +48,12 @@ export const Puppeteer = async (url: string, META_TAGS: string[]) => {
 							?.getAttribute("href")
 					);
 				});
-				const imageUrl = image?.includes("http")
-					? image
-					: homeUrl + image;
-				scrapedData[tag] = imageUrl;
+
+				// if the image is not a full url, add the home url
+				if (!image?.includes("http") && image)
+					scrapedData[tag] = homeUrl + image;
+				else if (image) scrapedData[tag] = image;
+				else scrapedData[tag] = "";
 
 				scrapedData["thumbnail"] = content!;
 			}

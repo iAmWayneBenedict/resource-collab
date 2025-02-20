@@ -39,9 +39,11 @@ export const Cheerio = async (url: string, META_TAGS: string[]) => {
 						$("link[rel='shortcut icon']").attr("href") ??
 						$("link[rel='icon']").attr("href");
 
-					if (!iconUrl?.includes("http"))
+					// If the image is not a full url, add the home url
+					if (!iconUrl?.includes("http") && iconUrl)
 						acc[tag] = homeUrl + iconUrl;
-					else acc[tag] = iconUrl;
+					else if (iconUrl) acc[tag] = iconUrl;
+					else acc[tag] = "";
 
 					acc["thumbnail"] = content;
 				}
