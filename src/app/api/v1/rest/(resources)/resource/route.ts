@@ -4,12 +4,11 @@ import {
 	deleteResourceTransaction,
 	findResource,
 } from "@/services/resource-service";
-import { auth } from "@/lib/auth";
+import { auth, getSession } from "@/lib/auth";
 import axios from "axios";
 import config from "@/config";
 
 type BodyParams = {
-	userId: string; // TODO: Delete this field on production
 	name: string;
 	category: number | string;
 	tags: number[] | string[];
@@ -20,15 +19,16 @@ type BodyParams = {
 };
 export async function POST(request: NextRequest): Promise<NextResponse> {
 	const body: BodyParams = await request.json();
-	const user = { id: body.userId };
 
-	// const session = await auth.api.getSession({ headers: request.headers });
-	// const user = session?.user;
-	// if (!user)
-	// 	return NextResponse.json(
-	// 		{ message: "Unauthorized", data: null },
-	// 		{ status: 403 },
-	// 	);
+	// check if the user is authenticated
+	const session = await getSession(request.headers);
+	const user = session?.user;
+	if (!user)
+		return NextResponse.json(
+			{ message: "Unauthorized", data: null },
+			{ status: 403 },
+		);
+
 	try {
 		let resourceData;
 

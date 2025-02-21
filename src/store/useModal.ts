@@ -19,7 +19,8 @@ export const useModal = create<TModalState>((set) => ({
 	data: null,
 	isOpen: false,
 	onSubmitCallback: (data) => {},
-	onOpen: (name, data, type) => set({ name, data, type: type || "create", isOpen: true }),
+	onOpen: (name, data, type) =>
+		set({ name, data, type: type ?? "create", isOpen: true }),
 	onClose: () => set({ isOpen: false, data: null, name: "", type: "" }),
 
 	reset: () => set({ name: "", data: null, isOpen: false, type: "" }),

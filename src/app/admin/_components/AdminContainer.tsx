@@ -9,8 +9,12 @@ type Props = {
 	description?: React.ReactNode;
 	children: React.ReactNode;
 };
-const AdminContainer: React.FC<Props> = ({ title, className, description, children }) => {
-	console.log(typeof title);
+const AdminContainer: React.FC<Props> = ({
+	title,
+	className,
+	description,
+	children,
+}) => {
 	return (
 		<Wrapper className={cn("", className)}>
 			<SideNav />

@@ -23,7 +23,7 @@ const ResourcesTable = () => {
 	const debouncedSearchValue = useDebounce(searchValue, 500);
 	const { getChecklistById } = useChecklist();
 
-	const hasCheckedInList = getChecklistById("User")?.list?.length || 0 > 0;
+	const hasCheckedInList = getChecklistById("User")?.list?.length ?? 0;
 
 	const { data, isLoading, refetch, isRefetching } =
 		useGetPaginatedResourcesQuery({
@@ -78,7 +78,9 @@ const ResourcesTable = () => {
 					</Button>
 					<Button
 						color="primary"
-						onPress={() => onOpenModal("resourcesForm", null)}
+						onPress={() =>
+							onOpenModal("resourcesForm", { type: "url" })
+						}
 						className="bg-violet"
 						endContent={<Plus className="h-7 w-7" />}
 					>

@@ -7,12 +7,14 @@ type Props = {
 
 const Top = ({ data, onRowsPerPageChange }: Props) => {
 	return (
-		<div className="flex justify-between items-center">
-			<span className="text-default-400 text-small">Total {data} rows</span>
-			<label className="flex items-center text-default-400 text-small">
+		<div className="flex items-center justify-between">
+			<span className="text-small text-default-400">
+				Total {data} rows
+			</span>
+			<label className="flex items-center text-small text-default-400">
 				Rows per page:
 				<select
-					className="bg-transparent outline-none text-default-400 text-small"
+					className="bg-transparent text-small text-default-400 outline-none"
 					onChange={onRowsPerPageChange}
 				>
 					<option value="5">5</option>

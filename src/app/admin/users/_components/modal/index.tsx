@@ -22,7 +22,7 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { InvalidateQueryFilters, useQueryClient } from "@tanstack/react-query";
 import { Lock, Mail, User } from "lucide-react";
-import { Fragment, useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -187,7 +187,7 @@ const UserFormModal = () => {
 										label="Name"
 										placeholder="Enter your name"
 										color={
-											!!errors.name ? "danger" : "default"
+											errors.name ? "danger" : "default"
 										}
 										isDisabled={isSubmitting}
 										endContent={
@@ -214,9 +214,7 @@ const UserFormModal = () => {
 										label="Email"
 										placeholder="Enter your email"
 										color={
-											!!errors.email
-												? "danger"
-												: "default"
+											errors.email ? "danger" : "default"
 										}
 										isDisabled={isSubmitting}
 										endContent={
@@ -243,7 +241,7 @@ const UserFormModal = () => {
 										isInvalid={!!errors.role}
 										errorMessage={errors.role?.message}
 										color={
-											!!errors.role ? "danger" : "default"
+											errors.role ? "danger" : "default"
 										}
 										label="Role"
 										placeholder="Select your role"
@@ -286,7 +284,7 @@ const UserFormModal = () => {
 												}
 												placeholder="Enter your password"
 												color={
-													!!errors.password
+													errors.password
 														? "danger"
 														: "default"
 												}
@@ -328,7 +326,7 @@ const UserFormModal = () => {
 												}
 												placeholder="Enter confirm password"
 												color={
-													!!errors.confirm_password
+													errors.confirm_password
 														? "danger"
 														: "default"
 												}

@@ -112,26 +112,31 @@ export const auth = betterAuth({
 
 	// rate limiter
 	rateLimit: {
-		window: 10,
-		max: 5,
+		window: 10, // seconds
+		max: 8, // max requests per window/seconds
 
 		// TODO: add more custom rules
 		customRules: {
 			"/sign-up/email": {
 				window: 10,
-				max: 2,
+				max: 8,
 			},
 			"/sign-in/email": {
 				window: 10,
-				max: 3,
+				max: 8,
 			},
 			"/email-otp": {
 				window: 30,
-				max: 1,
+				max: 10,
 			},
 		},
 	},
 });
 
-export const getSession = async () =>
-	await auth.api.getSession({ headers: await headers() });
+export const getSession = async (requestHeaders: Headers | null = null) => {
+	if (!requestHeaders) requestHeaders = await headers();
+
+	return await auth.api.getSession({
+		headers: requestHeaders,
+	});
+};

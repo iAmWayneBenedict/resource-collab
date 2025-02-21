@@ -25,6 +25,12 @@ export default async function RootLayout({
 	const session = await getSession();
 	return (
 		<html lang="en" suppressHydrationWarning={true}>
+			<head>
+				<script
+					crossOrigin="anonymous"
+					src="//unpkg.com/react-scan/dist/auto.global.js"
+				/>
+			</head>
 			<body className={cn(GeistSans.className)}>
 				<ThemeProvider
 				// attribute="class"

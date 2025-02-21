@@ -100,106 +100,99 @@ const Contact = () => {
 
 	const onSubmit: SubmitHandler<TFormValues> = (data) => console.log(data);
 	return (
-		<>
-			<script
-				async
-				src="https://cse.google.com/cse.js?cx=d4ded541602244e5a"
-			/>
-			<div className="gcse-search" suppressHydrationWarning></div>
-			<div
-				className="mt-56 flex w-full flex-col lg:flex-row"
-				style={{
-					gap: "clamp(3rem, 10vw, 10rem)",
-				}}
-			>
-				<div className="flex flex-1 flex-col gap-10">
-					<div>
-						<h1
-							className={cn(
-								"font-PlayFairDisplay font-medium",
-								"flex flex-col gap-3 whitespace-pre-wrap ~text-4xl/6xl",
-							)}
-						>
-							<span>Want to add?</span>
-							<span>Send us a message</span>
-						</h1>
-						<p className="mb-5 mt-10">
-							Lorem ipsum dolor sit amet, consectetur adipiscing
-							elit, sed do eiusmod tempor incididunt ut labore et
-							dolore magna aliqua. Ut enim ad minim veniam, quis
-							nostrud exercitation ullamco laboris nisi ut aliquip
-							ex ea commodo consequat.
-						</p>
-					</div>
-					<div className="h-auto w-full overflow-hidden rounded-[20px]">
-						<Image
-							className="h-full w-full object-cover"
-							src={contactGradient}
-							alt="contact gradient"
-						/>
-					</div>
+		<div
+			className="mt-56 flex w-full flex-col lg:flex-row"
+			style={{
+				gap: "clamp(3rem, 10vw, 10rem)",
+			}}
+		>
+			<div className="flex flex-1 flex-col gap-10">
+				<div>
+					<h1
+						className={cn(
+							"font-PlayFairDisplay font-medium",
+							"flex flex-col gap-3 whitespace-pre-wrap ~text-4xl/6xl",
+						)}
+					>
+						<span>Want to add?</span>
+						<span>Send us a message</span>
+					</h1>
+					<p className="mb-5 mt-10">
+						Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+						sed do eiusmod tempor incididunt ut labore et dolore
+						magna aliqua. Ut enim ad minim veniam, quis nostrud
+						exercitation ullamco laboris nisi ut aliquip ex ea
+						commodo consequat.
+					</p>
 				</div>
-				<div className="mt-7 flex-1">
-					<Form {...form}>
-						<form onSubmit={handleSubmit(onSubmit)}>
-							<div className="flex flex-col gap-3">
-								{formFields.map(({ name, type }) => {
-									return (
-										<Fragment key={name}>
-											{/*
+				<div className="h-auto w-full overflow-hidden rounded-[20px]">
+					<Image
+						className="h-full w-full object-cover"
+						src={contactGradient}
+						alt="contact gradient"
+					/>
+				</div>
+			</div>
+			<div className="mt-7 flex-1">
+				<Form {...form}>
+					<form onSubmit={handleSubmit(onSubmit)}>
+						<div className="flex flex-col gap-3">
+							{formFields.map(({ name, type }) => {
+								return (
+									<Fragment key={name}>
+										{/*
 											show scraped link if name is link
 										*/}
 
-											{name === "link" && scrapedData && (
-												<SiteCard
-													img={scrapedData.image}
-													title={scrapedData.title}
-													description={
-														scrapedData.description
-													}
-													link={scrapedData.link}
-												/>
-											)}
-											<ControlledInput
-												name={name}
-												type={type}
-												label={
-													name[0].toUpperCase() +
-													name.slice(1)
+										{name === "link" && scrapedData && (
+											<SiteCard
+												img={scrapedData.image}
+												title={scrapedData.title}
+												description={
+													scrapedData.description
 												}
-												control={control}
-												error={
-													errors[
-														name as keyof TFormValues
-													]
-												}
+												link={scrapedData.link}
 											/>
-										</Fragment>
-									);
-								})}
+										)}
+										<ControlledInput
+											name={name}
+											type={type}
+											label={
+												name[0].toUpperCase() +
+												name.slice(1)
+											}
+											control={control}
+											error={
+												errors[
+													name as keyof TFormValues
+												]
+											}
+										/>
+									</Fragment>
+								);
+							})}
 
-								<ControlledTextArea
-									size="lg"
-									name={"message"}
-									label={"Message"}
-									control={control}
-									error={errors["message"]}
-								/>
-							</div>
-							<div className="mt-10 w-full">
-								<button
-									type="submit"
-									title="Submit"
-									className="w-full rounded-full bg-violet py-5 text-lg text-white"
-								>
-									Message
-								</button>
-							</div>
-						</form>
-					</Form>
-				</div>
+							<ControlledTextArea
+								size="lg"
+								name={"message"}
+								label={"Message"}
+								control={control}
+								error={errors["message"]}
+							/>
+						</div>
+						<div className="mt-10 w-full">
+							<button
+								type="submit"
+								title="Submit"
+								className="w-full rounded-full bg-violet py-5 text-lg text-white"
+							>
+								Message
+							</button>
+						</div>
+					</form>
+				</Form>
 			</div>
-		</>
+		</div>
 	);
 };
 

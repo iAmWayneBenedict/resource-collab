@@ -1,9 +1,9 @@
-import { usePutUserMutation } from "./user-services";
+import { usePutUserMutation } from "./user-mutations";
 import {
 	usePostLoginMutation,
 	usePostRegisterMutation,
 	usePostVerifyEmailMutation,
-} from "./auth-services";
+} from "./auth-mutations";
 
 export {
 	usePostLoginMutation,
