@@ -34,7 +34,7 @@ export const Cheerio = async (url: string, META_TAGS: string[]) => {
 				if (content) acc[tag] = content;
 				if (!content && tag === "title")
 					acc[tag] = $("head title").text();
-				if (tag === "image") {
+				if (tag === "icon") {
 					const iconUrl =
 						$("link[rel='shortcut icon']").attr("href") ??
 						$("link[rel='icon']").attr("href");

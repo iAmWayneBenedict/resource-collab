@@ -1,7 +1,10 @@
 import type { Config } from "tailwindcss";
-const { default: flattenColorPalette } = require("tailwindcss/lib/util/flattenColorPalette");
+const {
+	default: flattenColorPalette,
+} = require("tailwindcss/lib/util/flattenColorPalette");
 import { heroui } from "@heroui/react";
-import fluid, {extract, screens, fontSize} from "fluid-tailwind";
+import fluid, { extract, screens, fontSize } from "fluid-tailwind";
+import { withUt } from "uploadthing/tw";
 
 const config = {
 	darkMode: "class",
@@ -13,7 +16,7 @@ const config = {
 			"./app/**/*.{ts,tsx}",
 			"./src/**/*.{ts,tsx}",
 		],
-		extract
+		extract,
 	},
 	prefix: "",
 	theme: {
@@ -129,7 +132,7 @@ const config = {
 function addVariablesForColors({ addBase, theme }: any) {
 	let allColors = flattenColorPalette(theme("colors"));
 	let newVars = Object.fromEntries(
-		Object.entries(allColors).map(([key, val]) => [`--${key}`, val])
+		Object.entries(allColors).map(([key, val]) => [`--${key}`, val]),
 	);
 
 	addBase({
@@ -137,4 +140,4 @@ function addVariablesForColors({ addBase, theme }: any) {
 	});
 }
 
-export default config;
+export default withUt(config);

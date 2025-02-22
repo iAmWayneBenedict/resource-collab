@@ -7,6 +7,7 @@ const META_TAGS: string[] = [
 	"title",
 	"site_name",
 	"image",
+	"icon",
 	"description",
 ];
 export const GET = async (request: NextRequest, response: NextResponse) => {

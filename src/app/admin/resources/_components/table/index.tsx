@@ -65,6 +65,8 @@ const ResourcesTable = () => {
 						value={searchValue}
 						onClear={() => setSearchValue("")}
 						onChange={(e) => setSearchValue(e.target.value)}
+						spellCheck="false"
+						suppressHydrationWarning
 					/>
 				</div>
 				<div className="flex gap-3">

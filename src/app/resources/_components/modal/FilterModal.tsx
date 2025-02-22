@@ -1,6 +1,7 @@
 "use client";
 
 import ControlledMultipleChipFilter from "@/components/custom/ControlledMultipleChipFilter";
+import CustomComboBox from "@/components/custom/CustomComboBox";
 import { useModal } from "@/store";
 import {
 	Modal,
@@ -51,7 +52,12 @@ const FilterFormModal = () => {
 							<span>Filters</span>
 						</ModalHeader>
 						<ModalBody className="gap-4">
-							<ControlledMultipleChipFilter />
+							<CustomComboBox
+								triggerText="Select Tags"
+								options={["test", "test2", "asdf"]}
+								selectionMode="multiple"
+								placement="top-start"
+							/>
 						</ModalBody>
 						<ModalFooter>
 							<Button

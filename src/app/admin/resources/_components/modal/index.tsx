@@ -12,6 +12,7 @@ import { useCallback, useEffect, useState } from "react";
 import URLForm from "./URLForm";
 import CompleteForm from "./CompleteForm";
 import { TabsContent, Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { toggleScrollBody } from "@/lib/utils";
 
 const ResourceFormModal = () => {
 	const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -21,12 +22,16 @@ const ResourceFormModal = () => {
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	useEffect(() => {
-		if (modalName === "resourcesForm") onOpen();
+		if (modalName === "resourcesForm") {
+			onOpen();
+			toggleScrollBody(true);
+		}
 	}, [modalName, onOpen]);
 
 	const onCloseModal = () => {
 		onOpenChange();
 		onClose();
+		toggleScrollBody(false);
 	};
 
 	const handleSubmittingCallback = useCallback((state: boolean) => {
@@ -36,20 +41,29 @@ const ResourceFormModal = () => {
 	return (
 		<Modal
 			isOpen={isOpen}
-			placement="top-center"
+			placement="center"
 			onOpenChange={onCloseModal}
 			backdrop="blur"
+			scrollBehavior="normal"
 			isDismissable={!isSubmitting}
 		>
 			<ModalContent>
 				<ModalHeader className="flex flex-col gap-1">
 					<span>Create Resource</span>
+					<p className="text-xs font-normal lg:text-sm">
+						Create new resources automatically using a URL or
+						manually fill them out using a form.
+					</p>
 				</ModalHeader>
 				<ModalBody className="gap-4">
 					<Tabs defaultValue="url" className="w-full">
 						<TabsList className="grid w-full grid-cols-2">
-							<TabsTrigger value="url">URL</TabsTrigger>
-							<TabsTrigger value="form">Form</TabsTrigger>
+							<TabsTrigger disabled={isSubmitting} value="url">
+								URL
+							</TabsTrigger>
+							<TabsTrigger disabled={isSubmitting} value="form">
+								Form
+							</TabsTrigger>
 						</TabsList>
 						<TabsContent value="url">
 							<URLForm

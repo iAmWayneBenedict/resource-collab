@@ -61,7 +61,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 			resourceData = {
 				...response.data?.data,
 				category: body.category,
-				icon: response.data?.data.image,
+				thumbnail: response.data?.data.image,
+				icon: response.data?.data.icon,
 				name:
 					response.data?.data.title ?? response.data?.data.site_name,
 				tags: [],

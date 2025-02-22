@@ -1,4 +1,4 @@
-import { delay } from "@/lib/utils";
+import { usePostResourceMutation } from "@/lib/mutations/resources";
 import { Button, Input } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useState } from "react";
@@ -31,14 +31,29 @@ const URLForm = ({
 
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
-	const onSubmit = (data: any) => {
-		onSubmittingCallback(true);
-		delay(2000).then(() => {
+	const createResourceMutation = usePostResourceMutation({
+		onSuccess: (data) => {
+			console.log(data);
 			onSubmittingCallback(false);
-		});
+			setIsSubmitting(false);
+		},
+		onError: (error) => {
+			console.log(error);
+			onSubmittingCallback(false);
+			setIsSubmitting(false);
+		},
+	});
+
+	const onSubmit = (data: any) => {
+		console.log(data);
+		onSubmittingCallback(true);
+		setIsSubmitting(true);
+
+		createResourceMutation.mutate(data);
 	};
 	return (
 		<form onSubmit={handleSubmit(onSubmit)} className="mt-4">
+			
 			<Controller
 				name="url"
 				control={control}
@@ -55,6 +70,10 @@ const URLForm = ({
 					/>
 				)}
 			/>
+			<p className="text-xs italic mt-4">
+				By default, this approach uses AI to determine the category and
+				tags associated with the resource
+			</p>
 			<div className="mb-3 mt-5 flex justify-end gap-2">
 				<Button
 					color="default"
@@ -70,7 +89,7 @@ const URLForm = ({
 					type="submit"
 					isLoading={isSubmitting}
 				>
-					{isSubmitting ? "Please wait" : "Create Account"}
+					{isSubmitting ? "Please wait" : "Create"}
 				</Button>
 			</div>
 		</form>

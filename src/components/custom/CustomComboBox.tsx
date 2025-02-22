@@ -12,17 +12,21 @@ import {
 	Selection,
 } from "@heroui/react";
 import React, { memo, useMemo, useState } from "react";
-import { toggleScrollBody } from "../../lib/utils";
-import { Search, SlidersHorizontal } from "lucide-react";
+import { cn, toggleScrollBody } from "../../lib/utils";
+import { ListFilterPlus, Search } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
+
+const notButtonStyles = "rounded-xl bg-default-100 p-2";
 
 type CustomComboBoxProps = {
 	triggerText: string;
 	options: string[];
-	value: (string | number)[];
-	onSelect: (value: (string | number)[]) => void;
-	isDisabled: boolean;
+	isButtonOnly?: boolean;
+	value?: (string | number)[];
+	onSelect?: (value: (string | number)[]) => void;
+	isDisabled?: boolean;
 	selectionMode?: "single" | "multiple";
+	disableParentScrollOnOpen?: boolean;
 	placement?:
 		| "top"
 		| "bottom"
@@ -34,11 +38,13 @@ type CustomComboBoxProps = {
 const CustomComboBox = ({
 	triggerText,
 	options,
+	isButtonOnly,
 	value = [],
 	selectionMode = "single",
 	placement = "bottom",
+	disableParentScrollOnOpen = true, // ! NOTE: Set "false" to enable scroll inside modals
 	isDisabled = false,
-	onSelect,
+	onSelect = () => {},
 }: CustomComboBoxProps) => {
 	const [selectedKeys, setSelectedKeys] = useState<Selection>(
 		new Set([...value]),
@@ -61,10 +67,19 @@ const CustomComboBox = ({
 		setSelectedKeys(new Set([]));
 	};
 
+	const onOpenChangeHandler = (state: boolean) => {
+		if (disableParentScrollOnOpen) toggleScrollBody(false);
+	};
+
 	return (
-		<div className="relative flex w-full flex-col rounded-xl bg-default-100 p-2">
+		<div
+			className={cn(
+				"relative flex w-full flex-col",
+				!isButtonOnly && notButtonStyles,
+			)}
+		>
 			<AnimatePresence mode="popLayout">
-				{!![...selectedKeys].length && (
+				{!isButtonOnly && !![...selectedKeys].length && (
 					<motion.div
 						layout
 						initial={{ scale: 0.9, opacity: 0 }}
@@ -90,16 +105,21 @@ const CustomComboBox = ({
 				classNames={{ content: "p-0 w-full" }}
 				aria-label="Custom ComboBox"
 				placement={placement}
-				onOpenChange={toggleScrollBody}
+				onOpenChange={onOpenChangeHandler}
 			>
 				<PopoverTrigger>
 					<Button
 						isDisabled={isDisabled}
 						variant="light"
-						startContent={<SlidersHorizontal />}
+						startContent={<ListFilterPlus />}
 						className="w-fit bg-white hover:opacity-90"
 					>
-						{triggerText}
+						{triggerText}{" "}
+						<span className="font-bold text-violet">
+							{[...selectedKeys].length
+								? `(${[...selectedKeys].length})`
+								: null}
+						</span>
 					</Button>
 				</PopoverTrigger>
 				<PopoverContent aria-label="Custom Combobox Content">
@@ -128,14 +148,29 @@ const CustomComboBox = ({
 						selectedKeys={selectedKeys}
 						onSelectionChangeHandler={onSelectionChangeHandler}
 					/>
+					<Divider />
+					<div className="flex w-full justify-end py-2 pr-2">
+						<Button
+							variant="flat"
+							size="sm"
+							className="h-6 min-w-10"
+							radius="full"
+							onPress={onClickClearHandler}
+							isDisabled={![...selectedKeys].length}
+						>
+							Clear
+						</Button>
+					</div>
 				</PopoverContent>
 			</Popover>
 
-			<ChipsContainer
-				isDisabled={isDisabled}
-				selectedKeys={selectedKeys}
-				onCloseChipHandler={onCloseChipHandler}
-			/>
+			{!isButtonOnly && (
+				<ChipsContainer
+					isDisabled={isDisabled}
+					selectedKeys={selectedKeys}
+					onCloseChipHandler={onCloseChipHandler}
+				/>
+			)}
 		</div>
 	);
 };
@@ -154,8 +189,8 @@ const ListboxContainer = memo(
 		options,
 		searchValue,
 		selectedKeys,
-		onSelectionChangeHandler,
 		selectionMode,
+		onSelectionChangeHandler,
 	}: ListboxContainerProps) => {
 		const filteredOptions = useMemo(() => {
 			if (!searchValue) return options;

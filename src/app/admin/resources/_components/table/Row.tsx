@@ -1,6 +1,5 @@
 import {
 	Button,
-	Chip,
 	Dropdown,
 	DropdownItem,
 	DropdownMenu,
@@ -21,19 +20,13 @@ const Row = ({ row, columnKey }: Props) => {
 	const cellValue = row[columnKey];
 
 	switch (columnKey) {
-		case "name":
-			return (
-				<User avatarProps={{ radius: "lg", src: row.avatar }} name={cellValue}>
-					{row.email}
-				</User>
-			);
 		case "created_at":
 			return <div>{formatDate(cellValue as string)}</div>;
 		case "updated_at":
 			return <div>{formatDate(cellValue as string)}</div>;
 		case "actions":
 			return (
-				<div className="relative flex justify-end items-center gap-2">
+				<div className="relative flex items-center justify-end gap-2">
 					<Dropdown placement="bottom-end">
 						<DropdownTrigger>
 							<Button isIconOnly size="sm" variant="light">
@@ -44,7 +37,9 @@ const Row = ({ row, columnKey }: Props) => {
 							<DropdownItem key="view">View</DropdownItem>
 							<DropdownItem
 								key="edit"
-								onPress={() => onOpenModal("resourceForm", row, "update")}
+								onPress={() =>
+									onOpenModal("resourceForm", row, "update")
+								}
 							>
 								Edit
 							</DropdownItem>
@@ -54,7 +49,11 @@ const Row = ({ row, columnKey }: Props) => {
 				</div>
 			);
 		default:
-			return <div>{cellValue}</div>;
+			return (
+				<div className="block w-full max-w-[15rem] overflow-hidden text-ellipsis whitespace-nowrap break-words">
+					{cellValue}
+				</div>
+			);
 	}
 };
 
