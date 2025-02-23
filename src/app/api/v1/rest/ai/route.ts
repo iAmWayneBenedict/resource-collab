@@ -1,6 +1,6 @@
 import { AIService } from "@/services/ai";
-import { ListOfSchema, ListOfSystemInstruction } from "@/services/ai/gemini";
-import { GenerationConfig } from "@google/generative-ai";
+import { ListOfSchema } from "@/services/ai/gemini";
+import { ListOfSystemInstruction } from "@/services/ai/system-instructions";
 import { NextRequest, NextResponse } from "next/server";
 
 export const GET = async (req: NextRequest) => {
@@ -14,7 +14,8 @@ export const GET = async (req: NextRequest) => {
 	}
 
 	const configSchema = ListOfSchema.LIST_OF_RESOURCES;
-	const systemInstruction = ListOfSystemInstruction.LIST_OF_RESOURCES_SUMMARY;
+	const systemInstruction =
+		ListOfSystemInstruction.LIST_OF_RESOURCES_INSTRUCTION;
 
 	const res = await AIService.gemini.generate({
 		prompt,

@@ -3,7 +3,7 @@ import { usersEnum, TUsers, users, usersStatusEnum } from "./models/users";
 import { sessions, sessionsRelations } from "./models/sessions";
 import { oauthAccounts, TOauthAccounts } from "./models/oauth-account";
 import { emailVerificationCodes } from "./models/email-verification-codes";
-import { resources, TResources, resourceRelations } from "./models/resources";
+import { resources, resourceRelations } from "./models/resources";
 import { portfolios, portfolioRelations } from "./models/portfolios";
 import {
 	portfolioSkills,
@@ -12,11 +12,7 @@ import {
 import { skills, skillRelations } from "./models/skills";
 import { admins, adminUserRelations } from "./models/admins";
 import { externalMessages } from "./models/external-message";
-import {
-	categories,
-	TCategories,
-	categoryRelations,
-} from "./models/categories";
+import { categories, categoryRelations } from "./models/categories";
 import { userRelations } from "./models/users";
 import { userResources, userResourcesRelations } from "./models/user-resources";
 import { bookmarks, bookmarksRelations } from "./models/bookmarks";
@@ -137,4 +133,4 @@ export {
 	externalMessages,
 };
 
-export type { TUsers, TOauthAccounts, TResources, TCategories };
+export type { TUsers, TOauthAccounts };

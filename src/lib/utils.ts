@@ -235,11 +235,11 @@ export const errorApiResponseExtractor = (error: any): TErrorAPIResponse => {
 export const getApiPaginatedSearchParams = (searchParams: URLSearchParams) => {
 	const page = Number(searchParams.get("page")) || 1;
 	const limit = Number(searchParams.get("limit")) || 10;
-	const search = searchParams.get("search") || undefined;
-	const sortBy = searchParams.get("sort_by") || undefined;
-	const sortType = searchParams.get("sort_type") || undefined;
-	const filterBy = searchParams.get("filter_by") || undefined;
-	const filterValue = searchParams.get("filter_value") || undefined;
+	const search = searchParams.get("search") ?? undefined;
+	const sortBy = searchParams.get("sort_by") ?? undefined;
+	const sortType = searchParams.get("sort_type") ?? undefined;
+	const filterBy = searchParams.get("filter_by") ?? undefined;
+	const filterValue = searchParams.get("filter_value") ?? undefined;
 
 	return { page, limit, search, sortBy, sortType, filterBy, filterValue };
 };

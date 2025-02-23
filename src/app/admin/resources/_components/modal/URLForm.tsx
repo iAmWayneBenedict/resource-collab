@@ -1,5 +1,6 @@
 import { usePostResourceMutation } from "@/lib/mutations/resources";
-import { Button, Input } from "@heroui/react";
+import { bindReactHookFormError } from "@/lib/utils";
+import { addToast, Alert, Button, Input } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -7,10 +8,12 @@ import { z } from "zod";
 
 const formSchema = z.object({
 	url: z.string().url("Invalid URL"),
+	alert: z.string().nullish(),
 });
 
 const DEFAULT_VALUES = {
 	url: "",
+	alert: "",
 };
 
 type URLFormProps = {
@@ -24,7 +27,13 @@ const URLForm = ({
 	data,
 	onSubmittingCallback,
 }: URLFormProps) => {
-	const { control, handleSubmit, setError, reset } = useForm({
+	const {
+		control,
+		handleSubmit,
+		setError,
+		reset,
+		formState: { errors },
+	} = useForm({
 		defaultValues: DEFAULT_VALUES,
 		resolver: zodResolver(formSchema),
 	});
@@ -33,14 +42,21 @@ const URLForm = ({
 
 	const createResourceMutation = usePostResourceMutation({
 		onSuccess: (data) => {
-			console.log(data);
 			onSubmittingCallback(false);
 			setIsSubmitting(false);
+			onCloseModal();
+
+			addToast({
+				title: "Success",
+				description: "Resource created successfully.",
+				color: "success",
+			});
 		},
 		onError: (error) => {
-			console.log(error);
+			console.log(error.response.data);
 			onSubmittingCallback(false);
 			setIsSubmitting(false);
+			bindReactHookFormError(error.response.data, setError);
 		},
 	});
 
@@ -53,7 +69,14 @@ const URLForm = ({
 	};
 	return (
 		<form onSubmit={handleSubmit(onSubmit)} className="mt-4">
-			
+			<Alert
+				color="danger"
+				variant={"flat"}
+				radius={"full"}
+				isVisible={!!errors.alert?.message}
+				title={(errors.alert?.message as string) ?? ""}
+				className="mb-3"
+			/>
 			<Controller
 				name="url"
 				control={control}
@@ -70,7 +93,7 @@ const URLForm = ({
 					/>
 				)}
 			/>
-			<p className="text-xs italic mt-4">
+			<p className="mt-4 text-xs italic">
 				By default, this approach uses AI to determine the category and
 				tags associated with the resource
 			</p>
@@ -78,6 +101,7 @@ const URLForm = ({
 				<Button
 					color="default"
 					variant="light"
+					radius="full"
 					onPress={onCloseModal}
 					isDisabled={isSubmitting}
 				>
@@ -87,6 +111,7 @@ const URLForm = ({
 					color="primary"
 					className="bg-violet"
 					type="submit"
+					radius="full"
 					isLoading={isSubmitting}
 				>
 					{isSubmitting ? "Please wait" : "Create"}

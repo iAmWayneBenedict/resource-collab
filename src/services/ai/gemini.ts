@@ -23,7 +23,7 @@ type GeminiProps = {
 };
 const Gemini = async ({
 	prompt,
-	model = "gemini-1.5-pro",
+	model = "gemini-2.0-flash",
 	config = undefined,
 	systemInstruction = undefined,
 }: GeminiProps) => {
@@ -43,7 +43,6 @@ const Gemini = async ({
 	});
 	const result = await geminiModel.generateContent(prompt);
 
-	// TODO: get the promptToken, candidateToken, and totalToken from usageMetaData for statistics
 	const text = result.response.text();
 	return {
 		response: JSON.parse(text),
@@ -110,10 +109,23 @@ export const ListOfSchema = {
 		},
 		required: ["summary", "knowledge_cutoff", "resources"],
 	} as GenerationConfig,
-};
 
-export const ListOfSystemInstruction = {
-	LIST_OF_RESOURCES_SUMMARY: `You are a web scraping assistant that scrapes the website and returns a list of resources that you may find similarities with the prompt you will be given. 
-        STRICTLY NO WEBSITES THAT ARE LISTING OTHER WEBSITES similar with these (Top UI library in react, Top AI models, Top 10, Top 5). 
-        You should also STRICTLY adhere to the schema that you will be given.`,
+	CATEGORY_AND_LIST_OF_TAGS: {
+		description: "Category and list of tags",
+		type: SchemaType.OBJECT,
+		properties: {
+			category: {
+				type: SchemaType.STRING,
+				description: "The category of the resource",
+			},
+			tags: {
+				type: SchemaType.ARRAY,
+				items: {
+					type: SchemaType.STRING,
+					description: "The tags of the resource",
+				},
+			},
+		},
+		required: ["category", "tags"],
+	} as GenerationConfig,
 };

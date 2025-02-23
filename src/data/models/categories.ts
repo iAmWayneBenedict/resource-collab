@@ -2,6 +2,7 @@ import { relations } from "drizzle-orm";
 import { pgTable, serial, timestamp, varchar } from "drizzle-orm/pg-core";
 import { portfolios } from "./portfolios";
 import { resources } from "./resources";
+import { tags } from "./tags";
 
 export const categories = pgTable("categories", {
 	id: serial("id").primaryKey(),
@@ -11,8 +12,10 @@ export const categories = pgTable("categories", {
 });
 
 export type CategoryType = typeof categories;
+export type CategorySelectType = typeof categories.$inferSelect;
 
 export const categoryRelations = relations(categories, ({ many }) => ({
 	resources: many(resources),
 	portfolios: many(portfolios),
+	tags: many(tags),
 }));

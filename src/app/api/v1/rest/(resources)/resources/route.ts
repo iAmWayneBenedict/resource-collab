@@ -133,7 +133,7 @@ export const GET = async (req: NextRequest) => {
 				orderBy: [sortValue],
 			})
 			.prepare("all_resources");
-		console.log(search);
+
 		const rows = await query.execute({
 			search: `%${search}%`,
 			offset: (page - 1) * limit,

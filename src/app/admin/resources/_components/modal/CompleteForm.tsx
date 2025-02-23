@@ -1,22 +1,22 @@
 import CustomComboBox from "@/components/custom/CustomComboBox";
 import { usePostResourceMutation } from "@/lib/mutations/resources";
-import { UploadButton } from "@/lib/storage/uploadthing";
 import {
 	Autocomplete,
 	AutocompleteItem,
 	Button,
-	Chip,
 	Input,
-	Switch,
 	Textarea,
+	addToast,
+	Alert,
 } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
-import { AnimatePresence, motion } from "motion/react";
 import { usePostDeleteUploadThingFileMutation } from "../../../../../lib/mutations/storage/uploadthing";
-import { isValidUrl } from "@/lib/utils";
+import { bindReactHookFormError } from "@/lib/utils";
+import { UploadImageResource } from "./UploadImage";
+import { useGetCategoriesQuery } from "@/lib/queries/categories";
 
 const formSchema = z.object({
 	url: z.string().url("Invalid URL"),
@@ -28,6 +28,7 @@ const formSchema = z.object({
 	icon: z.union([z.string().url(), z.literal("").nullish()]),
 	thumbnail: z.union([z.string().url(), z.literal("").nullish()]),
 	description: z.string().nullish(),
+	alert: z.string().nullish(),
 });
 const DEFAULT_VALUES = {
 	url: "",
@@ -37,6 +38,7 @@ const DEFAULT_VALUES = {
 	icon: "",
 	thumbnail: "",
 	description: "",
+	alert: "",
 };
 
 type CompleteFormProps = {
@@ -58,6 +60,8 @@ const CompleteForm = ({
 		setValue,
 		watch,
 		clearErrors,
+		getValues,
+		formState: { errors },
 	} = useForm({
 		defaultValues: DEFAULT_VALUES,
 		resolver: zodResolver(formSchema),
@@ -72,6 +76,35 @@ const CompleteForm = ({
 		icon: false,
 		thumbnail: false,
 	});
+
+	const categoriesWithTagsResponse = useGetCategoriesQuery();
+
+	const categoriesWithTags = useMemo(() => {
+		if (categoriesWithTagsResponse.data) {
+			return categoriesWithTagsResponse.data?.data?.rows?.map(
+				(category: any) => ({
+					id: category.id,
+					name: category.name,
+					tags: category.tags.map((tag: any) => tag.name),
+				}),
+			);
+		}
+
+		return [{ id: "empty", name: "Empty list", tags: [] }];
+	}, [categoriesWithTagsResponse.data]);
+
+	useEffect(() => {
+		setValue("tags", []);
+	}, [watch("category")]);
+
+	const tagsList = useMemo(
+		() =>
+			categoriesWithTags.find(
+				(category: any) =>
+					category.id === Number(getValues("category")),
+			)?.tags ?? [],
+		[watch("category")],
+	);
 
 	const deleteUploadedImagesMutation = usePostDeleteUploadThingFileMutation();
 	useEffect(() => {
@@ -89,15 +122,21 @@ const CompleteForm = ({
 			onSubmittingCallback(false);
 			setIsDisableForm(false);
 			setIsSubmitting(false);
+
+			addToast({
+				title: "Success",
+				description: "Resource created successfully.",
+				color: "success",
+			});
 		},
 		onError: (error) => {
 			console.log(error);
 			onSubmittingCallback(false);
 			setIsDisableForm(false);
 			setIsSubmitting(false);
+			bindReactHookFormError(error.response.data, setError);
 		},
 	});
-	console.log(watch("category"));
 	const onSubmit = (data: any) => {
 		console.log(data);
 		onSubmittingCallback(true);
@@ -111,6 +150,14 @@ const CompleteForm = ({
 			onSubmit={handleSubmit(onSubmit)}
 			className="mt-4 flex flex-col gap-4"
 		>
+			<Alert
+				color="danger"
+				variant={"flat"}
+				radius={"full"}
+				isVisible={!!errors.alert?.message}
+				title={(errors.alert?.message as string) ?? ""}
+				className="mb-3"
+			/>
 			<Controller
 				name="name"
 				control={control}
@@ -153,20 +200,20 @@ const CompleteForm = ({
 						isVirtualized
 						label="Category"
 						placeholder="Select category"
-						items={[
-							{ name: "category data" },
-							{ name: "category data 2" },
-						]}
+						items={categoriesWithTags}
+						isLoading={categoriesWithTagsResponse.isLoading}
+						defaultItems={[{ id: "empty", name: "Empty list" }]}
 						selectedKey={field.value}
 						onSelectionChange={field.onChange}
+						disabledKeys={["empty"]}
 						isInvalid={!!errors.category}
 						errorMessage={errors.category?.message}
 						color={errors.category ? "danger" : "default"}
 						isDisabled={isDisableForm}
 					>
 						{(item) => (
-							<AutocompleteItem key={item.name}>
-								{item.name}
+							<AutocompleteItem key={item?.id}>
+								{item?.name}
 							</AutocompleteItem>
 						)}
 					</Autocomplete>
@@ -218,32 +265,25 @@ const CompleteForm = ({
 				)}
 			/>
 
-			<Controller
-				name="tags"
-				control={control}
-				render={({ field }) => (
-					<CustomComboBox
-						triggerText="Select Tags"
-						value={field.value as string[]}
-						onSelect={field.onChange}
-						options={[
-							"test",
-							"test2",
-							"asdf",
-							"asdfg",
-							"asdfas",
-							"asdfaas",
-							"asdfasddaw",
-							"as",
-							"asdfwwwr",
-						]}
-						selectionMode="multiple"
-						placement="top-start"
-						isDisabled={isDisableForm}
-						disableParentScrollOnOpen={false}
-					/>
-				)}
-			/>
+			<div>
+				<Controller
+					name="tags"
+					control={control}
+					render={({ field }) => (
+						<CustomComboBox
+							triggerText="Select Tags"
+							value={field.value as string[]}
+							onSelect={field.onChange}
+							options={tagsList}
+							selectionMode="multiple"
+							placement="top-start"
+							isDisabled={isDisableForm || !tagsList.length}
+							disableParentScrollOnOpen={false}
+						/>
+					)}
+				/>
+				<div className="text-xs italic">Tags are based on category</div>
+			</div>
 
 			<div className="mb-3 mt-5 flex justify-end gap-2">
 				<Button
@@ -269,130 +309,3 @@ const CompleteForm = ({
 };
 
 export default CompleteForm;
-
-type UploadImageResource = {
-	name: string;
-	watch: any;
-	clearErrors: any;
-	setValue: any;
-	isDisableForm: boolean;
-	setShowUploadButtons: React.Dispatch<
-		React.SetStateAction<{
-			icon: boolean;
-			thumbnail: boolean;
-		}>
-	>;
-	showUploadButtons: any;
-	control: any;
-	setIsDisableForm: any;
-	setFileIds: any;
-	fileIds: any;
-};
-const UploadImageResource = ({
-	name,
-	isDisableForm,
-	setShowUploadButtons,
-	clearErrors,
-	setValue,
-	watch,
-	showUploadButtons,
-	control,
-	setIsDisableForm,
-	setFileIds,
-	fileIds,
-}: UploadImageResource) => {
-	const deleteImageMutation = usePostDeleteUploadThingFileMutation();
-	return (
-		<div>
-			<div className="mb-1 flex justify-between">
-				<Switch
-					size="sm"
-					isDisabled={!!isDisableForm}
-					isSelected={showUploadButtons[name]}
-					onValueChange={(state: boolean) =>
-						setShowUploadButtons((prev) => ({
-							...prev,
-							[name]: state,
-						}))
-					}
-				>
-					Show upload button
-				</Switch>
-				<AnimatePresence mode="popLayout">
-					{watch(name) && (
-						<motion.div
-							onClick={() => {
-								setValue(name, "");
-								clearErrors([name]);
-								deleteImageMutation.mutate([fileIds[name]]);
-							}}
-							className="cursor-pointer"
-							initial={{ opacity: 0, scale: 0.95 }}
-							animate={{ opacity: 1, scale: 1 }}
-							transition={{
-								ease: "easeInOut",
-								duration: 0.2,
-							}}
-						>
-							<Chip size="sm" className="text-xs" variant="flat">
-								Clear
-							</Chip>
-						</motion.div>
-					)}
-				</AnimatePresence>
-			</div>
-			<div className={showUploadButtons[name] ? "hidden" : "flex"}>
-				<Controller
-					name={name}
-					control={control}
-					render={({ field, formState: { errors } }) => (
-						<Input
-							value={field.value as string}
-							onValueChange={field.onChange}
-							isInvalid={!!errors[name]}
-							errorMessage={errors[name]?.message?.toString()}
-							label={name}
-							placeholder={`Enter ${name}`}
-							color={errors[name] ? "danger" : "default"}
-							isDisabled={isDisableForm}
-							classNames={{ label: "capitalize" }}
-						/>
-					)}
-				/>
-			</div>
-			<div className={showUploadButtons[name] ? "mt-2 flex" : "hidden"}>
-				<UploadButton
-					endpoint="imageUploader"
-					onClientUploadComplete={(res) => {
-						// Do something with the response
-						console.log("Files: ", res);
-						setValue(name, res[0].ufsUrl);
-						setIsDisableForm(false);
-						setShowUploadButtons((prev) => ({
-							icon: false,
-							thumbnail: false,
-						}));
-						setFileIds((prev: any) => ({
-							...prev,
-							[name]: res[0].key,
-						}));
-					}}
-					onUploadError={(error: Error) => {
-						// Do something with the error.
-						setIsDisableForm(false);
-					}}
-					onBeforeUploadBegin={(files) => {
-						// Do something before the upload begins.
-						if (fileIds[name])
-							deleteImageMutation.mutate(
-								Object.values(fileIds).filter((v) => v),
-							);
-
-						setIsDisableForm(true);
-						return files;
-					}}
-				/>
-			</div>
-		</div>
-	);
-};

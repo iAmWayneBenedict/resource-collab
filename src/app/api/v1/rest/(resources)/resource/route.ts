@@ -7,6 +7,11 @@ import {
 import { auth, getSession } from "@/lib/auth";
 import axios from "axios";
 import config from "@/config";
+import { AIService } from "@/services/ai";
+import { ListOfPrompt } from "@/services/ai/prompts";
+import { findAllCategory } from "@/services/category-service";
+import { ListOfSchema } from "@/services/ai/gemini";
+import { ListOfSystemInstruction } from "@/services/ai/system-instructions";
 
 type BodyParams = {
 	name: string;
@@ -54,9 +59,36 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 		}
 
 		if (!body.name) {
-			const response = await axios.get(
-				`${config.SERVER_API_URL}/scrape?url=${body.url}`,
-			);
+			let response;
+			try {
+				response = await axios.get(
+					`${config.SERVER_API_URL}/scrape?url=${body.url}`,
+				);
+			} catch (error: Error | any) {
+				console.log(JSON.stringify(error));
+
+				if (error.code === "ERR_BAD_REQUEST") {
+					return NextResponse.json(
+						{ message: "Invalid URL", data: { path: ["url"] } },
+						{ status: 400 },
+					);
+				}
+
+				if (error instanceof Error) {
+					return NextResponse.json(
+						{ message: error.message, data: { path: ["url"] } },
+						{ status: 400 },
+					);
+				}
+
+				return NextResponse.json(
+					{
+						message: "Error scraping the url",
+						data: { path: ["alert"] },
+					},
+					{ status: 400 },
+				);
+			}
 
 			resourceData = {
 				...response.data?.data,
@@ -68,14 +100,55 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 				tags: [],
 			};
 		}
-		console.log(resourceData);
+
+		if (!resourceData.description) {
+			return NextResponse.json(
+				{
+					message: "No metadata found from the url",
+					data: { path: ["url"] },
+				},
+				{ status: 404 },
+			);
+		}
+
+		if (!resourceData.category) {
+			const categoriesWithTags = await findAllCategory({
+				type: "all",
+				with: { tags: true },
+			});
+			const structuredCategoriesWithTags = categoriesWithTags.rows.map(
+				(category: any) => ({
+					category: category.name,
+					tags: category?.tags.map((tag: any) => tag.name),
+				}),
+			);
+
+			const aiCategoryWithTagsResponse = await AIService.gemini.generate({
+				prompt: ListOfPrompt.CATEGORY_AND_LIST_OF_TAGS({
+					resource: JSON.stringify(resourceData),
+					categoriesWithTags: JSON.stringify(
+						structuredCategoriesWithTags,
+					),
+				}),
+				systemInstruction:
+					ListOfSystemInstruction.CATEGORY_AND_LIST_OF_TAGS_INSTRUCTION,
+				config: ListOfSchema.CATEGORY_AND_LIST_OF_TAGS,
+			});
+
+			const categoryAndListOfTags = aiCategoryWithTagsResponse.response;
+			// add the category and tags to the resource data
+			resourceData = {
+				...resourceData,
+				...categoryAndListOfTags,
+			};
+		}
 
 		const { tags: tagParams } = resourceData;
 
 		// check if the tags are string then it is new tags
 		if (!Array.isArray(tagParams))
 			return NextResponse.json(
-				{ message: "Tags must be an array", data: null },
+				{ message: "Tags must be an array", data: { path: ["tags"] } },
 				{ status: 400 },
 			);
 
@@ -92,7 +165,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 		console.log("Error", error);
 
 		return NextResponse.json(
-			{ message: "Error creating resource", data: null },
+			{ message: "Error creating resource", data: { path: ["alert"] } },
 			{ status: 400 },
 		);
 	}

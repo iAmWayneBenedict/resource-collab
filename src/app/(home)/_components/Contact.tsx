@@ -10,9 +10,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "@/components/ui/form";
 import ControlledInput from "@/components/custom/ControlledInput";
 import ControlledTextArea from "@/components/custom/ControlledTextArea";
-import { useWebScraperQuery } from "@/lib/queries/scraper";
 import { useDebounce } from "@/hooks";
 import { SiteCard } from "@/components/layouts/cards/SiteCard";
+import { useWebScraperQuery } from "@/lib/queries/scraper";
 
 // Contact form schema
 // Define the schema for contact form

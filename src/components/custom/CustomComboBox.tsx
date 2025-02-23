@@ -11,7 +11,7 @@ import {
 	PopoverTrigger,
 	Selection,
 } from "@heroui/react";
-import React, { memo, useMemo, useState } from "react";
+import React, { memo, useEffect, useMemo, useState } from "react";
 import { cn, toggleScrollBody } from "../../lib/utils";
 import { ListFilterPlus, Search } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
@@ -49,6 +49,12 @@ const CustomComboBox = ({
 	const [selectedKeys, setSelectedKeys] = useState<Selection>(
 		new Set([...value]),
 	);
+
+	// set selected keys when value changes
+	useEffect(() => {
+		setSelectedKeys(new Set([...value]));
+	}, [value]);
+
 	const [searchValue, setSearchValue] = useState<string>("");
 
 	// debounce search value

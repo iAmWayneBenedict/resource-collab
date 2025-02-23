@@ -7,7 +7,6 @@ import {
 	tags,
 	userResources,
 } from "@/data/schema";
-import { getSession } from "@/lib/auth";
 import {
 	and,
 	eq,
@@ -192,7 +191,7 @@ export const createResourceTransaction = async (
 				.returning();
 
 			categoryId = newCategory.id;
-			console.log(`New Category created with ID: ${newCategory.id}`);
+			console.log(`New Category created with ID: ${newCategory.name}`);
 		}
 		// create tags
 		const tagIds: number[] = [];
@@ -219,23 +218,22 @@ export const createResourceTransaction = async (
 			// map the name of the tags to an array
 			const existNames = exists.map((tag) => tag.name);
 
-			if (exists.length > 0) {
-				// if the tag exists in the database, then push the id to the tagIds array
-				console.log(
-					`Tags exist in the database: ${existNames.join(", ")}`,
-				);
-				exists.forEach((tag) => tagIds.push(tag.id));
-			} else {
-				// if the tag does not exist in the database, then insert the tags to the database
-				const remainingTags = tagValues
-					.filter((tag) => !existNames.includes(tag.name))
-					.map((tag) => ({
-						name: tag.name,
-						category_id: categoryId as number,
-					}));
-				console.log(
-					`Tags does not exist in the database: ${remainingTags.map((tag) => tag.name).join(", ")}`,
-				);
+			console.log(`Tags exist in the database: ${existNames.join(", ")}`);
+			exists.forEach((tag) => tagIds.push(tag.id));
+
+			// get the remaining tags
+			const remainingTags = tagValues
+				.filter((tag) => !existNames.includes(tag.name))
+				.map((tag) => ({
+					name: tag.name,
+					category_id: categoryId as number,
+				}));
+			console.log(
+				`Tags does not exist in the database: ${remainingTags.map((tag) => tag.name).join(", ")}`,
+			);
+
+			// if there are remaining tags, then create them
+			if (remainingTags.length) {
 				const tagRes = await tx
 					.insert(tags)
 					.values(remainingTags)

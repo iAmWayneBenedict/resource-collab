@@ -65,13 +65,13 @@ export const GET = async (request: NextRequest, response: NextResponse) => {
 		if (e instanceof Error) {
 			return NextResponse.json(
 				{ message: e.message, data: null },
-				{ status: 400 },
+				{ status: 500 },
 			);
 		}
 
 		return NextResponse.json(
 			{ message: "Error scrapping URL", data: null },
-			{ status: 400 },
+			{ status: 500 },
 		);
 	}
 };

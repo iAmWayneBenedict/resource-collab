@@ -3,6 +3,7 @@
 import React, { useLayoutEffect } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { HeroUIProvider } from "@heroui/react";
+import { ToastProvider } from "@heroui/toast";
 import { useAppTheme } from "@/hooks";
 import { useAuthUser } from "@/store/useAuthUser";
 
@@ -18,7 +19,18 @@ const Providers = ({ data, children }: any) => {
 
 	return (
 		<QueryClientProvider client={queryClient}>
-			<HeroUIProvider>{children}</HeroUIProvider>
+			<HeroUIProvider>
+				<ToastProvider
+					placement="top-center"
+					toastOffset={60}
+					toastProps={{
+						radius: "full",
+						variant: "flat",
+						timeout: 6000,
+					}}
+				/>
+				{children}
+			</HeroUIProvider>
 		</QueryClientProvider>
 	);
 };
