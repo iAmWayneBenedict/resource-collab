@@ -64,7 +64,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 				response = await axios.get(
 					`${config.SERVER_API_URL}/scrape?url=${body.url}`,
 				);
-			} catch (error: Error | any) {
+			} catch (error: any) {
 				console.log(JSON.stringify(error));
 
 				if (error.code === "ERR_BAD_REQUEST") {

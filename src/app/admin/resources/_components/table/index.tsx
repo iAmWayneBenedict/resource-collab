@@ -4,14 +4,19 @@ import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import { Bottom, CustomTable, Top } from "../../../_components/table";
 import { columns } from "./helper";
 import Row from "./Row";
-import { Button, Input } from "@heroui/react";
+import { addToast, Button, Input } from "@heroui/react";
 import { useSortTable } from "@/store/useSort";
 import { Plus, Search, Trash } from "lucide-react";
 import { useDebounce } from "@/hooks";
-import { useChecklist, useModal } from "@/store";
+import { useAlertDialog, useChecklist, useModal } from "@/store";
 import { useGetPaginatedResourcesQuery } from "@/lib/queries/resources";
+import { useDeleteResourceMutation } from "@/lib/mutations/resources";
 
 const ResourcesTable = () => {
+	const setAlertDialogDetails = useAlertDialog(
+		(state) => state.setAlertDialogDetails,
+	);
+
 	const [searchValue, setSearchValue] = useState("");
 	const [rowsPerPage, setRowsPerPage] = useState(10);
 	const [page, setPage] = useState(1);
@@ -21,9 +26,9 @@ const ResourcesTable = () => {
 	const { onOpen: onOpenModal } = useModal();
 
 	const debouncedSearchValue = useDebounce(searchValue, 500);
-	const { getChecklistById } = useChecklist();
+	const { getChecklistById, updateChecklist } = useChecklist();
 
-	const hasCheckedInList = getChecklistById("User")?.list?.length ?? 0;
+	const hasCheckedInList = getChecklistById("Resources")?.list?.length ?? 0;
 
 	const { data, isLoading, refetch, isRefetching } =
 		useGetPaginatedResourcesQuery({
@@ -49,6 +54,56 @@ const ResourcesTable = () => {
 		},
 		[],
 	);
+
+	const deleteResourcesMutation = useDeleteResourceMutation({
+		onSuccess: () => {
+			// refetch the data
+			refetch();
+			// reset the checklist
+			updateChecklist("Resources", []);
+
+			// add toast
+			addToast({
+				title: "Resources deleted",
+				description: "Resources have been deleted successfully",
+				color: "success",
+			});
+		},
+		onError: (error) => {
+			console.log(error);
+			addToast({
+				title: "Error deleting resources",
+				description: "Something went wrong while deleting resources",
+				color: "danger",
+			});
+		},
+	});
+
+	const onPressDeleteHandler = () => {
+		if (!getChecklistById("Resources")?.list?.length) {
+			addToast({
+				title: "No resources selected",
+				description: "Please select resources to delete",
+				color: "danger",
+			});
+			return;
+		}
+
+		setAlertDialogDetails({
+			isOpen: true,
+			title: "Delete Resources",
+			type: "danger",
+			message: "Are you sure you want to delete these resources?",
+			dialogType: "confirm",
+			onConfirm: () => {
+				deleteResourcesMutation.mutate({
+					ids: getChecklistById("Resources")?.list || [],
+					type: "hard",
+				});
+			},
+		});
+	};
+
 	return (
 		<div>
 			<div className="mb-5 flex items-end justify-between gap-3">
@@ -75,6 +130,7 @@ const ResourcesTable = () => {
 						color={hasCheckedInList ? "danger" : "default"}
 						isDisabled={!hasCheckedInList}
 						endContent={<Trash className="h-5 w-5" />}
+						onPress={onPressDeleteHandler}
 					>
 						Delete
 					</Button>

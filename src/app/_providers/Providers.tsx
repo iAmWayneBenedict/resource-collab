@@ -6,6 +6,7 @@ import { HeroUIProvider } from "@heroui/react";
 import { ToastProvider } from "@heroui/toast";
 import { useAppTheme } from "@/hooks";
 import { useAuthUser } from "@/store/useAuthUser";
+import CustomAlertDialog from "@/components/custom/CustomDialog";
 
 const queryClient = new QueryClient();
 const Providers = ({ data, children }: any) => {
@@ -30,6 +31,7 @@ const Providers = ({ data, children }: any) => {
 					}}
 				/>
 				{children}
+				<CustomAlertDialog />
 			</HeroUIProvider>
 		</QueryClientProvider>
 	);

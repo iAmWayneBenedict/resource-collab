@@ -114,6 +114,7 @@ export const reInitQueryParams = (
 };
 
 /**
+ * ! WORKAROUND: This is a workaround for the bug in Lenis. Remove this when the bug is fixed.
  * Toggle the scrollability of the body element. When state is true, this
  * function sets the overflow of the body to "hidden" and adds a data-lenis-prevent
  * attribute to the body element to prevent the body from being scrollable.
@@ -125,10 +126,10 @@ export const reInitQueryParams = (
  */
 export const toggleScrollBody = (state: boolean) => {
 	if (state) {
-		document.body.style.overflow = "hidden"; // standard no-scroll implementation
+		document.body.style.overflowY = "hidden"; // standard no-scroll implementation
 		document.body.setAttribute("data-lenis-prevent", "true"); // Make sure you pass true as string
 	} else {
-		document.body.style.overflowY = "auto";
+		document.body.removeAttribute("style"); // Make sure you pass true as string
 		document.body.removeAttribute("data-lenis-prevent"); // Make sure you pass true as string
 	}
 };

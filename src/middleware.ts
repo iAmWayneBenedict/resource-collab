@@ -54,6 +54,6 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
 // apply middleware to protected and auth routes
 // Protected routes are routes that are only accessible to authenticated users.
 // Auth routes are routes that are only accessible to unauthenticated users.
-export const config = {
-	matcher: [...protectedRoutes, ...authRoutes],
-};
+// export const config = {
+// 	matcher: [...protectedRoutes, ...authRoutes],
+// };

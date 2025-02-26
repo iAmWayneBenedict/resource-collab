@@ -1,5 +1,8 @@
 import CustomComboBox from "@/components/custom/CustomComboBox";
-import { usePostResourceMutation } from "@/lib/mutations/resources";
+import {
+	usePostResourceMutation,
+	usePutResourceMutation,
+} from "@/lib/mutations/resources";
 import {
 	Autocomplete,
 	AutocompleteItem,
@@ -25,8 +28,8 @@ const formSchema = z.object({
 		required_error: "Category is required",
 	}),
 	tags: z.array(z.string().nullish()),
-	icon: z.union([z.string().url(), z.literal("").nullish()]),
-	thumbnail: z.union([z.string().url(), z.literal("").nullish()]),
+	icon: z.union([z.literal(""), z.string().url()]),
+	thumbnail: z.union([z.literal(""), z.string().url()]),
 	description: z.string().nullish(),
 	alert: z.string().nullish(),
 });
@@ -42,7 +45,7 @@ const DEFAULT_VALUES = {
 };
 
 type CompleteFormProps = {
-	data: typeof DEFAULT_VALUES;
+	data: any;
 	onCloseModal: () => void;
 	onSubmittingCallback: (state: boolean) => void;
 };
@@ -66,6 +69,7 @@ const CompleteForm = ({
 		defaultValues: DEFAULT_VALUES,
 		resolver: zodResolver(formSchema),
 	});
+
 	const [fileIds, setFileIds] = useState({
 		icon: "", // uploaded file id
 		thumbnail: "", // uploaded file id
@@ -82,19 +86,36 @@ const CompleteForm = ({
 	const categoriesWithTags = useMemo(() => {
 		if (categoriesWithTagsResponse.data) {
 			return categoriesWithTagsResponse.data?.data?.rows?.map(
-				(category: any) => ({
-					id: category.id,
-					name: category.name,
-					tags: category.tags.map((tag: any) => tag.name),
-				}),
+				(category: any) => {
+					return {
+						id: category.id,
+						name: category.name,
+						tags: category.tags.map((tag: any) => tag.name),
+					};
+				},
 			);
 		}
 
-		return [{ id: "empty", name: "Empty list", tags: [] }];
+		if (data?.category?.id)
+			return [{ id: data?.category?.id, name: data?.category?.name }];
+
+		return [{ id: "", name: "" }];
 	}, [categoriesWithTagsResponse.data]);
 
 	useEffect(() => {
-		setValue("tags", []);
+		if (data?.category?.id && categoriesWithTagsResponse.data) {
+			reset({
+				...data,
+				category: data.category?.id + "",
+				tags: data.resourceTags.map(({ tag }: any) => tag.name),
+			});
+		} else {
+			reset(DEFAULT_VALUES);
+		}
+	}, [data, categoriesWithTagsResponse.data]);
+
+	useEffect(() => {
+		if (!watch("category")) setValue("tags", []);
 	}, [watch("category")]);
 
 	const tagsList = useMemo(
@@ -103,13 +124,15 @@ const CompleteForm = ({
 				(category: any) =>
 					category.id === Number(getValues("category")),
 			)?.tags ?? [],
-		[watch("category")],
+		[watch("category"), categoriesWithTagsResponse.data],
 	);
 
 	const deleteUploadedImagesMutation = usePostDeleteUploadThingFileMutation();
+
 	useEffect(() => {
 		return () => {
-			if (watch("icon") || watch("thumbnail"))
+			const hasImage = watch("icon") || watch("thumbnail");
+			if (hasImage && Object.values(fileIds).length)
 				deleteUploadedImagesMutation.mutate(
 					Object.values(fileIds).filter((v) => v),
 				);
@@ -118,7 +141,6 @@ const CompleteForm = ({
 
 	const createResourceMutation = usePostResourceMutation({
 		onSuccess: (data) => {
-			console.log(data);
 			onSubmittingCallback(false);
 			setIsDisableForm(false);
 			setIsSubmitting(false);
@@ -137,13 +159,41 @@ const CompleteForm = ({
 			bindReactHookFormError(error.response.data, setError);
 		},
 	});
-	const onSubmit = (data: any) => {
-		console.log(data);
+
+	const updateResourceMutation = usePutResourceMutation({
+		params: data?.id ?? "",
+		onSuccess: (data) => {
+			onSubmittingCallback(false);
+			setIsDisableForm(false);
+			setIsSubmitting(false);
+
+			addToast({
+				title: "Success",
+				description: "Resource updated successfully.",
+				color: "success",
+			});
+		},
+		onError: (error) => {
+			console.log(error.response.data);
+			onSubmittingCallback(false);
+			setIsDisableForm(false);
+			setIsSubmitting(false);
+			bindReactHookFormError(error.response.data, setError);
+		},
+	});
+
+	const onSubmit = (payload: any) => {
+		console.log(payload);
 		onSubmittingCallback(true);
 		setIsDisableForm(true);
 		setIsSubmitting(true);
 
-		createResourceMutation.mutate(data);
+		if (data?.category?.id) {
+			payload["id"] = data?.id;
+			updateResourceMutation.mutate(payload);
+			return;
+		}
+		createResourceMutation.mutate(payload);
 	};
 	return (
 		<form
@@ -195,29 +245,35 @@ const CompleteForm = ({
 			<Controller
 				name="category"
 				control={control}
-				render={({ field, formState: { errors } }) => (
-					<Autocomplete
-						isVirtualized
-						label="Category"
-						placeholder="Select category"
-						items={categoriesWithTags}
-						isLoading={categoriesWithTagsResponse.isLoading}
-						defaultItems={[{ id: "empty", name: "Empty list" }]}
-						selectedKey={field.value}
-						onSelectionChange={field.onChange}
-						disabledKeys={["empty"]}
-						isInvalid={!!errors.category}
-						errorMessage={errors.category?.message}
-						color={errors.category ? "danger" : "default"}
-						isDisabled={isDisableForm}
-					>
-						{(item) => (
-							<AutocompleteItem key={item?.id}>
-								{item?.name}
-							</AutocompleteItem>
-						)}
-					</Autocomplete>
-				)}
+				render={({ field, formState: { errors } }) => {
+					return (
+						<Autocomplete
+							isVirtualized
+							allowsCustomValue
+							label="Category"
+							placeholder="Select category"
+							items={categoriesWithTags}
+							isLoading={categoriesWithTagsResponse.isLoading}
+							defaultItems={[{ id: "", name: "" }]}
+							selectedKey={field.value}
+							onSelectionChange={field.onChange}
+							disabledKeys={["empty"]}
+							isInvalid={!!errors.category}
+							errorMessage={errors.category?.message}
+							color={errors.category ? "danger" : "default"}
+							isDisabled={
+								isDisableForm ||
+								categoriesWithTagsResponse.isLoading
+							}
+						>
+							{(item) => (
+								<AutocompleteItem key={item?.id}>
+									{item?.name}
+								</AutocompleteItem>
+							)}
+						</Autocomplete>
+					);
+				}}
 			/>
 
 			<UploadImageResource
@@ -269,18 +325,21 @@ const CompleteForm = ({
 				<Controller
 					name="tags"
 					control={control}
-					render={({ field }) => (
-						<CustomComboBox
-							triggerText="Select Tags"
-							value={field.value as string[]}
-							onSelect={field.onChange}
-							options={tagsList}
-							selectionMode="multiple"
-							placement="top-start"
-							isDisabled={isDisableForm || !tagsList.length}
-							disableParentScrollOnOpen={false}
-						/>
-					)}
+					render={({ field }) => {
+						console.log(field.value);
+						return (
+							<CustomComboBox
+								triggerText="Select Tags"
+								value={field.value as string[]}
+								onSelect={field.onChange}
+								options={tagsList}
+								selectionMode="multiple"
+								placement="top-start"
+								isDisabled={isDisableForm || !tagsList.length}
+								disableParentScrollOnOpen={false}
+							/>
+						);
+					}}
 				/>
 				<div className="text-xs italic">Tags are based on category</div>
 			</div>

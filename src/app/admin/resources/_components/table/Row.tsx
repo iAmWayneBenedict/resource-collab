@@ -36,12 +36,12 @@ const Row = ({ row, columnKey }: Props) => {
 						<DropdownMenu>
 							<DropdownItem key="view">View</DropdownItem>
 							<DropdownItem
-								key="edit"
+								key="update"
 								onPress={() =>
-									onOpenModal("resourceForm", row, "update")
+									onOpenModal("resourcesForm", row, "update")
 								}
 							>
-								Edit
+								Update
 							</DropdownItem>
 							<DropdownItem key="delete">Delete</DropdownItem>
 						</DropdownMenu>

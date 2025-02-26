@@ -85,7 +85,7 @@ export const UploadImageResource = ({
 							onValueChange={field.onChange}
 							isInvalid={!!errors[name]}
 							errorMessage={errors[name]?.message?.toString()}
-							label={(name = " (optional)")}
+							label={name + " (optional)"}
 							placeholder={`Enter ${name} url`}
 							color={errors[name] ? "danger" : "default"}
 							isDisabled={isDisableForm}

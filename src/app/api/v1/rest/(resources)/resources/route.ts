@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/data/connection";
-import { resources, resourceTags, userResources } from "@/data/schema";
-import { and, asc, count, desc, eq, ilike, inArray, sql } from "drizzle-orm";
+import { resources, resourceTags } from "@/data/schema";
+import { and, asc, count, desc, eq, ilike, sql } from "drizzle-orm";
 import { ResourcesSelectType } from "@/data/models/resources";
 import { getApiPaginatedSearchParams } from "@/lib/utils";
 import { deleteResourceTransaction } from "@/services/resource-service";
@@ -9,64 +9,50 @@ import { auth } from "@/lib/auth";
 
 export const DELETE = async (request: NextRequest) => {
 	const body = await request.json();
-	const user = { id: body.userId, role: "admin" };
-	// const session = await auth.api.getSession({ headers: request.headers });
-	// const user = session?.user;
+	const session = await auth.api.getSession({ headers: request.headers });
+	const user = session?.user;
 
-	// if (!user)
-	// 	return NextResponse.json(
-	// 		{ message: "Unauthorized", data: null },
-	// 		{ status: 401 },
-	// 	);
-
-	if (!("ids" in body))
+	if (!user)
 		return NextResponse.json(
-			{
-				message: "Please fill in the ids field",
-				data: { path: ["ids"] },
-			},
-			{ status: 400 },
+			{ message: "Unauthorized", data: null },
+			{ status: 403 },
 		);
 
-	try {
-		const exists = await db
-			.select()
-			.from(userResources)
-			.where(
-				and(
-					inArray(userResources.resource_id, body.ids),
-					eq(userResources.user_id, body.userId),
-				),
-			);
-		if (!exists.length)
-			return NextResponse.json(
-				{ message: "Resource does not exist", data: null },
-				{ status: 404 },
-			);
-	} catch (error) {
-		console.log("Error", error);
+	if (!body.ids || !Array.isArray(body.ids)) {
 		return NextResponse.json(
-			{ message: "Error deleting resource", data: null },
-			{ status: 400 },
+			{ message: "Resource IDs parameter is missing", data: null },
+			{ status: 404 },
 		);
 	}
 
+	if (!body.type || !["soft", "hard"].includes(body.type)) {
+		return NextResponse.json(
+			{ message: "Type parameter is missing", data: null },
+			{ status: 404 },
+		);
+	}
+
+	const { ids, type } = body;
+
 	try {
-		console.log(body);
-		const deletedIds = await deleteResourceTransaction({
-			...body,
+		const deletedResources = await deleteResourceTransaction({
+			ids: ids as number[],
 			userId: user.id,
+			type: type as "soft" | "hard",
 		});
 
 		return NextResponse.json(
-			{ message: "Resource deleted", data: null },
-			{ status: 200 },
+			{
+				message: "Resource successfully retrieved",
+				data: deletedResources,
+			},
+			{ status: 201 },
 		);
-	} catch (error) {
-		console.log("Error", error);
+	} catch (error: any) {
+		console.log("Error", error.message);
 
 		return NextResponse.json(
-			{ message: "Error deleting resource", data: null },
+			{ message: "Error retrieving resource", data: null },
 			{ status: 400 },
 		);
 	}

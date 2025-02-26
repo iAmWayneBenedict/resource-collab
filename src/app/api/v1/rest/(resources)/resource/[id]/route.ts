@@ -1,18 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/data/connection";
-import { ConsoleLogWriter, inArray } from "drizzle-orm";
+import { inArray } from "drizzle-orm";
 import { resources } from "@/data/schema";
 import {
 	findResource,
 	updateResourceTransaction,
 } from "@/services/resource-service";
-import { auth } from "@/lib/auth";
+import { auth, getSession } from "@/lib/auth";
 
 export async function GET(
 	_: NextRequest,
-	{ params }: { params: { id: number } },
+	{ params }: { params: Promise<{ id: string }> },
 ) {
-	if (!params.id)
+	const { id: paramsId } = await params;
+
+	if (!paramsId)
 		return NextResponse.json(
 			{ message: "Resource ID parameter is missing", data: null },
 			{ status: 404 },
@@ -20,7 +22,7 @@ export async function GET(
 
 	try {
 		const resource = await findResource({
-			value: params.id,
+			value: paramsId,
 			identifier: "id",
 		});
 
@@ -40,7 +42,7 @@ export async function GET(
 
 export const PUT = async (request: NextRequest) => {
 	const body = await request.json();
-	const session = await auth.api.getSession({ headers: request.headers });
+	const session = await getSession(request.headers);
 	const user = session?.user;
 
 	if (!user)
@@ -53,30 +55,10 @@ export const PUT = async (request: NextRequest) => {
 		const validationResponse = validate(body);
 
 		if (validationResponse) return validationResponse;
-
-		const { tags, category } = body;
-
-		if (!category.move_to) {
-			return NextResponse.json(
-				{
-					message: "Category ID is required",
-					data: null,
-				},
-				{ status: 400 },
-			);
-		}
-
-		if (!tags.delete || !tags.add) {
-			return NextResponse.json(
-				{
-					message:
-						"Invalid tags. It should have 'deleted' and 'add' properties",
-					data: null,
-				},
-				{ status: 400 },
-			);
-		}
-
+		console.log({
+			...body,
+			userId: user.id,
+		});
 		const updatedResource = await updateResourceTransaction({
 			...body,
 			userId: user.id,
@@ -99,46 +81,46 @@ export const PUT = async (request: NextRequest) => {
 	}
 };
 
-export const DELETE = async (
-	request: NextRequest,
-	{ params }: { params: { id: number } },
-) => {
-	const session = await auth.api.getSession({ headers: request.headers });
-	const user = session?.user;
-	console.log("user", user);
-	if (!user)
-		return NextResponse.json(
-			{ message: "Unauthorized", data: null },
-			{ status: 403 },
-		);
-	if (!params.id)
-		return NextResponse.json(
-			{ message: "Resource ID parameter is missing", data: null },
-			{ status: 404 },
-		);
+// export const DELETE = async (
+// 	request: NextRequest,
+// 	{ params }: { params: { id: number } },
+// ) => {
+// 	const session = await auth.api.getSession({ headers: request.headers });
+// 	const user = session?.user;
 
-	try {
-		await db
-			.delete(resources)
-			.where(inArray(resources.id, [params.id]))
-			.returning();
+// 	if (!user)
+// 		return NextResponse.json(
+// 			{ message: "Unauthorized", data: null },
+// 			{ status: 403 },
+// 		);
+// 	if (!params.id)
+// 		return NextResponse.json(
+// 			{ message: "Resource ID parameter is missing", data: null },
+// 			{ status: 404 },
+// 		);
 
-		return NextResponse.json(
-			{ message: "Resource deleted", data: null },
-			{ status: 200 },
-		);
-	} catch (error) {
-		console.log("Error", error);
+// 	try {
+// 		await db
+// 			.delete(resources)
+// 			.where(inArray(resources.id, [params.id]))
+// 			.returning();
 
-		return NextResponse.json(
-			{ message: "Error deleting resource", data: null },
-			{ status: 400 },
-		);
-	}
-};
+// 		return NextResponse.json(
+// 			{ message: "Resource deleted", data: null },
+// 			{ status: 200 },
+// 		);
+// 	} catch (error) {
+// 		console.log("Error", error);
+
+// 		return NextResponse.json(
+// 			{ message: "Error deleting resource", data: null },
+// 			{ status: 400 },
+// 		);
+// 	}
+// };
 
 const validate = (body: any) => {
-	const requiredFields = ["name", "icon", "user_id"];
+	const requiredFields = ["name", "icon", "category"];
 	const missingFields = requiredFields.filter((field) => !body[field]);
 
 	if (missingFields.length > 0) {

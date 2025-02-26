@@ -15,7 +15,12 @@ import { TabsContent, Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toggleScrollBody } from "@/lib/utils";
 
 const ResourceFormModal = () => {
-	const { isOpen, onOpen, onOpenChange } = useDisclosure();
+	const {
+		isOpen,
+		onOpen,
+		onOpenChange,
+		onClose: onCloseModalView,
+	} = useDisclosure();
 
 	const { name: modalName, onClose, data: dataModal, type } = useModal();
 
@@ -23,15 +28,15 @@ const ResourceFormModal = () => {
 
 	useEffect(() => {
 		if (modalName === "resourcesForm") {
-			onOpen();
 			toggleScrollBody(true);
+			onOpen();
 		}
 	}, [modalName, onOpen]);
 
 	const onCloseModal = () => {
-		onOpenChange();
-		onClose();
 		toggleScrollBody(false);
+		onCloseModalView();
+		onClose();
 	};
 
 	const handleSubmittingCallback = useCallback((state: boolean) => {
@@ -44,7 +49,7 @@ const ResourceFormModal = () => {
 			placement="center"
 			onOpenChange={onCloseModal}
 			backdrop="blur"
-			scrollBehavior="normal"
+			scrollBehavior="outside"
 			isDismissable={!isSubmitting}
 		>
 			<ModalContent>
@@ -56,12 +61,21 @@ const ResourceFormModal = () => {
 					</p>
 				</ModalHeader>
 				<ModalBody className="gap-4">
-					<Tabs defaultValue="url" className="w-full">
+					<Tabs
+						defaultValue={type === "create" ? "url" : "form"}
+						className="w-full"
+					>
 						<TabsList className="grid w-full grid-cols-2">
-							<TabsTrigger disabled={isSubmitting} value="url">
+							<TabsTrigger
+								disabled={isSubmitting || type === "update"}
+								value="url"
+							>
 								URL
 							</TabsTrigger>
-							<TabsTrigger disabled={isSubmitting} value="form">
+							<TabsTrigger
+								disabled={isSubmitting || type === "update"}
+								value="form"
+							>
 								Form
 							</TabsTrigger>
 						</TabsList>

@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import {
 	Table,
 	TableBody,
@@ -44,10 +44,17 @@ const CustomTable = ({
 	bottomComponent,
 	topComponent,
 }: Props) => {
-	const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]));
-
-	const { updateChecklist, isExists, addChecklist } = useChecklist();
+	const { updateChecklist, isExists, addChecklist, getChecklistById } =
+		useChecklist();
+	const [selectedKeys, setSelectedKeys] = useState<Selection>(
+		new Set((getChecklistById(title)?.list as unknown as Selection) || []), // set initial selected keys from checklist
+	);
 	const { sort, setSort } = useSortTable();
+
+	useEffect(() => {
+		// reset selected keys if checklist is empty
+		if (!getChecklistById(title)?.list.length) setSelectedKeys(new Set([]));
+	}, [getChecklistById(title)?.list]);
 
 	useLayoutEffect(() => {
 		if (!isExists(title)) addChecklist(title, []);
@@ -66,6 +73,13 @@ const CustomTable = ({
 			topContentPlacement="outside"
 			onSelectionChange={(keys) => {
 				setSelectedKeys(keys);
+				if (keys === "all") {
+					updateChecklist(
+						title,
+						rows.map((row) => row.id),
+					);
+					return;
+				}
 				updateChecklist(title, [...keys]);
 			}}
 			onSortChange={(sortDescriptor) => {

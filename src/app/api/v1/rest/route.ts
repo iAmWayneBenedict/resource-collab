@@ -1,4 +1,6 @@
 import { db } from "@/data/connection";
+import { resourceTags, tags } from "@/data/schema";
+import { eq, inArray } from "drizzle-orm";
 import { NextResponse, NextRequest } from "next/server";
 
 export async function GET(request: NextRequest, response: NextResponse) {
@@ -20,9 +22,31 @@ export async function GET(request: NextRequest, response: NextResponse) {
 	// 		.where(eq(skills.id, 1))
 	// );
 
+	// return NextResponse.json({
+	// 	data: await db
+	// 		.select()
+	// 		.from(resourceTags)
+	// 		.leftJoin(tags, eq(resourceTags.tag_id, tags.id))
+	// 		.where(eq(resourceTags.resource_id, 56)),
+	// });
+	// return NextResponse.json({
+	// 	data: await db.query.tags.findMany({
+	// 		with: {
+	// 			resourceTags: {
+	// 				where: (resourceTags, { eq }) =>
+	// 					eq(resourceTags.resource_id, 56),
+	// 			},
+	// 		},
+	// 		// where: inArray(tags.name, ["Networking"]),
+	// 	}),
+	// });
+
 	return NextResponse.json({
-		data: await db.query.resources.findMany({
-			with: { category: true, resourceTags: { with: { tag: true } } },
+		data: await db.query.resourceTags.findMany({
+			with: {
+				tag: true,
+			},
+			where: eq(resourceTags.resource_id, 56),
 		}),
 	});
 }

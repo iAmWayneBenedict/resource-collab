@@ -52,8 +52,13 @@ const CustomComboBox = ({
 
 	// set selected keys when value changes
 	useEffect(() => {
-		setSelectedKeys(new Set([...value]));
+		if (value.length) setSelectedKeys(new Set([...value]));
 	}, [value]);
+
+	// clear selected keys when options has changed to empty
+	useEffect(() => {
+		if (!options.length) setSelectedKeys(new Set([]));
+	}, [options]);
 
 	const [searchValue, setSearchValue] = useState<string>("");
 
@@ -67,16 +72,17 @@ const CustomComboBox = ({
 
 	const onCloseChipHandler = (key: string) => {
 		setSelectedKeys(new Set([...selectedKeys].filter((el) => el !== key)));
+		onSelect([...selectedKeys].filter((el) => el !== key));
 	};
 
 	const onClickClearHandler = () => {
 		setSelectedKeys(new Set([]));
+		onSelect([]);
 	};
 
 	const onOpenChangeHandler = (state: boolean) => {
 		if (disableParentScrollOnOpen) toggleScrollBody(false);
 	};
-
 	return (
 		<div
 			className={cn(
@@ -204,7 +210,6 @@ const ListboxContainer = memo(
 				option.toLowerCase().includes(searchValue.toLowerCase()),
 			);
 		}, [options, searchValue]);
-
 		return (
 			<Listbox
 				selectedKeys={selectedKeys}
@@ -237,6 +242,7 @@ const ChipsContainer = ({
 	onCloseChipHandler,
 }: ChipsContainerProps) => {
 	const selectedKeysArr = [...selectedKeys];
+
 	return (
 		<div className="mb-1 mt-2 flex flex-wrap gap-1">
 			<AnimatePresence mode="popLayout">

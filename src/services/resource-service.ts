@@ -292,11 +292,6 @@ export const createResourceTransaction = async (
 	});
 };
 
-type TagActions = {
-	add: string[];
-	delete: number[];
-};
-
 type CategoryActions = {
 	move_to: number;
 };
@@ -304,7 +299,7 @@ type CategoryActions = {
 type UpdateResourceTransactionParams = ResourceParams & {
 	id: number;
 	userId: string;
-	tags: TagActions;
+	tags: string[];
 	category: CategoryActions;
 };
 
@@ -312,36 +307,43 @@ export const updateResourceTransaction = async (
 	body: UpdateResourceTransactionParams,
 ): Promise<InferSelectModel<ResourcesType>> => {
 	return await db.transaction(async (tx) => {
-		const { tags: tagActions, category, ...resource } = body;
-		const { add, delete: deleteTags } = tagActions;
-		const { move_to } = category;
+		const { tags: tagNames, category, ...resource } = body;
 
 		// update resource
 		const [updatedResource] = await tx
 			.update(resources)
 			.set({
 				...resource,
-				category_id: move_to,
+				category_id: category as number,
 			})
 			.where(eq(resources.id, resource.id))
 			.returning();
 
-		// delete tags
-		if (deleteTags.length) {
-			await tx
-				.delete(resourceTags)
-				.where(inArray(resourceTags.tag_id, deleteTags));
-		}
+		// determine if the tags are the same as the one stored in db
+		const existingResourceTags = await tx.query.resourceTags.findMany({
+			with: { tag: true },
+			where: eq(resourceTags.resource_id, resource.id),
+		});
+		const isSameValues = existingResourceTags.every((resourceTag) =>
+			tagNames.includes(resourceTag.tag.name),
+		);
+		// if the tags are the same, then return the updated resource and do not update the tags
+		if (isSameValues) return updatedResource;
 
-		// add tags
-		if (add.length) {
-			const tagRes = await tx
-				.insert(tags)
-				.values(add.map((tag) => ({ name: tag })))
-				.returning();
+		// delete all tags associated with the resource
+		await tx
+			.delete(resourceTags)
+			.where(eq(resourceTags.resource_id, resource.id));
+
+		// then add the tags here from the request body
+		if (tagNames.length) {
+			const tagIds = await tx
+				.select()
+				.from(tags)
+				.where(inArray(tags.name, tagNames));
 
 			await tx.insert(resourceTags).values(
-				tagRes.map((tag) => ({
+				tagIds.map((tag) => ({
 					resource_id: resource.id,
 					tag_id: tag.id,
 				})),

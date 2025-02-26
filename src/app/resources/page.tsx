@@ -3,11 +3,11 @@ import BannerContent from "@/components/layouts/users/BannerContent";
 import BannerGradient from "@/components/layouts/users/BannerGradient";
 import Layout from "@/components/layouts/users/Layout";
 import Section from "@/components/layouts/Section";
-import ResourceCard from "@/components/layouts/cards/ResourceCard";
 import React, { Suspense } from "react";
 import Container from "@/components/layouts/Container";
 import { FilterFormModal, SearchFormModal } from "./_components/modal";
 import { FilterModalTrigger, SearchModalTrigger } from "./_components/filter";
+import ResourceCardContainer from "./_components/ResourceCardContainer";
 
 const ASIDE_LINKS = [
 	{ title: "All", href: "/resources" },
@@ -39,11 +39,7 @@ const Page = () => {
 								<SearchModalTrigger />
 								<FilterModalTrigger />
 							</div>
-							<div className="mt-10 flex flex-wrap gap-6">
-								{[1, 2, 3, 4, 5, 6].map((el) => (
-									<ResourceCard key={el} />
-								))}
-							</div>
+							<ResourceCardContainer />
 						</div>
 					</Section>
 				</Container>
