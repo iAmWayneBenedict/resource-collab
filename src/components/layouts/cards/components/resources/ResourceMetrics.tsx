@@ -19,7 +19,10 @@ export const ResourceMetrics = ({ views, shares }: ResourceMetricsProps) => {
 			</button>
 			<button className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
 				<Share2 className="h-4 w-4" />
-				<span>{formatNumber(shares)} shares</span>
+				<span>
+					{/* {formatNumber(shares)}  */}
+					Share
+				</span>
 			</button>
 		</div>
 	);

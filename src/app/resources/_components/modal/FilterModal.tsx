@@ -2,7 +2,8 @@
 
 import ControlledMultipleChipFilter from "@/components/custom/ControlledMultipleChipFilter";
 import CustomComboBox from "@/components/custom/CustomComboBox";
-import { reInitQueryParams } from "@/lib/utils";
+import { useGetPaginatedResourcesQuery } from "@/lib/queries/resources";
+import { reInitQueryParams, toggleScrollBody } from "@/lib/utils";
 import { useModal } from "@/store";
 import {
 	Modal,
@@ -17,14 +18,15 @@ import {
 } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
+import { useGetCategoriesQuery } from "../../../../lib/queries/categories";
 
 const SORT_LIST = ["Newest", "Oldest", "Alphabetical", "Reverse Alphabetical"];
 const FilterFormSchema = z.object({
 	sortBy: z.string().nullish(),
-	filter: z.array(z.string()).nullish(),
+	tags: z.array(z.string()).nullish(),
 });
 
 const FilterFormModal = () => {
@@ -32,24 +34,60 @@ const FilterFormModal = () => {
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	const searchParams = useSearchParams();
+	// make sure it exist
+	const tagsSearchParams = searchParams
+		.get("tags")
+		?.split(",")
+		?.filter((tag) => tag);
+	const sortBySearchParams = searchParams.get("sortBy");
+
 	const router = useRouter();
 
-	const {
-		handleSubmit,
-		control,
-		formState: { errors },
-	} = useForm({
+	const category = searchParams.get("category") ?? "";
+
+	const { handleSubmit, control, reset } = useForm({
 		resolver: zodResolver(FilterFormSchema),
-		defaultValues: {
-			sortBy: searchParams.get("sortBy") ?? "",
-			filter: searchParams.get("filter")?.split(",") ?? [],
-		},
+		defaultValues: useMemo(
+			() => ({
+				sortBy: sortBySearchParams ?? "",
+				tags: tagsSearchParams ?? [],
+			}),
+			[sortBySearchParams, tagsSearchParams],
+		),
 	});
-	console.log(errors);
+
+	useEffect(() => {
+		if (!sortBySearchParams && !tagsSearchParams)
+			reset({
+				sortBy: "",
+				tags: [],
+			});
+	}, [sortBySearchParams, tagsSearchParams]);
+
 	const { name: modalName, onClose, data: dataModal, type } = useModal();
+
+	const categoriesResponse = useGetCategoriesQuery();
+
+	const tags = useMemo(() => {
+		if (!categoriesResponse.isSuccess) return [];
+
+		const rows = categoriesResponse.data.data.rows;
+
+		if (!category || isNaN(Number(category)))
+			return rows
+				.map((row: any) => row.tags.map((tag: any) => tag.name))
+				.flat();
+
+		const categoryTags = rows
+			.find((row: any) => row.id === Number(category))
+			?.tags.map((tag: any) => tag.name);
+
+		return categoryTags;
+	}, [category, categoriesResponse.isSuccess]);
 
 	useEffect(() => {
 		if (modalName === "Resource Filter") {
+			toggleScrollBody(true);
 			onOpen();
 		} else {
 			onClose();
@@ -57,21 +95,27 @@ const FilterFormModal = () => {
 	}, [modalName, onClose, onOpen]);
 
 	const onCloseModal = () => {
+		toggleScrollBody(false);
 		onOpenChange();
 		onClose();
 	};
 
 	const onSubmit = (data: any) => {
-		console.log(data);
-		// router.push(reInitQueryParams(window.location.href, { filter: formData }), {
-		// 	scroll: false,
-		// });
+		router.push(reInitQueryParams(window.location.href, data), {
+			scroll: false,
+		});
+		onCloseModal();
+	};
+
+	const onReset = () => {
+		router.push(window.location.pathname, { scroll: false });
+		onCloseModal();
 	};
 
 	return (
 		<Modal
 			isOpen={isOpen}
-			placement="top-center"
+			placement="center"
 			onOpenChange={onCloseModal}
 			backdrop="blur"
 			isDismissable={!isSubmitting}
@@ -88,10 +132,10 @@ const FilterFormModal = () => {
 								control={control}
 								render={({ field }) => (
 									<Select
-										selectedKeys={
-											(field.value as string) ?? ""
-										}
-										onSelectionChange={field.onChange}
+										selectedKeys={[
+											(field.value as string) ?? "",
+										]}
+										onChange={field.onChange}
 										label="Sort"
 										placeholder="Select sort"
 									>
@@ -104,16 +148,17 @@ const FilterFormModal = () => {
 								)}
 							/>
 							<Controller
-								name="filter"
+								name="tags"
 								control={control}
 								render={({ field }) => (
 									<CustomComboBox
 										triggerText="Select Tags"
 										value={field.value as string[]}
 										onSelect={field.onChange}
-										options={["test", "test2", "asdf"]}
+										options={tags}
 										selectionMode="multiple"
 										placement="top-start"
+										disableParentScrollOnOpen={false}
 									/>
 								)}
 							/>
@@ -122,11 +167,11 @@ const FilterFormModal = () => {
 							<Button
 								color="default"
 								variant="light"
-								onPress={onCloseModal}
+								onPress={onReset}
 								isDisabled={isSubmitting}
 								radius="full"
 							>
-								Close
+								Reset
 							</Button>
 							<Button
 								color="primary"

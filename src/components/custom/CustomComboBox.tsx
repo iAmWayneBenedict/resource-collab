@@ -219,8 +219,8 @@ const ListboxContainer = memo(
 				aria-label="Custom ComboBox Listbox"
 				classNames={{ emptyContent: "text-center" }}
 				virtualization={{
-					maxListboxHeight: 250,
-					itemHeight: 40,
+					maxListboxHeight: 225,
+					itemHeight: 35,
 				}}
 			>
 				{filteredOptions.map((option) => (

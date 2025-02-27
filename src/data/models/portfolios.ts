@@ -1,4 +1,11 @@
-import { boolean, pgTable, serial, text, timestamp, varchar } from "drizzle-orm/pg-core";
+import {
+	boolean,
+	pgTable,
+	serial,
+	text,
+	timestamp,
+	varchar,
+} from "drizzle-orm/pg-core";
 import { users } from "./users";
 import { relations } from "drizzle-orm";
 import { categories } from "./categories";
@@ -8,10 +15,16 @@ import { bookmarks } from "./bookmarks";
 export const portfolios = pgTable("portfolios", {
 	id: serial("id").primaryKey(),
 	user_id: text("user_id")
-		.references(() => users.id)
+		.references(() => users.id, {
+			onDelete: "cascade",
+			onUpdate: "cascade",
+		})
 		.notNull(),
 	category_id: serial("category_id")
-		.references(() => categories.id)
+		.references(() => categories.id, {
+			onDelete: "cascade",
+			onUpdate: "cascade",
+		})
 		.notNull(),
 	name: varchar("name").notNull(),
 	icon: text("icon").notNull(),

@@ -8,8 +8,14 @@ import { users } from "./users";
 
 export const resources = pgTable("resources", {
 	id: serial("id").primaryKey(),
-	category_id: serial("category_id").references(() => categories.id),
-	owner_id: text("owner_id").references(() => users.id),
+	category_id: serial("category_id").references(() => categories.id, {
+		onDelete: "cascade",
+		onUpdate: "cascade",
+	}),
+	owner_id: text("owner_id").references(() => users.id, {
+		onDelete: "cascade",
+		onUpdate: "cascade",
+	}),
 	name: varchar("name"),
 	icon: text("icon"),
 	thumbnail: text("thumbnail"),

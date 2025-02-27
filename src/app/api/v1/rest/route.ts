@@ -42,6 +42,32 @@ export async function GET(request: NextRequest, response: NextResponse) {
 	// });
 
 	return NextResponse.json({
+		data: await db.query.resources.findMany({
+			with: {
+				resourceTags: {
+					with: {
+						tag: true,
+					},
+					// where: (resourceTags, { inArray }) =>
+					// 	inArray(resourceTags.tag_id, [338]),
+				},
+			},
+			where: (resources, { exists, and, eq }) =>
+				exists(
+					db
+						.select()
+						.from(resourceTags)
+						.where(
+							and(
+								eq(resourceTags.resource_id, resources.id),
+								inArray(resourceTags.tag_id, [338]),
+							),
+						),
+				),
+		}),
+	});
+
+	return NextResponse.json({
 		data: await db.query.resourceTags.findMany({
 			with: {
 				tag: true,

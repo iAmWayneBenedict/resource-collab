@@ -1,5 +1,5 @@
 import { db } from "@/data/connection";
-import { ResourcesType } from "@/data/models/resources";
+import { ResourcesSelectType, ResourcesType } from "@/data/models/resources";
 import {
 	categories as categoriesTable,
 	resources,
@@ -9,12 +9,17 @@ import {
 } from "@/data/schema";
 import {
 	and,
+	asc,
+	count,
+	desc,
 	eq,
+	exists,
 	ilike,
 	inArray,
 	InferInsertModel,
 	InferSelectModel,
 	or,
+	sql,
 	SQL,
 } from "drizzle-orm";
 
@@ -28,7 +33,7 @@ type ResourceParams = {
 	tags: string[] | number[];
 };
 
-type FindResourcesParams = {
+type FindResourceParams = {
 	value: string | number | SQL;
 	identifier: "url" | "name" | "id" | "custom";
 	sameDomain?: boolean;
@@ -37,7 +42,7 @@ type FindResourcesParams = {
 /**
  * Finds resources in the database based on the specified identifier and value.
  *
- * @param {FindResourcesParams} params - The parameters for finding resources.
+ * @param {FindResourceParams} params - The parameters for finding resources.
  * @param {string | number | SQL} params.value - The value to search for. This can be a string, number, or SQL condition.
  * @param {"url" | "name" | "id" | "custom"} params.identifier - The type of identifier to search by.
  *   - "name": Searches resources by name matching the specified value.
@@ -52,7 +57,7 @@ export const findResource = ({
 	value,
 	identifier,
 	sameDomain = false,
-}: FindResourcesParams): Promise<InferSelectModel<ResourcesType>[]> => {
+}: FindResourceParams): Promise<InferSelectModel<ResourcesType>[]> => {
 	if (identifier === "name") {
 		return db.query.resources.findMany({
 			where: eq(resources.name, value as string),
@@ -388,5 +393,131 @@ export const deleteResourceTransaction = async (
 		}
 
 		return ids;
+	});
+};
+type FindResourcesParams = {
+	page: number;
+	limit: number;
+	search: string;
+	sortBy: string;
+	sortType: "ascending" | "descending" | null;
+	category: string | null;
+	tags: string[];
+};
+export const findResources = async (
+	body: FindResourcesParams,
+): Promise<{ rows: InferSelectModel<ResourcesType>[]; totalCount: number }> => {
+	const {
+		page = 1,
+		limit = 10,
+		search = "",
+		sortBy = "created_at",
+		sortType = "ascending",
+		category: categoryParams = "",
+		tags: tagsParams = [],
+	} = body;
+
+	console.log(`Finding resources with params:`, {
+		page,
+		limit,
+		search,
+		sortBy,
+		sortType,
+		category: categoryParams,
+		tags: tagsParams,
+	});
+
+	return await db.transaction(async (tx) => {
+		const [{ totalCount }] = await tx
+			.select({ totalCount: count() })
+			.from(resources);
+		console.log(`Total resources count: ${totalCount}`);
+
+		const filters: SQL[] = [];
+		if (search) {
+			filters.push(ilike(resources.name, sql.placeholder("search")));
+			console.log(`Added search filter for: ${search}`);
+		}
+
+		if (categoryParams) {
+			filters.push(
+				eq(resources.category_id, sql.placeholder("categoryParams")),
+			);
+			console.log(`Added category filter for: ${categoryParams}`);
+		}
+
+		// get the id of the tags
+		const tagIds = await db
+			.select({ id: tags.id })
+			.from(tags)
+			.where(inArray(tags.name, tagsParams));
+		console.log(
+			`Found tag IDs:`,
+			tagIds.map((t) => t.id),
+		);
+
+		// add the tag filters
+		const baseFilters = filters.length ? filters : [];
+		const tagFilter = tagsParams.length
+			? [
+					exists(
+						tx
+							.select()
+							.from(resourceTags)
+							.where(
+								and(
+									eq(resourceTags.resource_id, resources.id),
+									inArray(
+										resourceTags.tag_id,
+										tagIds.map((tag) => tag.id),
+									), // ! NOTE: array is not supported for prepared statements
+								),
+							),
+					),
+				]
+			: [];
+
+		if (tagsParams.length) {
+			console.log(`Added tag filters for: ${tagsParams.join(", ")}`);
+		}
+
+		const sortValue = sortBy
+			? (sortType === "ascending" ? asc : desc)(
+					resources[sortBy as keyof ResourcesSelectType],
+				)
+			: asc(resources.id);
+		console.log(`Sorting by ${sortBy} in ${sortType} order`);
+
+		// prepare the query
+		console.log("Preparing query with filters and sorting");
+		const query = tx.query.resources
+			.findMany({
+				with: {
+					category: { columns: { id: true, name: true } },
+					resourceTags: {
+						columns: { resource_id: false, tag_id: false },
+						with: { tag: true },
+					},
+				},
+				where: and(...baseFilters, ...tagFilter),
+				offset: sql.placeholder("offset"),
+				limit: sql.placeholder("limit"),
+				orderBy: [sortValue],
+			})
+			.prepare("all_resources");
+
+		// execute the prepared statement
+		const rows = await query.execute({
+			search: `%${search}%`,
+			offset: (page - 1) * limit,
+			limit: Number(limit),
+			categoryParams,
+		});
+		console.log(`Found ${rows.length} resources for page ${page}`);
+
+		return {
+			rows,
+			totalCount,
+		};
 	});
 };

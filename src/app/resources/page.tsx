@@ -8,6 +8,7 @@ import Container from "@/components/layouts/Container";
 import { FilterFormModal, SearchFormModal } from "./_components/modal";
 import { FilterModalTrigger, SearchModalTrigger } from "./_components/filter";
 import ResourceCardContainer from "./_components/ResourceCardContainer";
+import CategoriesAsideContainer from "./_components/CategoriesAsideContainer";
 
 const ASIDE_LINKS = [
 	{ title: "All", href: "/resources" },
@@ -33,7 +34,7 @@ const Page = () => {
 					</Section>
 
 					<Section className="flex flex-col lg:flex-row">
-						<Aside links={ASIDE_LINKS} />
+						<CategoriesAsideContainer />
 						<div className="w-full">
 							<div className="flex items-center justify-end gap-2">
 								<SearchModalTrigger />

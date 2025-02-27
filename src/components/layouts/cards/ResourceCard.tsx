@@ -62,7 +62,7 @@ const ResourceCard = ({ data }: ResourceCardProps) => {
 						<h2 className="mt-5 line-clamp-1 font-bold ~text-lg/2xl">
 							{data.name}
 						</h2>
-						<p className="mt-2 line-clamp-3 ~text-sm/base">
+						<p className="mt-2 line-clamp-2 ~text-sm/base lg:line-clamp-3">
 							{data.description}
 						</p>
 					</div>

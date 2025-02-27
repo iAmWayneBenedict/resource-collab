@@ -6,8 +6,18 @@ import { resources } from "./resources";
 export const likeResources = pgTable(
 	"like_resources",
 	{
-		user_id: varchar("user_id").notNull(),
-		resource_id: varchar("resource_id").notNull(),
+		user_id: varchar("user_id")
+			.references(() => users.id, {
+				onDelete: "cascade",
+				onUpdate: "cascade",
+			})
+			.notNull(),
+		resource_id: varchar("resource_id")
+			.references(() => resources.id, {
+				onDelete: "cascade",
+				onUpdate: "cascade",
+			})
+			.notNull(),
 		liked_at: timestamp("liked_at", { mode: "date" }).defaultNow(),
 	},
 	(table) => [

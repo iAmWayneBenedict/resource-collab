@@ -7,10 +7,16 @@ export const portfolioSkills = pgTable(
 	"portfolio_skills",
 	{
 		portfolio_id: serial("portfolio_id")
-			.references(() => portfolios.id)
+			.references(() => portfolios.id, {
+				onDelete: "cascade",
+				onUpdate: "cascade",
+			})
 			.notNull(),
 		skill_id: serial("skill_id")
-			.references(() => skills.id)
+			.references(() => skills.id, {
+				onDelete: "cascade",
+				onUpdate: "cascade",
+			})
 			.notNull(),
 	},
 	(table) => [

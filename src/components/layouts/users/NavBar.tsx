@@ -26,7 +26,7 @@ import { useAuthUser } from "@/store/useAuthUser";
 
 const NavBar = () => {
 	return (
-		<div className="fixed top-[30px] left-1/2 -translate-x-1/2 w-[90%] flex justify-between items-center bg-blur-background py-4 px-10 rounded-full shadow-lg backdrop-blur-md z-50">
+		<div className="fixed left-1/2 top-[30px] z-50 flex w-[90%] -translate-x-1/2 items-center justify-between rounded-full bg-blur-background px-10 py-4 shadow-lg backdrop-blur-md">
 			<div id="nav-left" style={{ flex: 1 }} className="flex">
 				<div className="flex items-center">
 					<Link href="/" className="flex items-center">
@@ -57,9 +57,9 @@ const NavLinkStyleWrapper = ({
 	return (
 		<div
 			className={cn(
-				"relative opacity-75 hover:opacity-100 after:opacity-0 after:absolute after:content-[''] after:-bottom-1 after:left-1/2 after:-translate-x-1/2 after:w-1 after:h-1 after:rounded-full after:bg-violet",
+				"relative opacity-75 after:absolute after:-bottom-1 after:left-1/2 after:h-1 after:w-1 after:-translate-x-1/2 after:rounded-full after:bg-violet after:opacity-0 after:content-[''] hover:opacity-100",
 				className,
-				pathname.includes(name) || isHomePath ? activeStyle : ""
+				pathname.includes(name) || isHomePath ? activeStyle : "",
 			)}
 		>
 			{children}
@@ -73,7 +73,7 @@ const SmallNav = () => {
 			<Sheet>
 				<SheetTrigger>
 					<div
-						className="w-[30px] h-[12px] flex flex-col justify-between cursor-pointer"
+						className="flex h-[12px] w-[30px] cursor-pointer flex-col justify-between"
 						id="hamburger"
 					>
 						<div className="h-[1px] w-full bg-black dark:bg-white"></div>
@@ -84,8 +84,9 @@ const SmallNav = () => {
 					<SheetHeader>
 						{/* <SheetTitle>Are you absolutely sure?</SheetTitle> */}
 						<SheetDescription>
-							This action cannot be undone. This will permanently delete your account
-							and remove your data from our servers.
+							This action cannot be undone. This will permanently
+							delete your account and remove your data from our
+							servers.
 						</SheetDescription>
 					</SheetHeader>
 				</SheetContent>
@@ -123,24 +124,28 @@ const NAV_LINKS = [
 
 const LargeNav = () => {
 	const { authUser } = useAuthUser();
-	console.log(authUser);
+
 	return (
 		<React.Fragment>
-			<div style={{ flex: 1 }} className="hidden lg:flex justify-center">
+			<div style={{ flex: 1 }} className="hidden justify-center lg:flex">
 				<NavigationMenu>
 					<NavigationMenuList>
 						{NAV_LINKS.map(({ name, link }) => {
-							if (name == "admin" && authUser?.role !== "admin") return null;
+							if (name == "admin" && authUser?.role !== "admin")
+								return null;
 							return (
 								<NavigationMenuItem key={name}>
 									<Link href={link} legacyBehavior passHref>
 										<NavigationMenuLink
 											className={cn(
 												navigationMenuTriggerStyle(),
-												"bg-transparent hover:bg-transparent focus:bg-transparent"
+												"bg-transparent hover:bg-transparent focus:bg-transparent",
 											)}
 										>
-											<NavLinkStyleWrapper name={name} className="capitalize">
+											<NavLinkStyleWrapper
+												name={name}
+												className="capitalize"
+											>
 												{name}
 											</NavLinkStyleWrapper>
 										</NavigationMenuLink>
@@ -151,7 +156,10 @@ const LargeNav = () => {
 					</NavigationMenuList>
 				</NavigationMenu>
 			</div>
-			<div style={{ flex: 1 }} className="items-center justify-end hidden gap-3 lg:flex">
+			<div
+				style={{ flex: 1 }}
+				className="hidden items-center justify-end gap-3 lg:flex"
+			>
 				{!authUser && (
 					<>
 						<Link href="/auth/signup" passHref>
@@ -159,7 +167,9 @@ const LargeNav = () => {
 						</Link>
 						<Button
 							asChild
-							className={cn("rounded-full px-7 bg-violet hover:bg-violet-foreground")}
+							className={cn(
+								"rounded-full bg-violet px-7 hover:bg-violet-foreground",
+							)}
 						>
 							<Link href="/auth/login" passHref>
 								Login

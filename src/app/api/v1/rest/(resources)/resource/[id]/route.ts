@@ -55,10 +55,7 @@ export const PUT = async (request: NextRequest) => {
 		const validationResponse = validate(body);
 
 		if (validationResponse) return validationResponse;
-		console.log({
-			...body,
-			userId: user.id,
-		});
+
 		const updatedResource = await updateResourceTransaction({
 			...body,
 			userId: user.id,

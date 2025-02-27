@@ -11,35 +11,39 @@ type Props = {
 };
 
 type LinkType = {
+	id: string | number;
 	title: string;
 	href: string;
 };
 
-/**
- * Aside component is used to display the left side of the layout and its links.
- * @param {Object} props - The props object.
- * @param {LinkType[]} props.links - An array of LinkType objects representing the links to be displayed.
- * @returns {*} React element.
- */
 const Aside: React.FC<Props> = ({ links }) => {
 	const params = useSearchParams();
 	const category = params.get("category") || "all";
+
 	const activeStyle =
 		"bg-black text-white hover:bg-black dark:hover:bg-white dark:bg-white dark:text-black";
-	console.log(category);
+
 	return (
-		<aside className={cn("hidden lg:flex min-w-[15rem] 2xl:min-w-[18rem] pr-10 2xl:pr-16")}>
-			<ul className="flex flex-col gap-1 w-full">
-				<li className="mb-5 pb-5 border-b border-neutral-400 dark:border-neutral-500">
-					<Link href={`${links[0].href}?category=bookmark`} scroll={false}>
+		<aside
+			className={cn(
+				"hidden min-w-[15rem] pr-10 lg:flex 2xl:min-w-[18rem] 2xl:pr-16",
+			)}
+		>
+			<ul className="flex w-full flex-col gap-1">
+				<li className="mb-5 border-b border-neutral-400 pb-5 dark:border-neutral-500">
+					<Link
+						href={`${links[0].href}?category=bookmark`}
+						scroll={false}
+					>
 						<Badge
 							variant={"secondary"}
 							className={cn(
 								category === "bookmark" ? activeStyle : "",
-								"flex items-center gap-2"
+								"flex items-center gap-2",
 							)}
 						>
-							<Bookmark className="transition-none" /> <span>Bookmark</span>
+							<Bookmark className="transition-none" />{" "}
+							<span>Bookmark</span>
 						</Badge>
 					</Link>
 				</li>
@@ -49,7 +53,7 @@ const Aside: React.FC<Props> = ({ links }) => {
 							<Badge
 								variant={"secondary"}
 								className={cn(
-									category === link.title.toLocaleLowerCase() ? activeStyle : ""
+									category == link.id ? activeStyle : "",
 								)}
 							>
 								{link.title}

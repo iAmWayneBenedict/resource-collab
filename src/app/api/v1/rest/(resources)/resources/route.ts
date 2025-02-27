@@ -1,10 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/data/connection";
-import { resources, resourceTags } from "@/data/schema";
-import { and, asc, count, desc, eq, ilike, sql } from "drizzle-orm";
+import { resources, resourceTags, tags } from "@/data/schema";
+import {
+	and,
+	asc,
+	count,
+	desc,
+	eq,
+	exists,
+	ilike,
+	inArray,
+	SQL,
+	sql,
+} from "drizzle-orm";
 import { ResourcesSelectType } from "@/data/models/resources";
 import { getApiPaginatedSearchParams } from "@/lib/utils";
-import { deleteResourceTransaction } from "@/services/resource-service";
+import {
+	deleteResourceTransaction,
+	findResources,
+} from "@/services/resource-service";
 import { auth } from "@/lib/auth";
 
 export const DELETE = async (request: NextRequest) => {
@@ -58,83 +72,43 @@ export const DELETE = async (request: NextRequest) => {
 	}
 };
 
+const DEFAULT_PAGE = 1;
+const DEFAULT_LIMIT = 10;
 export const GET = async (req: NextRequest) => {
 	const { searchParams } = req.nextUrl;
 
-	const { page, limit, search, sortBy, sortType, filterBy, filterValue } =
-		getApiPaginatedSearchParams(searchParams);
+	const page = Number(searchParams.get("page")) || DEFAULT_PAGE;
+	const limit = Number(searchParams.get("limit")) || DEFAULT_LIMIT;
+	const search = searchParams.get("search") ?? "";
+	const sortBy = searchParams.get("sort_by") ?? "";
+	const sortType = searchParams.get("sort_type") as
+		| "ascending"
+		| "descending"
+		| null;
+
+	// filters
+	const categoryParams = searchParams.get("category");
+	const tagsParams =
+		searchParams
+			.get("tags")
+			?.split(",")
+			.filter((tag) => tag) ?? [];
 
 	try {
-		const [{ totalCount }] = await db
-			.select({ totalCount: count() })
-			.from(resources);
-
-		const filters = [];
-		if (search)
-			filters.push(ilike(resources.name, sql.placeholder("search")));
-
-		if (filterBy && filterValue)
-			filters.push(
-				eq(
-					resources[filterBy as keyof ResourcesSelectType],
-					sql.placeholder("filterValue"),
-				),
-			);
-
-		const tagFilters = [];
-		if (filterBy === "tag")
-			tagFilters.push(
-				eq(resourceTags.tag_id, sql.placeholder("filterBy")),
-			);
-
-		const sortValue = sortBy
-			? (sortType === "ascending" ? asc : desc)(
-					resources[sortBy as keyof ResourcesSelectType],
-				)
-			: asc(resources.id);
-
-		const query = db.query.resources
-			.findMany({
-				with: {
-					category: {
-						columns: {
-							id: true,
-							name: true,
-						},
-					},
-					resourceTags: {
-						columns: {
-							resource_id: false,
-							tag_id: false,
-						},
-						with: { tag: true },
-						where: tagFilters.length
-							? and(...tagFilters)
-							: undefined,
-					},
-				},
-				where: filters.length ? and(...filters) : undefined,
-				offset: sql.placeholder("offset"),
-				limit: sql.placeholder("limit"),
-				orderBy: [sortValue],
-			})
-			.prepare("all_resources");
-
-		const rows = await query.execute({
-			search: `%${search}%`,
-			offset: (page - 1) * limit,
-			limit: Number(limit),
-			filterBy,
-			filterValue,
+		const { rows, totalCount } = await findResources({
+			limit,
+			page,
+			search,
+			sortBy,
+			sortType,
+			category: categoryParams,
+			tags: tagsParams,
 		});
 
 		return NextResponse.json(
 			{
 				message: "Successfully retrieved resources",
-				data: {
-					rows,
-					count: totalCount,
-				},
+				data: { rows, count: totalCount },
 			},
 			{ status: 200 },
 		);

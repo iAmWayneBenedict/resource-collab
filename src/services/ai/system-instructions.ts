@@ -11,8 +11,8 @@ export const ListOfSystemInstruction = {
 		
 		You should also STRICTLY add tags aside from the given tags, but IT SHOULD STILL BE RELATED. IT SHOULD ALWAYS BE IN THE GIVEN CATEGORIES.
 
-		You can make up your own categories and tags if the given categories and tags are not enough. You should add as much tag as much as possible.
+		You can make up your own categories and tags if the given categories and tags are not enough. MAXIMUM TAGS SHOULD NOT EXCEED 10.
 		
-		NOTE: Categories and tags SHOULD NOT BE EMPTY.
+		NOTE: Categories and tags SHOULD NOT BE EMPTY and Programming Languages are PRIORITY for "Software Development".
 		The response should STRICTLY follow the schema that you will be given.`,
 };
