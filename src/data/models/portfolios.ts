@@ -10,7 +10,7 @@ import { users } from "./users";
 import { relations } from "drizzle-orm";
 import { categories } from "./categories";
 import { portfolioSkills } from "./portfolio-skills";
-import { bookmarks } from "./bookmarks";
+import { portfolioCollections } from "./portfolio-collections";
 
 export const portfolios = pgTable("portfolios", {
 	id: serial("id").primaryKey(),
@@ -47,5 +47,5 @@ export const portfolioRelations = relations(portfolios, ({ one, many }) => ({
 		references: [categories.id],
 	}),
 	skills: many(portfolioSkills),
-	bookmarks: many(bookmarks),
+	portfolioCollections: many(portfolioCollections),
 }));

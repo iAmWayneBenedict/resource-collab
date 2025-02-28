@@ -1,25 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/data/connection";
-import { resources, resourceTags, tags } from "@/data/schema";
-import {
-	and,
-	asc,
-	count,
-	desc,
-	eq,
-	exists,
-	ilike,
-	inArray,
-	SQL,
-	sql,
-} from "drizzle-orm";
-import { ResourcesSelectType } from "@/data/models/resources";
-import { getApiPaginatedSearchParams } from "@/lib/utils";
 import {
 	deleteResourceTransaction,
 	findResources,
 } from "@/services/resource-service";
-import { auth } from "@/lib/auth";
+import { auth, getSession } from "@/lib/auth";
 
 export const DELETE = async (request: NextRequest) => {
 	const body = await request.json();
@@ -77,6 +61,9 @@ const DEFAULT_LIMIT = 10;
 export const GET = async (req: NextRequest) => {
 	const { searchParams } = req.nextUrl;
 
+	const session = await getSession(req.headers);
+	const user = session?.user;
+
 	const page = Number(searchParams.get("page")) || DEFAULT_PAGE;
 	const limit = Number(searchParams.get("limit")) || DEFAULT_LIMIT;
 	const search = searchParams.get("search") ?? "";
@@ -103,6 +90,7 @@ export const GET = async (req: NextRequest) => {
 			sortType,
 			category: categoryParams,
 			tags: tagsParams,
+			userId: user?.id,
 		});
 
 		return NextResponse.json(

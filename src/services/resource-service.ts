@@ -2,6 +2,7 @@ import { db } from "@/data/connection";
 import { ResourcesSelectType, ResourcesType } from "@/data/models/resources";
 import {
 	categories as categoriesTable,
+	resourceCollections,
 	resources,
 	resourceTags,
 	tags,
@@ -403,6 +404,7 @@ type FindResourcesParams = {
 	sortType: "ascending" | "descending" | null;
 	category: string | null;
 	tags: string[];
+	userId: string | undefined;
 };
 export const findResources = async (
 	body: FindResourcesParams,
@@ -415,6 +417,7 @@ export const findResources = async (
 		sortType = "ascending",
 		category: categoryParams = "",
 		tags: tagsParams = [],
+		userId,
 	} = body;
 
 	console.log(`Finding resources with params:`, {
@@ -425,6 +428,7 @@ export const findResources = async (
 		sortType,
 		category: categoryParams,
 		tags: tagsParams,
+		userId,
 	});
 
 	return await db.transaction(async (tx) => {
@@ -494,6 +498,23 @@ export const findResources = async (
 			.findMany({
 				with: {
 					category: { columns: { id: true, name: true } },
+					resourceCollections: userId
+						? {
+								where: and(
+									eq(resourceCollections.user_id, userId),
+									eq(
+										resourceCollections.resource_id,
+										resources.id,
+									),
+								),
+								columns: {
+									id: true,
+									resource_id: true,
+									collection_folder_id: true,
+								},
+								with: { collectionFolder: true },
+							}
+						: undefined,
 					resourceTags: {
 						columns: { resource_id: false, tag_id: false },
 						with: { tag: true },

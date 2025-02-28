@@ -2,7 +2,7 @@ import { pgTable, serial, text, timestamp, varchar } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { userResources } from "./user-resources";
 import { categories } from "./categories";
-import { bookmarks } from "./bookmarks";
+import { resourceCollections } from "./resource-collections";
 import { resourceTags } from "./resource-tags";
 import { users } from "./users";
 
@@ -32,7 +32,7 @@ export const resourceRelations = relations(resources, ({ many, one }) => ({
 		fields: [resources.category_id],
 		references: [categories.id],
 	}),
-	bookmarks: many(bookmarks),
+	resourceCollections: many(resourceCollections),
 	resourceTags: many(resourceTags),
 	owner: one(users, {
 		fields: [resources.owner_id],

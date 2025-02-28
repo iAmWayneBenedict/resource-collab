@@ -108,7 +108,10 @@ const FilterFormModal = () => {
 	};
 
 	const onReset = () => {
-		router.push(window.location.pathname, { scroll: false });
+		let location = window.location.pathname;
+		if (category) location += `?category=${category}`;
+
+		router.push(location, { scroll: false });
 		onCloseModal();
 	};
 

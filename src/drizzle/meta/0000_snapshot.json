@@ -1,5 +1,5 @@
 {
-  "id": "791f7584-0d6c-4284-9fd1-cb5ae825b3c0",
+  "id": "c2ead153-0bfc-46e1-9d4a-59470456b29f",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -101,8 +101,8 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -154,155 +154,6 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.bookmark_folders": {
-      "name": "bookmark_folders",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "user_id": {
-          "name": "user_id",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "name": {
-          "name": "name",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "visibility": {
-          "name": "visibility",
-          "type": "bookmark_folders_visibility",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "'private'"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "bookmark_folders_user_id_users_id_fk": {
-          "name": "bookmark_folders_user_id_users_id_fk",
-          "tableFrom": "bookmark_folders",
-          "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "cascade"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.bookmarks": {
-      "name": "bookmarks",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "user_id": {
-          "name": "user_id",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "bookmark_folder_id": {
-          "name": "bookmark_folder_id",
-          "type": "serial",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "resource_id": {
-          "name": "resource_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "portfolio_id": {
-          "name": "portfolio_id",
-          "type": "serial",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "bookmarks_user_id_users_id_fk": {
-          "name": "bookmarks_user_id_users_id_fk",
-          "tableFrom": "bookmarks",
-          "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "cascade"
-        },
-        "bookmarks_bookmark_folder_id_bookmark_folders_id_fk": {
-          "name": "bookmarks_bookmark_folder_id_bookmark_folders_id_fk",
-          "tableFrom": "bookmarks",
-          "tableTo": "bookmark_folders",
-          "columnsFrom": [
-            "bookmark_folder_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "cascade"
-        },
-        "bookmarks_resource_id_resources_id_fk": {
-          "name": "bookmarks_resource_id_resources_id_fk",
-          "tableFrom": "bookmarks",
-          "tableTo": "resources",
-          "columnsFrom": [
-            "resource_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "cascade"
-        },
-        "bookmarks_portfolio_id_portfolios_id_fk": {
-          "name": "bookmarks_portfolio_id_portfolios_id_fk",
-          "tableFrom": "bookmarks",
-          "tableTo": "portfolios",
-          "columnsFrom": [
-            "portfolio_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
           "onDelete": "cascade",
           "onUpdate": "cascade"
         }
@@ -346,6 +197,59 @@
       },
       "indexes": {},
       "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.collection_folders": {
+      "name": "collection_folders",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "visibility": {
+          "name": "visibility",
+          "type": "collection_folders_visibility",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'private'"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "collection_folders_user_id_users_id_fk": {
+          "name": "collection_folders_user_id_users_id_fk",
+          "tableFrom": "collection_folders",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
@@ -406,8 +310,8 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -483,8 +387,8 @@
           "primaryKey": true,
           "notNull": true
         },
-        "bookmark_folder_id": {
-          "name": "bookmark_folder_id",
+        "collection_folder_id": {
+          "name": "collection_folder_id",
           "type": "serial",
           "primaryKey": false,
           "notNull": true
@@ -505,12 +409,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "folder_access_bookmark_folder_id_bookmark_folders_id_fk": {
-          "name": "folder_access_bookmark_folder_id_bookmark_folders_id_fk",
+        "folder_access_collection_folder_id_collection_folders_id_fk": {
+          "name": "folder_access_collection_folder_id_collection_folders_id_fk",
           "tableFrom": "folder_access",
-          "tableTo": "bookmark_folders",
+          "tableTo": "collection_folders",
           "columnsFrom": [
-            "bookmark_folder_id"
+            "collection_folder_id"
           ],
           "columnsTo": [
             "id"
@@ -537,7 +441,7 @@
         },
         "resource_id": {
           "name": "resource_id",
-          "type": "varchar",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
@@ -550,15 +454,35 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {
-        "like_resources_user_id_resource_id_pk": {
-          "name": "like_resources_user_id_resource_id_pk",
-          "columns": [
-            "user_id",
-            "resource_id"
-          ]
+      "foreignKeys": {
+        "like_resources_user_id_users_id_fk": {
+          "name": "like_resources_user_id_users_id_fk",
+          "tableFrom": "like_resources",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         },
+        "like_resources_resource_id_resources_id_fk": {
+          "name": "like_resources_resource_id_resources_id_fk",
+          "tableFrom": "like_resources",
+          "tableTo": "resources",
+          "columnsFrom": [
+            "resource_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {
         "like_resources_pk": {
           "name": "like_resources_pk",
           "columns": [
@@ -607,26 +531,96 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         }
       },
       "compositePrimaryKeys": {
-        "oauth_account_provider_id_provider_user_id_pk": {
-          "name": "oauth_account_provider_id_provider_user_id_pk",
-          "columns": [
-            "provider_id",
-            "provider_user_id"
-          ]
-        },
-        "oauth_constraint": {
-          "name": "oauth_constraint",
+        "oauth_account_pk": {
+          "name": "oauth_account_pk",
           "columns": [
             "provider_id",
             "provider_user_id"
           ]
         }
       },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.portfolio_collections": {
+      "name": "portfolio_collections",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "collection_folder_id": {
+          "name": "collection_folder_id",
+          "type": "serial",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "portfolio_id": {
+          "name": "portfolio_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "portfolio_collections_user_id_users_id_fk": {
+          "name": "portfolio_collections_user_id_users_id_fk",
+          "tableFrom": "portfolio_collections",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "portfolio_collections_collection_folder_id_collection_folders_id_fk": {
+          "name": "portfolio_collections_collection_folder_id_collection_folders_id_fk",
+          "tableFrom": "portfolio_collections",
+          "tableTo": "collection_folders",
+          "columnsFrom": [
+            "collection_folder_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "portfolio_collections_portfolio_id_portfolios_id_fk": {
+          "name": "portfolio_collections_portfolio_id_portfolios_id_fk",
+          "tableFrom": "portfolio_collections",
+          "tableTo": "portfolios",
+          "columnsFrom": [
+            "portfolio_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
@@ -661,8 +655,8 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         },
         "portfolio_skills_skill_id_skills_id_fk": {
           "name": "portfolio_skills_skill_id_skills_id_fk",
@@ -674,18 +668,11 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         }
       },
       "compositePrimaryKeys": {
-        "portfolio_skills_portfolio_id_skill_id_pk": {
-          "name": "portfolio_skills_portfolio_id_skill_id_pk",
-          "columns": [
-            "portfolio_id",
-            "skill_id"
-          ]
-        },
         "portfolio_skills_pk": {
           "name": "portfolio_skills_pk",
           "columns": [
@@ -746,18 +733,11 @@
         }
       },
       "compositePrimaryKeys": {
-        "portfolio_tags_portfolio_id_tag_id_pk": {
-          "name": "portfolio_tags_portfolio_id_tag_id_pk",
-          "columns": [
-            "portfolio_id",
-            "tag_id"
-          ]
-        },
         "portfolio_tags_pk": {
           "name": "portfolio_tags_pk",
           "columns": [
-            "portfolio_id",
-            "tag_id"
+            "tag_id",
+            "portfolio_id"
           ]
         }
       },
@@ -859,8 +839,8 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         },
         "portfolios_category_id_categories_id_fk": {
           "name": "portfolios_category_id_categories_id_fk",
@@ -872,8 +852,85 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.resource_collections": {
+      "name": "resource_collections",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "collection_folder_id": {
+          "name": "collection_folder_id",
+          "type": "serial",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "resource_id": {
+          "name": "resource_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "resource_collections_user_id_users_id_fk": {
+          "name": "resource_collections_user_id_users_id_fk",
+          "tableFrom": "resource_collections",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "resource_collections_collection_folder_id_collection_folders_id_fk": {
+          "name": "resource_collections_collection_folder_id_collection_folders_id_fk",
+          "tableFrom": "resource_collections",
+          "tableTo": "collection_folders",
+          "columnsFrom": [
+            "collection_folder_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "resource_collections_resource_id_resources_id_fk": {
+          "name": "resource_collections_resource_id_resources_id_fk",
+          "tableFrom": "resource_collections",
+          "tableTo": "resources",
+          "columnsFrom": [
+            "resource_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -929,18 +986,11 @@
         }
       },
       "compositePrimaryKeys": {
-        "resource_tags_resource_id_tag_id_pk": {
-          "name": "resource_tags_resource_id_tag_id_pk",
-          "columns": [
-            "resource_id",
-            "tag_id"
-          ]
-        },
         "resource_tags_pk": {
           "name": "resource_tags_pk",
           "columns": [
-            "resource_id",
-            "tag_id"
+            "tag_id",
+            "resource_id"
           ]
         }
       },
@@ -1034,8 +1084,8 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         },
         "resources_owner_id_users_id_fk": {
           "name": "resources_owner_id_users_id_fk",
@@ -1047,8 +1097,8 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -1124,8 +1174,8 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -1292,13 +1342,6 @@
         }
       },
       "compositePrimaryKeys": {
-        "user_resources_user_id_resource_id_pk": {
-          "name": "user_resources_user_id_resource_id_pk",
-          "columns": [
-            "user_id",
-            "resource_id"
-          ]
-        },
         "user_resources_pk": {
           "name": "user_resources_pk",
           "columns": [
@@ -1525,8 +1568,8 @@
     }
   },
   "enums": {
-    "public.bookmark_folders_visibility": {
-      "name": "bookmark_folders_visibility",
+    "public.collection_folders_visibility": {
+      "name": "collection_folders_visibility",
       "schema": "public",
       "values": [
         "public",

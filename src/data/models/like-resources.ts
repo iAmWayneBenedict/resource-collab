@@ -1,5 +1,11 @@
 import { relations } from "drizzle-orm";
-import { pgTable, primaryKey, timestamp, varchar } from "drizzle-orm/pg-core";
+import {
+	integer,
+	pgTable,
+	primaryKey,
+	timestamp,
+	varchar,
+} from "drizzle-orm/pg-core";
 import { users } from "./users";
 import { resources } from "./resources";
 
@@ -12,7 +18,7 @@ export const likeResources = pgTable(
 				onUpdate: "cascade",
 			})
 			.notNull(),
-		resource_id: varchar("resource_id")
+		resource_id: integer("resource_id")
 			.references(() => resources.id, {
 				onDelete: "cascade",
 				onUpdate: "cascade",

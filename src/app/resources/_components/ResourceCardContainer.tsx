@@ -1,14 +1,18 @@
 "use client";
 
 import ResourceCard from "@/components/layouts/cards/ResourceCard";
+import { getSession } from "@/lib/auth";
+import { useGetCollectionsQuery } from "@/lib/queries/collections";
 import { useGetPaginatedResourcesQuery } from "@/lib/queries/resources";
+import { useAuthUser } from "@/store";
 import { Button } from "@heroui/react";
 import { RotateCcw } from "lucide-react";
 import { useSearchParams } from "next/navigation";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 const ResourceCardContainer = () => {
 	const searchParams = useSearchParams();
+	const authUser = useAuthUser((state) => state.authUser);
 
 	const category = searchParams.get("category") ?? "";
 	const sortBySearchParams = searchParams.get("sortBy") ?? "";
@@ -20,8 +24,8 @@ const ResourceCardContainer = () => {
 	let sortBy = "";
 	if (["Newest", "Oldest"].includes(sortBySearchParams)) {
 		sortBy = "created_at";
-		if (sortBySearchParams === "Newest") sortValue = "ascending";
-		else sortValue = "descending";
+		if (sortBySearchParams === "Newest") sortValue = "descending";
+		else sortValue = "ascending";
 	} else if (
 		["Alphabetical", "Reverse Alphabetical"].includes(sortBySearchParams)
 	) {
@@ -45,6 +49,12 @@ const ResourceCardContainer = () => {
 			},
 			[category, sortValue, sortBy, tagsSearchParams],
 		);
+
+	const collections = useGetCollectionsQuery({
+		enabled: !!authUser,
+	});
+
+	console.log(collections.data);
 
 	if (isLoading) {
 		return (

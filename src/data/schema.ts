@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { usersEnum, TUsers, users, usersStatusEnum } from "./models/users";
+import {
+	usersEnum,
+	TUsers,
+	users,
+	usersStatusEnum,
+	userRelations,
+} from "./models/users";
 import { sessions, sessionsRelations } from "./models/sessions";
 import { oauthAccounts, TOauthAccounts } from "./models/oauth-account";
 import { emailVerificationCodes } from "./models/email-verification-codes";
@@ -13,14 +19,12 @@ import { skills, skillRelations } from "./models/skills";
 import { admins, adminUserRelations } from "./models/admins";
 import { externalMessages } from "./models/external-message";
 import { categories, categoryRelations } from "./models/categories";
-import { userRelations } from "./models/users";
 import { userResources, userResourcesRelations } from "./models/user-resources";
-import { bookmarks, bookmarksRelations } from "./models/bookmarks";
 import {
-	bookmarkFolders,
-	bookmarkFoldersRelations,
-	bookmarkFoldersVisibility,
-} from "./models/bookmark-folders";
+	collectionFolders,
+	collectionFoldersRelations,
+	collectionFoldersVisibility,
+} from "./models/collection-folders";
 import { folderAccess, folderAccessRelations } from "./models/folder-access";
 import { likeResourcesRelations, likeResources } from "./models/like-resources";
 import { tags, tagsRelations } from "./models/tags";
@@ -37,6 +41,14 @@ import {
 } from "./models/user-subscriptions";
 import { accountRelations, accounts } from "./models/accounts";
 import { verifications } from "./models/verifications";
+import {
+	portfolioCollections,
+	portfolioCollectionsRelations,
+} from "./models/portfolio-collections";
+import {
+	resourceCollections,
+	resourceCollectionsRelations,
+} from "./models/resource-collections";
 
 export const loginSchema = z.object({
 	email: z.string().email().min(5).max(255),
@@ -44,93 +56,62 @@ export const loginSchema = z.object({
 });
 
 export {
-	// users
-	usersEnum,
-	usersStatusEnum,
+	// users and auth (base tables first)
 	users,
 	userRelations,
-
-	// accounts
 	accounts,
 	accountRelations,
-
-	// subscriptions
+	sessions,
+	sessionsRelations,
+	verifications,
+	oauthAccounts,
+	emailVerificationCodes,
+	// categories and tags (independent tables)
+	categories,
+	categoryRelations,
+	tags,
+	tagsRelations,
+	// subscription related
 	subscriptions,
 	subscriptionsRelations,
 	subscriptionEnum,
-
-	// user subscription
 	userSubscription,
 	userSubscriptionRelations,
-
-	// session
-	sessions,
-	sessionsRelations,
-
-	// verification
-	verifications,
-
-	// oauth
-	oauthAccounts,
-
-	// email verification
-	emailVerificationCodes,
-
-	// user to resources
-	userResources,
-	userResourcesRelations,
-
-	// resources
+	// resources and portfolios
 	resources,
 	resourceRelations,
-
-	// resource categories
-	categories,
-	categoryRelations,
-
-	// portfolio
 	portfolios,
 	portfolioRelations,
-
-	// portfolio to skills
+	// skills
+	skills,
+	skillRelations,
 	portfolioSkills,
 	portfolioSkillsRelations,
-
-	// bookmarks
-	bookmarks,
-	bookmarksRelations,
-
-	// bookmark folders
-	bookmarkFolders,
-	bookmarkFoldersRelations,
-	bookmarkFoldersVisibility,
-
-	// folder access
+	// collections and folders
+	collectionFolders,
+	collectionFoldersRelations,
+	collectionFoldersVisibility,
+	portfolioCollections,
+	portfolioCollectionsRelations,
+	resourceCollections,
+	resourceCollectionsRelations,
 	folderAccess,
 	folderAccessRelations,
-
-	// like resources
+	// relationships and tags
+	userResources,
+	userResourcesRelations,
 	likeResources,
 	likeResourcesRelations,
-
-	// tags
-	tags,
-	tagsRelations,
 	resourceTags,
 	resourceTagsRelations,
 	portfolioTags,
 	portfolioTagsRelations,
-
-	// skills
-	skills,
-	skillRelations,
-
-	// admins
+	// admin and messages
 	admins,
 	adminUserRelations,
-
-	// external message
 	externalMessages,
+	// enums
+	usersEnum,
+	usersStatusEnum,
 };
-
 export type { TUsers, TOauthAccounts };

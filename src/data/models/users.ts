@@ -12,10 +12,11 @@ import { portfolios } from "./portfolios";
 import { userMessages } from "./user-message";
 import { userResources } from "./user-resources";
 import { admins } from "./admins";
-import { bookmarks } from "./bookmarks";
 import { userSubscription } from "./user-subscriptions";
 import { sessions } from "./sessions";
 import { resources } from "./resources";
+import { resourceCollections } from "./resource-collections";
+import { portfolioCollections } from "./portfolio-collections";
 
 export const usersEnum = pgEnum("users_enum", ["user", "admin", "guest"]);
 export const usersStatusEnum = pgEnum("users_status_enum", [
@@ -69,7 +70,8 @@ export const userRelations = relations(users, ({ many, one }) => ({
 	}),
 
 	messages: many(userMessages),
-	bookmarks: many(bookmarks),
+	resourceCollections: many(resourceCollections),
+	portfolioCollections: many(portfolioCollections),
 	userSubscriptions: many(userSubscription),
 	ownedResources: many(resources),
 }));

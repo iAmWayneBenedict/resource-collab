@@ -1,4 +1,3 @@
-import Aside from "@/components/layouts/users/Aside";
 import BannerContent from "@/components/layouts/users/BannerContent";
 import BannerGradient from "@/components/layouts/users/BannerGradient";
 import Layout from "@/components/layouts/users/Layout";
@@ -9,14 +8,6 @@ import { FilterFormModal, SearchFormModal } from "./_components/modal";
 import { FilterModalTrigger, SearchModalTrigger } from "./_components/filter";
 import ResourceCardContainer from "./_components/ResourceCardContainer";
 import CategoriesAsideContainer from "./_components/CategoriesAsideContainer";
-
-const ASIDE_LINKS = [
-	{ title: "All", href: "/resources" },
-	{ title: "Design", href: "/resources?category=design" },
-	{ title: "Development", href: "/resources?category=development" },
-	{ title: "Marketing", href: "/resources?category=marketing" },
-	{ title: "Productivity", href: "/resources?category=productivity" },
-];
 
 const Page = () => {
 	return (
