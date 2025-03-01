@@ -41,6 +41,7 @@ import {
 } from "./models/user-subscriptions";
 import { accountRelations, accounts } from "./models/accounts";
 import { verifications } from "./models/verifications";
+import { userMessages } from "./models/user-message";
 import {
 	portfolioCollections,
 	portfolioCollectionsRelations,
@@ -113,5 +114,6 @@ export {
 	// enums
 	usersEnum,
 	usersStatusEnum,
+	userMessages,
 };
 export type { TUsers, TOauthAccounts };

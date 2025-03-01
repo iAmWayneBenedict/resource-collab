@@ -1,12 +1,9 @@
 import { db } from "@/data/connection";
 import { collectionFolders, resourceCollections } from "@/data/schema";
 
-type CollectionType = "resource" | "portfolio";
-
-type CreateCollectionDto = {
+type CreateResourceCollectionDto = {
 	name: string;
 	userId: string;
-	type?: CollectionType;
 	resourceId?: number;
 	portfolioId?: number;
 };
@@ -16,8 +13,8 @@ type CollectionResponse = {
 	newCollection: typeof resourceCollections.$inferSelect;
 };
 
-export const createCollection = async (
-	body: CreateCollectionDto,
+export const createResourceCollection = async (
+	body: CreateResourceCollectionDto,
 ): Promise<CollectionResponse> => {
 	return db.transaction(async (tx) => {
 		const [newCollectionFolder] = await tx

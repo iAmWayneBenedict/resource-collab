@@ -1,12 +1,9 @@
 "use client";
 
-import React, { useLayoutEffect, useMemo, useState } from "react";
 import Image from "next/image";
-import { useTheme } from "next-themes";
 import { ResourceTags } from "./components/resources/ResourceTags";
 import { ResourceMetrics } from "./components/resources/ResourceMetrics";
-import { BookmarkButton } from "./components/resources/BookmarkButton";
-import { motion, stagger } from "motion/react";
+import { motion } from "motion/react";
 import SaveResourcePopOver from "./components/resources/SaveResourcePopOver";
 
 type ResourceCardProps = {

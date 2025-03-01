@@ -12,6 +12,6 @@ const client = postgres(process.env.DATABASE_CONNECTION_URL ?? "", {
  * @see  * @see URL_ADDRESS.drizzle.team/docs/postgres-js
  * ! NOTE: logger: true is only for development
  */
-const db = drizzle(client, { schema, logger: false });
+const db = drizzle(client, { schema, logger: true });
 
 export { db };

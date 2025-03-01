@@ -1,18 +1,19 @@
 "use client";
 
 import ResourceCard from "@/components/layouts/cards/ResourceCard";
-import { getSession } from "@/lib/auth";
 import { useGetCollectionsQuery } from "@/lib/queries/collections";
 import { useGetPaginatedResourcesQuery } from "@/lib/queries/resources";
 import { useAuthUser } from "@/store";
+import { useCollections } from "@/store/useCollections";
 import { Button } from "@heroui/react";
 import { RotateCcw } from "lucide-react";
 import { useSearchParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
 const ResourceCardContainer = () => {
 	const searchParams = useSearchParams();
 	const authUser = useAuthUser((state) => state.authUser);
+	const setCollections = useCollections((state) => state.setCollections);
 
 	const category = searchParams.get("category") ?? "";
 	const sortBySearchParams = searchParams.get("sortBy") ?? "";
@@ -54,7 +55,11 @@ const ResourceCardContainer = () => {
 		enabled: !!authUser,
 	});
 
-	console.log(collections.data);
+	useEffect(() => {
+		if (!collections.isSuccess) return;
+
+		setCollections(collections.data?.data);
+	}, [collections.isSuccess, collections.data]);
 
 	if (isLoading) {
 		return (

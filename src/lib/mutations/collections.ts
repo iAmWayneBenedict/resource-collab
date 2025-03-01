@@ -5,4 +5,4 @@ export const usePostCollectionsMutation = ({
 	...options
 }: TMutationOptions): UseMutationResult<
 	TSuccessAPIResponse<any> | TErrorAPIResponse
-> => useHookMutation({ endpoint: "/collections", ...options });
+> => useHookMutation({ endpoint: "/resource-collections", ...options });

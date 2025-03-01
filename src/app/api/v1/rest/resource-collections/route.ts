@@ -1,7 +1,7 @@
 import { db } from "@/data/connection";
 import { collectionFolders, resourceCollections } from "@/data/schema";
 import { getSession } from "@/lib/auth";
-import { createCollection } from "@/services/collection-service";
+import { createResourceCollection } from "@/services/resource-collection-service";
 import { count, eq, sql } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -29,8 +29,7 @@ export const POST = async (req: NextRequest) => {
 	}
 
 	try {
-		await createCollection({
-			type: "resource",
+		await createResourceCollection({
 			userId: user.id,
 			name: body.name,
 			resourceId: body.resource_id,
@@ -78,6 +77,8 @@ const validate = (body: BodyParams) => {
 };
 
 export const GET = async (req: NextRequest) => {
+	const searchParams = req.nextUrl.searchParams;
+
 	const session = await getSession(req.headers);
 	const user = session?.user;
 	if (!user) {
@@ -88,16 +89,16 @@ export const GET = async (req: NextRequest) => {
 	}
 
 	try {
-		const collectionsData = await db.query.collectionFolders.findMany({
-			extras: {
-				resourceCount: sql<{
-					resourceCount: number;
-				}>`CAST((SELECT COUNT(*) as resourceCount FROM resource_collections WHERE collection_folder_id = ${collectionFolders.id}) AS integer)`.as(
-					"resourceCount",
-				),
-			},
-			where: eq(collectionFolders.user_id, user.id),
-		});
+		// ! THERE is a bug in the drizzle relational queries where subqueries with conditional queries are not working (at least for extras)
+		const collectionsData = await db
+			.select({
+				id: collectionFolders.id,
+				name: collectionFolders.name,
+				visibility: collectionFolders.visibility,
+				resourceCount: sql<number>`CAST((${db.select({ count: count() }).from(resourceCollections).where(eq(resourceCollections.collection_folder_id, collectionFolders.id))}) AS integer)`,
+			})
+			.from(collectionFolders)
+			.where(eq(collectionFolders.user_id, user.id));
 
 		return NextResponse.json(
 			{
