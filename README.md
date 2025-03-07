@@ -1,5 +1,7 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/iAmWayneBenedict/resource-collab?labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit%20Reviews)
+
 ## Getting Started
 
 First, run the development server:
