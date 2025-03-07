@@ -7,25 +7,31 @@ import { useTime } from "@/hooks";
 const Footer = () => {
 	const year = useTime({ options: { year: "numeric" } });
 	return (
-		<div className="absolute bottom-[30px] left-1/2 -translate-x-1/2 w-[90%] flex justify-between items-center bg-blur-background py-5 px-10 rounded-full shadow-lg backdrop-blur-md z-50">
-			<div id="nav-left" className="flex-1 hidden md:flex">
+		<div className="absolute bottom-[30px] left-1/2 z-50 flex w-[95%] -translate-x-1/2 items-center justify-between rounded-full bg-blur-background px-10 py-5 shadow-lg backdrop-blur-md md:w-[90%]">
+			<div id="nav-left" className="hidden flex-1 md:flex">
 				<div className="flex items-center">
 					<Link href="/" className="flex items-center">
 						<span className="text-xl font-bold">Co.</span>
 					</Link>
 				</div>
 			</div>
-			<div className="flex justify-center w-fit md:flex-1">
+			<div className="flex w-fit justify-center md:flex-1">
 				{year && (
 					<small className="flex gap-2">
-						<span className="hidden md:flex">All Rights Reserved</span>
+						<span className="hidden md:flex">
+							All Rights Reserved
+						</span>
 						<span className="hidden md:flex">|</span>
 						<span>© {year}</span>
 					</small>
 				)}
 			</div>
-			<div className="flex items-center justify-end flex-1 gap-3">
-				<Link href="https://iamwayne.vercel.app/" target="_blank" passHref>
+			<div className="flex flex-1 items-center justify-end gap-3">
+				<Link
+					href="https://iamwayne.vercel.app/"
+					target="_blank"
+					passHref
+				>
 					<svg
 						width="106"
 						height="20"

@@ -5,7 +5,7 @@ import { useGetCollectionsQuery } from "@/lib/queries/collections";
 import { useGetPaginatedResourcesQuery } from "@/lib/queries/resources";
 import { useAuthUser } from "@/store";
 import { useCollections } from "@/store/useCollections";
-import { Button } from "@heroui/react";
+import { Button, Skeleton } from "@heroui/react";
 import { RotateCcw } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import React, { useEffect } from "react";
@@ -63,8 +63,16 @@ const ResourceCardContainer = () => {
 
 	if (isLoading) {
 		return (
-			<div className="mt-10 flex w-full justify-center">
-				<h3 className="text-xl">Loading...</h3>
+			<div className="mt-10 flex w-full flex-wrap gap-6">
+				{/* <h3 className="text-xl">Loading...</h3> */}
+				{Array.from({ length: 6 }).map((_, index) => (
+					<Skeleton
+						key={index}
+						className="m-0 flex h-72 min-w-[19rem] flex-1 flex-col rounded-2xl p-0 md:min-w-[22rem]"
+					>
+						<div className="relative" />
+					</Skeleton>
+				))}
 			</div>
 		);
 	}
@@ -87,7 +95,7 @@ const ResourceCardContainer = () => {
 	}
 
 	return (
-		<div className="mt-10 flex flex-wrap gap-6">
+		<div className="mt-10 flex flex-wrap gap-4 md:gap-6">
 			{data?.data.rows.map((resource: any) => (
 				<ResourceCard key={resource.id} data={resource} />
 			))}

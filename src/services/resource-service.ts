@@ -2,6 +2,7 @@ import { db } from "@/data/connection";
 import { ResourcesSelectType, ResourcesType } from "@/data/models/resources";
 import {
 	categories as categoriesTable,
+	likeResources,
 	resourceCollections,
 	resources,
 	resourceTags,
@@ -408,7 +409,10 @@ type FindResourcesParams = {
 };
 export const findResources = async (
 	body: FindResourcesParams,
-): Promise<{ rows: InferSelectModel<ResourcesType>[]; totalCount: number }> => {
+): Promise<{
+	rows: Partial<InferSelectModel<ResourcesType>>[];
+	totalCount: number;
+}> => {
 	const {
 		page = 1,
 		limit = 10,
@@ -496,17 +500,12 @@ export const findResources = async (
 		console.log("Preparing query with filters and sorting");
 		const query = tx.query.resources
 			.findMany({
+				columns: { owner_id: false },
 				with: {
 					category: { columns: { id: true, name: true } },
 					resourceCollections: userId
 						? {
-								where: and(
-									eq(resourceCollections.user_id, userId),
-									eq(
-										resourceCollections.resource_id,
-										resources.id,
-									),
-								),
+								where: eq(resourceCollections.user_id, userId),
 								columns: {
 									id: true,
 									resource_id: true,
@@ -517,8 +516,23 @@ export const findResources = async (
 						: undefined,
 					resourceTags: {
 						columns: { resource_id: false, tag_id: false },
-						with: { tag: true },
+						with: { tag: { columns: { name: true } } },
 					},
+					likes: {
+						columns: { liked_at: true },
+						where: eq(likeResources.user_id, userId as string),
+					},
+				},
+				extras: {
+					bookmarksCount:
+						sql<number>`CAST((${tx.select({ count: count() }).from(resourceCollections).where(eq(resourceCollections.resource_id, resources.id))}) AS integer)`.as(
+							"bookmarksCount",
+						),
+
+					likesCount:
+						sql<number>`CAST((${tx.select({ count: count() }).from(likeResources).where(eq(likeResources.resource_id, resources.id))}) AS integer)`.as(
+							"likesCount",
+						),
 				},
 				where: and(...baseFilters, ...tagFilter),
 				offset: sql.placeholder("offset"),

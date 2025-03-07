@@ -22,10 +22,10 @@ const Providers = ({ data, children }: any) => {
 		<QueryClientProvider client={queryClient}>
 			<HeroUIProvider>
 				<ToastProvider
-					placement="top-center"
-					toastOffset={60}
+					placement="bottom-right"
+					toastOffset={100}
 					toastProps={{
-						radius: "full",
+						radius: "lg",
 						variant: "flat",
 						timeout: 6000,
 					}}

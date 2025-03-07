@@ -8,12 +8,16 @@ export const ResourceTags = ({ tags }: ResourceTagsProps) => {
 	return (
 		<div className="flex flex-wrap gap-2">
 			{tags?.slice(0, 3).map(({ tag }) => (
-				<Chip variant="flat" key={tag.name} className="text-sm">
+				<Chip
+					variant="flat"
+					key={tag.name}
+					className="text-xs 2xl:text-sm"
+				>
 					{tag.name}
 				</Chip>
 			))}
 			{tags?.length > 3 && (
-				<Chip variant="flat" className="text-sm">
+				<Chip variant="flat" className="text-xs 2xl:text-sm">
 					+{tags.length - 3}
 				</Chip>
 			)}

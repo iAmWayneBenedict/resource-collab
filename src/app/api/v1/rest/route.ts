@@ -1,6 +1,11 @@
 import { db } from "@/data/connection";
-import { resourceTags, tags } from "@/data/schema";
-import { eq, inArray } from "drizzle-orm";
+import {
+	resourceCollections,
+	resources,
+	resourceTags,
+	tags,
+} from "@/data/schema";
+import { and, eq, inArray } from "drizzle-orm";
 import { NextResponse, NextRequest } from "next/server";
 
 export async function GET(request: NextRequest, response: NextResponse) {
@@ -44,26 +49,13 @@ export async function GET(request: NextRequest, response: NextResponse) {
 	return NextResponse.json({
 		data: await db.query.resources.findMany({
 			with: {
-				resourceTags: {
-					with: {
-						tag: true,
-					},
-					// where: (resourceTags, { inArray }) =>
-					// 	inArray(resourceTags.tag_id, [338]),
+				resourceCollections: {
+					where: eq(
+						resourceCollections.user_id,
+						"gaduDMR7AviJrbLuyXtxFl9aTqQSRitX",
+					),
 				},
 			},
-			where: (resources, { exists, and, eq }) =>
-				exists(
-					db
-						.select()
-						.from(resourceTags)
-						.where(
-							and(
-								eq(resourceTags.resource_id, resources.id),
-								inArray(resourceTags.tag_id, [338]),
-							),
-						),
-				),
 		}),
 	});
 

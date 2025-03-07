@@ -26,7 +26,7 @@ import { useAuthUser } from "@/store/useAuthUser";
 
 const NavBar = () => {
 	return (
-		<div className="fixed left-1/2 top-[30px] z-50 flex w-[90%] -translate-x-1/2 items-center justify-between rounded-full bg-blur-background px-10 py-4 shadow-lg backdrop-blur-md">
+		<div className="fixed left-1/2 top-[30px] z-50 flex w-[95%] -translate-x-1/2 items-center justify-between rounded-full bg-blur-background px-10 py-4 shadow-lg backdrop-blur-md md:w-[90%]">
 			<div id="nav-left" style={{ flex: 1 }} className="flex">
 				<div className="flex items-center">
 					<Link href="/" className="flex items-center">

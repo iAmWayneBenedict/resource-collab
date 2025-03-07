@@ -6,22 +6,29 @@ import {
 	PopoverTrigger,
 	ListboxItem,
 	Listbox,
+	addToast,
+	Selection,
 } from "@heroui/react";
-import React, { useState } from "react";
+import React, { Key, useCallback, useEffect, useMemo, useState } from "react";
 import { BookmarkButton } from "./BookmarkButton";
 import { motion, AnimatePresence } from "motion/react";
-import { Plus, ArrowLeft, Lock, Eye, Users } from "lucide-react";
+import { Plus, ArrowLeft, Lock, Eye, Users, Trash2 } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { usePostCollectionsMutation } from "@/lib/mutations/collections";
-import { bindReactHookFormError } from "@/lib/utils";
+import {
+	usePostCreateCollectionsMutation,
+	usePostCreateResourceCollectionsMutation,
+} from "@/lib/mutations/collections";
+import { bindReactHookFormError, toggleScrollBody } from "@/lib/utils";
 import { useCollections } from "@/store/useCollections";
 import { useQueryClient } from "@tanstack/react-query";
+import { a } from "vitest/dist/chunks/suite.qtkXWc6R.js";
 
 // Collection item type
 // Update the Collection type to include additional information
 type Collection = {
+	id: number;
 	key: string;
 	name: string;
 	resourceCount: number;
@@ -31,21 +38,96 @@ type Collection = {
 // Props for the CollectionsList component
 type CollectionsListProps = {
 	onCreateNew: () => void;
+	onComplete: () => void;
 	titleProps: any;
+	collectionList: string[];
+	resourceId: number;
 };
 
 // Props for the CreateCollectionForm component
 type CreateCollectionFormProps = {
 	resourceId: number;
 	onBack: () => void;
-	onComplete: (name: string) => void;
+	onComplete: () => void;
+};
+
+const collectionItemIcons = {
+	private: <Lock size={18} />,
+	public: <Eye size={18} />,
+	shared: <Users size={18} />,
 };
 
 // Collections list component
-const CollectionsList = ({ onCreateNew, titleProps }: CollectionsListProps) => {
+const CollectionsList = ({
+	onCreateNew,
+	titleProps,
+	onComplete,
+	collectionList,
+	resourceId,
+}: CollectionsListProps) => {
 	const getCollections = useCollections((state) => state.getCollections);
+	const [selectedKeys, setSelectedKeys] = useState<Selection>(
+		new Set([...collectionList]),
+	);
+
+	const queryClient = useQueryClient();
 
 	const collections = getCollections() as Collection[];
+
+	// Prevent scroll body when collections exceed 4
+	useEffect(() => {
+		if (!collections || collections.length <= 4) return;
+		toggleScrollBody(true);
+
+		return () => toggleScrollBody(false);
+	}, [collections]);
+
+	const mutation = usePostCreateResourceCollectionsMutation({
+		onSuccess: (data) => {
+			console.log("Resource added to collection:", data);
+			addToast({
+				title: "Success",
+				description: "Updated collection",
+				color: "success",
+			});
+			queryClient.invalidateQueries({ queryKey: ["collections"] });
+			queryClient.invalidateQueries({
+				queryKey: ["paginated-resources"],
+			});
+			onComplete();
+		},
+		onError: (error) => {
+			console.error(
+				"Error adding resource to collection:",
+				error.response.data,
+			);
+			addToast({
+				title: "Error",
+				description: "Resource addition failed.",
+				color: "danger",
+			});
+		},
+	});
+
+	const isSimilar = useMemo(() => {
+		const convert = (collectionList: any[]) => {
+			const sortedList = [...collectionList]
+				.map(Number)
+				.sort((a, b) => a - b);
+			return JSON.stringify(sortedList);
+		};
+		const selectedSetKeys = convert([...selectedKeys]);
+		const collectionListSet = convert(collectionList);
+
+		return selectedSetKeys === collectionListSet;
+	}, [selectedKeys, collectionList]);
+
+	const onDoneSubmit = useCallback(() => {
+		mutation.mutate({
+			collection_folder_ids: [...selectedKeys].map((v) => Number(v)),
+			resource_id: resourceId,
+		});
+	}, [selectedKeys]);
 
 	return (
 		<motion.div
@@ -78,31 +160,26 @@ const CollectionsList = ({ onCreateNew, titleProps }: CollectionsListProps) => {
 					Create new collection
 				</Button>
 			</div>
-			<div className="mt-2 rounded-md border border-gray-200 dark:border-gray-700">
+			<div className="mt-2 rounded-xl border border-gray-200 dark:border-gray-700">
 				<Listbox
 					aria-label="Collections"
 					className="w-full"
 					isVirtualized
+					selectionMode="multiple"
+					selectedKeys={selectedKeys}
+					onSelectionChange={setSelectedKeys}
 					virtualization={{
 						maxListboxHeight: 200,
 						itemHeight: 48,
 					}}
 				>
-					{collections.map((collection) => (
+					{collections?.map((collection) => (
 						<ListboxItem
-							key={collection.name}
+							key={collection.id}
 							className="py-2"
 							endContent={
 								<div className="flex items-center gap-2">
-									{collection.visibility === "private" && (
-										<Lock size={18} />
-									)}
-									{collection.visibility === "public" && (
-										<Eye size={18} />
-									)}
-									{collection.visibility === "shared" && (
-										<Users size={18} />
-									)}
+									{collectionItemIcons[collection.visibility]}
 								</div>
 							}
 							description={`${collection.resourceCount} item(s)`}
@@ -111,6 +188,18 @@ const CollectionsList = ({ onCreateNew, titleProps }: CollectionsListProps) => {
 						</ListboxItem>
 					))}
 				</Listbox>
+			</div>
+			<div className="mt-2 flex w-full justify-end">
+				<Button
+					size="sm"
+					className="bg-violet text-white"
+					radius="full"
+					onPress={onDoneSubmit}
+					isLoading={mutation.isPending}
+					isDisabled={isSimilar}
+				>
+					Done
+				</Button>
 			</div>
 		</motion.div>
 	);
@@ -138,17 +227,28 @@ const CreateCollectionForm = ({
 		},
 	});
 
-	const mutation = usePostCollectionsMutation({
+	const mutation = usePostCreateCollectionsMutation({
 		onSuccess: (data) => {
 			console.log("Collection created:", data);
+			queryClient.invalidateQueries({ queryKey: ["collections"] });
 			queryClient.invalidateQueries({
-				queryKey: ["collections"],
+				queryKey: ["paginated-resources"],
 			});
-			// onBack();
+			addToast({
+				title: "Success",
+				description: "Collection created successfully.",
+				color: "success",
+			});
+			onComplete();
 		},
 		onError: (error) => {
 			console.error("Error creating collection:", error.response.data);
 			bindReactHookFormError(error.response.data, setError);
+			addToast({
+				title: "Error",
+				description: "Collection creation failed.",
+				color: "danger",
+			});
 		},
 	});
 
@@ -156,7 +256,10 @@ const CreateCollectionForm = ({
 		if (!data) return;
 		console.log("Submitting new collection:", data, resourceId);
 		// onComplete(data);
-		mutation.mutate({ name: data.name, resource_id: resourceId });
+		mutation.mutate({
+			name: data.name,
+			resource_id: resourceId,
+		});
 	};
 
 	return (
@@ -205,10 +308,11 @@ const CreateCollectionForm = ({
 						)}
 					/>
 					<Button
-						color="primary"
 						size="sm"
 						radius="full"
 						type="submit"
+						className="bg-violet text-white"
+						isLoading={mutation.isPending}
 					>
 						Create
 					</Button>
@@ -222,14 +326,24 @@ const CreateCollectionForm = ({
 const SaveResourcePopOver = ({
 	bookmarkCount,
 	id,
+	isBookmarked,
+	collectionList,
 }: {
 	bookmarkCount: number;
 	id: number;
+	isBookmarked: boolean;
+	collectionList: any[];
 }) => {
 	const [showCreateForm, setShowCreateForm] = useState(false);
+	const [isOpen, setIsOpen] = useState(false);
 
-	const handleComplete = (name: string) => {
-		console.log(`Creating collection: ${name}`);
+	const onCompleteHandler = () => {
+		onOpenChangeHandler(false);
+	};
+
+	const onOpenChangeHandler = (isOpen: boolean) => {
+		setIsOpen(isOpen);
+		setShowCreateForm(false);
 	};
 
 	return (
@@ -238,11 +352,13 @@ const SaveResourcePopOver = ({
 			offset={10}
 			placement="bottom"
 			backdrop="transparent"
+			isOpen={isOpen}
+			onOpenChange={onOpenChangeHandler}
 		>
 			<PopoverTrigger>
 				<BookmarkButton
 					count={bookmarkCount || 0}
-					isBookmarked={false}
+					isBookmarked={isBookmarked}
 				/>
 			</PopoverTrigger>
 			<PopoverContent className="w-[280px] p-0">
@@ -252,12 +368,15 @@ const SaveResourcePopOver = ({
 							{!showCreateForm ? (
 								<CollectionsList
 									onCreateNew={() => setShowCreateForm(true)}
+									onComplete={onCompleteHandler}
 									titleProps={titleProps}
+									collectionList={collectionList}
+									resourceId={id}
 								/>
 							) : (
 								<CreateCollectionForm
 									onBack={() => setShowCreateForm(false)}
-									onComplete={handleComplete}
+									onComplete={onCompleteHandler}
 									resourceId={id}
 								/>
 							)}

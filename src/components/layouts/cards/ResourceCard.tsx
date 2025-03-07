@@ -5,12 +5,21 @@ import { ResourceTags } from "./components/resources/ResourceTags";
 import { ResourceMetrics } from "./components/resources/ResourceMetrics";
 import { motion } from "motion/react";
 import SaveResourcePopOver from "./components/resources/SaveResourcePopOver";
+import { useMemo } from "react";
 
 type ResourceCardProps = {
 	data: any;
 };
 
 const ResourceCard = ({ data }: ResourceCardProps) => {
+	const collectionList = useMemo(
+		() =>
+			data.resourceCollections?.map(
+				(c: any) => c.collection_folder_id + "", //!convert to string for the listbox to work
+			) ?? [],
+		[data.resourceCollections],
+	);
+
 	return (
 		<motion.div
 			key={data.id}
@@ -21,10 +30,15 @@ const ResourceCard = ({ data }: ResourceCardProps) => {
 			className="relative flex min-w-[19rem] flex-1 flex-col rounded-2xl bg-white shadow-md dark:bg-black md:min-w-[22rem]"
 		>
 			<div className="absolute right-7 top-7">
-				<SaveResourcePopOver bookmarkCount={1} id={data.id} />
+				<SaveResourcePopOver
+					bookmarkCount={data.bookmarksCount}
+					isBookmarked={!!data.resourceCollections.length}
+					collectionList={collectionList}
+					id={data.id}
+				/>
 			</div>
 			<div className="h-full">
-				<div className="flex h-full flex-col p-7">
+				<div className="flex h-full flex-col p-5 xl:p-7">
 					<div className="flex justify-start">
 						<Image
 							src={data.icon}
@@ -33,8 +47,8 @@ const ResourceCard = ({ data }: ResourceCardProps) => {
 							height={45}
 						/>
 					</div>
-					<div>
-						<h2 className="mt-5 line-clamp-1 font-bold ~text-lg/2xl">
+					<div className="mt-2">
+						<h2 className="mt-5 line-clamp-1 font-bold ~text-lg/xl">
 							{data.name}
 						</h2>
 						<p className="mt-2 line-clamp-2 ~text-sm/base lg:line-clamp-3">
@@ -48,8 +62,11 @@ const ResourceCard = ({ data }: ResourceCardProps) => {
 						<ResourceTags tags={data.resourceTags} />
 						<div className="mt-4">
 							<ResourceMetrics
-								views={data.views || 0}
+								resource_id={data.id}
+								views={data.view_count || 0}
+								likes={data.likesCount}
 								shares={data.shares || 0}
+								isLiked={data.likes.length > 0}
 							/>
 						</div>
 					</div>

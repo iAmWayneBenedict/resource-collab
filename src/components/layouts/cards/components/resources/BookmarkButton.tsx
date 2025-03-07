@@ -1,5 +1,6 @@
+import { Button } from "@heroui/react";
 import { Bookmark } from "lucide-react";
-import { Button } from "@/components/ui/button";
+// import { Button } from "@/components/ui/button";
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
 
@@ -10,8 +11,8 @@ type BookmarkButtonProps = {
 
 const ICON_COLORS = {
 	active: {
-		fill: "#000000",
-		stroke: "#000000",
+		fill: "#8134f2",
+		stroke: "#8134f2",
 	},
 	inactive: {
 		fill: "none",
@@ -30,11 +31,14 @@ export const BookmarkButton = ({
 	}>(ICON_COLORS.inactive);
 
 	useEffect(() => {
-		if (isBookmarked) {
-			setIconColors(ICON_COLORS.active);
-		} else {
-			setIconColors(ICON_COLORS.inactive);
-		}
+		const newIconColors = {
+			bookmarked: ICON_COLORS.active,
+			default: ICON_COLORS.inactive,
+			hover: { ...ICON_COLORS.inactive, stroke: "#6B7280" },
+			pressed: { ...ICON_COLORS.active, fill: "#6D2AE8" },
+		}[isBookmarked ? "bookmarked" : "default"];
+
+		setIconColors(newIconColors);
 	}, [isBookmarked]);
 
 	const formatNumber = (num: number): string => {
@@ -43,13 +47,15 @@ export const BookmarkButton = ({
 	};
 
 	return (
-		<Button
-			variant="ghost"
-			size="icon"
-			className="h-9 w-9 rounded-full bg-none p-0 transition-none"
-			{...props}
-		>
-			<div className="relative">
+		<div className="relative">
+			<Button
+				variant="light"
+				// size="icon"
+				isIconOnly
+				size="sm"
+				className="overflow-visible bg-none p-0 transition-none"
+				{...props}
+			>
 				<motion.div
 					className="h-full w-full"
 					whileTap={{ scale: 0.8 }}
@@ -63,10 +69,10 @@ export const BookmarkButton = ({
 						size={28}
 					/>
 				</motion.div>
-				<span className="absolute -bottom-[1.2rem] left-1/2 flex h-4 w-4 -translate-x-1/2 items-center justify-center rounded-full text-[12px] font-medium text-gray-800">
-					{formatNumber(count)}
-				</span>
-			</div>
-		</Button>
+			</Button>
+			<span className="absolute -bottom-[.8rem] left-1/2 z-[1] flex h-4 w-4 -translate-x-1/2 items-center justify-center rounded-full text-[12px] font-medium text-gray-800">
+				{formatNumber(count)}
+			</span>
+		</div>
 	);
 };

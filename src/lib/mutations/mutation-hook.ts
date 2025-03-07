@@ -20,6 +20,8 @@ export const useHookMutation = ({
 	endpoint,
 	onSuccess,
 	onError,
+	onMutate,
+	onSettled,
 	...options
 }: MutationFactoryOptions): UseMutationResult<
 	TSuccessAPIResponse<any> | TErrorAPIResponse
@@ -48,6 +50,8 @@ export const useHookMutation = ({
 		onError(error) {
 			if (onError) onError(error);
 		},
+		onMutate,
+		onSettled,
 		...options,
 	});
 };

@@ -5,6 +5,7 @@ import { categories } from "./categories";
 import { resourceCollections } from "./resource-collections";
 import { resourceTags } from "./resource-tags";
 import { users } from "./users";
+import { likeResources } from "./like-resources";
 
 export const resources = pgTable("resources", {
 	id: serial("id").primaryKey(),
@@ -34,6 +35,7 @@ export const resourceRelations = relations(resources, ({ many, one }) => ({
 	}),
 	resourceCollections: many(resourceCollections),
 	resourceTags: many(resourceTags),
+	likes: many(likeResources),
 	owner: one(users, {
 		fields: [resources.owner_id],
 		references: [users.id],
