@@ -10,7 +10,7 @@ const META_TAGS: string[] = [
 	"icon",
 	"description",
 ];
-export const GET = async (request: NextRequest, response: NextResponse) => {
+export const GET = async (request: NextRequest) => {
 	// Parse the request URL
 	let requestUrl: URL;
 	try {

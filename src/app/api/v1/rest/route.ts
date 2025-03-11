@@ -1,14 +1,9 @@
 import { db } from "@/data/connection";
-import {
-	resourceCollections,
-	resources,
-	resourceTags,
-	tags,
-} from "@/data/schema";
-import { and, eq, inArray } from "drizzle-orm";
+import { resourceCollections } from "@/data/schema";
+import { eq } from "drizzle-orm";
 import { NextResponse, NextRequest } from "next/server";
 
-export async function GET(request: NextRequest, response: NextResponse) {
+export async function GET() {
 	// sample using relations
 	// return NextResponse.json(
 	// 	await db.query.portfolioToSkills.findMany({
@@ -58,19 +53,10 @@ export async function GET(request: NextRequest, response: NextResponse) {
 			},
 		}),
 	});
-
-	return NextResponse.json({
-		data: await db.query.resourceTags.findMany({
-			with: {
-				tag: true,
-			},
-			where: eq(resourceTags.resource_id, 56),
-		}),
-	});
 }
 
 // To handle a POST request to /api
-export async function POST(request: NextRequest, response: NextResponse) {
+export async function POST() {
 	// Do whatever you want
 	return NextResponse.json({ message: "Hello World" });
 }

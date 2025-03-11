@@ -3,7 +3,7 @@ import { TUsers, users } from "@/data/schema";
 import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
-export const GET = async (req: NextRequest, { params }: { params: { id: string } }) => {
+export const GET = async () => {
 	// try {
 	// 	const users = await showUser(params.id);
 	// 	return NextResponse.json(
@@ -40,11 +40,14 @@ export const PUT = async (req: NextRequest) => {
 
 		return NextResponse.json(
 			{ message: "User updated successfully", data: null },
-			{ status: 200 }
+			{ status: 200 },
 		);
 	} catch (error) {
 		console.log(error);
 
-		return NextResponse.json({ message: "Error updating user", data: null }, { status: 400 });
+		return NextResponse.json(
+			{ message: "Error updating user", data: null },
+			{ status: 400 },
+		);
 	}
 };
