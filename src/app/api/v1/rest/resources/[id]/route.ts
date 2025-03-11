@@ -40,7 +40,11 @@ export async function GET(
 	}
 }
 
-export const PUT = async (request: NextRequest) => {
+export const PUT = async (
+	request: NextRequest,
+	{ params }: { params: Promise<{ id: string }> },
+) => {
+	const { id } = await params;
 	const body = await request.json();
 	const session = await getSession(request.headers);
 	const user = session?.user;
@@ -58,6 +62,7 @@ export const PUT = async (request: NextRequest) => {
 
 		const updatedResource = await updateResourceTransaction({
 			...body,
+			id,
 			userId: user.id,
 		});
 
