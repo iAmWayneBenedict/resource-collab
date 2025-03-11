@@ -105,7 +105,7 @@ const config = {
 	},
 	plugins: [
 		require("tailwindcss-animate"),
-		addVariablesForColors,
+		// addVariablesForColors,
 		fluid,
 		heroui({
 			prefix: "heroui", // prefix for themes variables

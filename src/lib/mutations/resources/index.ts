@@ -5,7 +5,7 @@ export const usePostResourceMutation = ({
 	...options
 }: TMutationOptions): UseMutationResult<
 	TSuccessAPIResponse<any> | TErrorAPIResponse
-> => useHookMutation({ endpoint: "/resource", ...options });
+> => useHookMutation({ endpoint: "/resources", ...options });
 
 export const useDeleteResourceMutation = ({
 	...options
@@ -20,7 +20,7 @@ export const usePutResourceMutation = ({
 	TSuccessAPIResponse<any> | TErrorAPIResponse
 > =>
 	useHookMutation({
-		endpoint: "/resource/" + params,
+		endpoint: "/resources/" + params,
 		method: "put",
 		...options,
 	});

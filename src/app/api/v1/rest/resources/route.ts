@@ -3,15 +3,16 @@ import {
 	createResourceTransaction,
 	deleteResourceTransaction,
 	findResource,
+	findResources,
 } from "@/services/resource-service";
 import { auth, getSession } from "@/lib/auth";
+import { ListOfPrompt } from "@/services/ai/prompts";
+import { ListOfSystemInstruction } from "@/services/ai/system-instructions";
+import { ListOfSchema } from "@/services/ai/gemini";
+import { AIService } from "@/services/ai";
+import { findAllCategory } from "@/services/category-service";
 import axios from "axios";
 import config from "@/config";
-import { AIService } from "@/services/ai";
-import { ListOfPrompt } from "@/services/ai/prompts";
-import { findAllCategory } from "@/services/category-service";
-import { ListOfSchema } from "@/services/ai/gemini";
-import { ListOfSystemInstruction } from "@/services/ai/system-instructions";
 
 type BodyParams = {
 	name: string;
@@ -100,6 +101,19 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 				tags: [],
 			};
 		}
+		console.log(resourceData);
+		const isCloudflareProtected = resourceData.title
+			.toLowerCase()
+			.includes("cloudflare");
+		if (isCloudflareProtected) {
+			return NextResponse.json(
+				{
+					message: "Website protected with cloudflare!",
+					data: { path: ["url"] },
+				},
+				{ status: 403 },
+			);
+		}
 
 		if (!resourceData.description) {
 			return NextResponse.json(
@@ -171,57 +185,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 	}
 }
 
-export async function DELETE(
-	request: NextRequest,
-	{ params }: { params: { id: number } },
-): Promise<NextResponse> {
-	const searchParams = request.nextUrl.searchParams;
-	const type = searchParams.get("type") ?? "";
-	const session = await auth.api.getSession({ headers: request.headers });
-	const user = session?.user;
-	if (!user)
-		return NextResponse.json(
-			{ message: "Unauthorized", data: null },
-			{ status: 403 },
-		);
-	if (!params.id) {
-		return NextResponse.json(
-			{ message: "Resource ID parameter is missing", data: null },
-			{ status: 404 },
-		);
-	}
-
-	if (!["soft", "hard"].includes(type)) {
-		return NextResponse.json(
-			{ message: "Type parameter is missing", data: null },
-			{ status: 404 },
-		);
-	}
-
-	try {
-		const deletedResources = await deleteResourceTransaction({
-			ids: [params.id],
-			userId: user.id,
-			type: type as "soft" | "hard",
-		});
-
-		return NextResponse.json(
-			{
-				message: "Resource successfully retrieved",
-				data: deletedResources,
-			},
-			{ status: 201 },
-		);
-	} catch (error: any) {
-		console.log("Error", error.message);
-
-		return NextResponse.json(
-			{ message: "Error retrieving resource", data: null },
-			{ status: 400 },
-		);
-	}
-}
-
 const validate = (body: BodyParams) => {
 	const requiredFields = ["name", "icon", "category", "tags", "url"];
 	const missingFields = requiredFields.filter(
@@ -241,4 +204,108 @@ const validate = (body: BodyParams) => {
 	}
 
 	return null;
+};
+
+export const DELETE = async (request: NextRequest) => {
+	const body = await request.json();
+	const session = await auth.api.getSession({ headers: request.headers });
+	const user = session?.user;
+
+	if (!user)
+		return NextResponse.json(
+			{ message: "Unauthorized", data: null },
+			{ status: 403 },
+		);
+
+	if (!body.ids || !Array.isArray(body.ids)) {
+		return NextResponse.json(
+			{ message: "Resource IDs parameter is missing", data: null },
+			{ status: 404 },
+		);
+	}
+
+	if (!body.type || !["soft", "hard"].includes(body.type)) {
+		return NextResponse.json(
+			{ message: "Type parameter is missing", data: null },
+			{ status: 404 },
+		);
+	}
+
+	const { ids, type } = body;
+
+	try {
+		const deletedResources = await deleteResourceTransaction({
+			ids: ids as number[],
+			userId: user.id,
+			type: type as "soft" | "hard",
+		});
+
+		return NextResponse.json(
+			{
+				message: "Resource successfully retrieved",
+				data: deletedResources,
+			},
+			{ status: 201 },
+		);
+	} catch (error: any) {
+		console.log("Error", error.message);
+
+		return NextResponse.json(
+			{ message: "Error retrieving resource", data: null },
+			{ status: 400 },
+		);
+	}
+};
+
+const DEFAULT_PAGE = 1;
+const DEFAULT_LIMIT = 10;
+export const GET = async (req: NextRequest) => {
+	const { searchParams } = req.nextUrl;
+
+	const session = await getSession(req.headers);
+	const user = session?.user;
+
+	const page = Number(searchParams.get("page")) || DEFAULT_PAGE;
+	const limit = Number(searchParams.get("limit")) || DEFAULT_LIMIT;
+	const search = searchParams.get("search") ?? "";
+	const sortBy = searchParams.get("sort_by") ?? "";
+	const sortType = searchParams.get("sort_type") as
+		| "ascending"
+		| "descending"
+		| null;
+
+	// filters
+	const categoryParams = searchParams.get("category");
+	const tagsParams =
+		searchParams
+			.get("tags")
+			?.split(",")
+			.filter((tag) => tag) ?? [];
+
+	try {
+		const { rows, totalCount } = await findResources({
+			limit,
+			page,
+			search,
+			sortBy,
+			sortType,
+			category: categoryParams,
+			tags: tagsParams,
+			userId: user?.id,
+		});
+
+		return NextResponse.json(
+			{
+				message: "Successfully retrieved resources",
+				data: { rows, count: totalCount },
+			},
+			{ status: 200 },
+		);
+	} catch (error) {
+		console.log("Error", error);
+		return NextResponse.json(
+			{ message: "Error retrieving resources", data: null },
+			{ status: 500 },
+		);
+	}
 };

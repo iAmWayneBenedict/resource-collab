@@ -513,7 +513,7 @@ export const findResources = async (
 								},
 								with: { collectionFolder: true },
 							}
-						: {},
+						: undefined,
 					resourceTags: {
 						columns: { resource_id: false, tag_id: false },
 						with: { tag: { columns: { name: true } } },
