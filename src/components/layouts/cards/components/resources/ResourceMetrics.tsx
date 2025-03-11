@@ -1,5 +1,7 @@
 import { usePostLikeResourceMutation } from "@/lib/mutations/like";
-import { Spinner } from "@heroui/react";
+import { ResourcePaginatedSearchParamsState } from "@/store/context/providers/ResourcePaginatedSearchParams";
+import useResourcePaginatedSearchParams from "@/store/context/useResourcePaginatedSearchParams";
+import { addToast, Spinner } from "@heroui/react";
 import { useQueryClient } from "@tanstack/react-query";
 import { ChartNoAxesColumn, Heart, Share2 } from "lucide-react";
 
@@ -11,6 +13,28 @@ type ResourceMetricsProps = {
 	isLiked?: boolean;
 };
 
+// Move helper functions outside component
+const formatNumber = (num: number): string => {
+	if (num >= 1000) return (num / 1000).toFixed(1) + "k";
+	return num.toString();
+};
+
+// Define type for the resource data
+type ResourceData = {
+	id: number;
+	likesCount: number;
+	likes: Array<{ id: number }>;
+	[key: string]: any;
+};
+
+// Define type for the previous resources data structure
+type PreviousResourcesData = {
+	data: {
+		rows: ResourceData[];
+	};
+	[key: string]: any;
+};
+
 export const ResourceMetrics = ({
 	resource_id,
 	views,
@@ -18,24 +42,79 @@ export const ResourceMetrics = ({
 	likes = 0,
 	isLiked = false,
 }: ResourceMetricsProps) => {
-	const formatNumber = (num: number): string => {
-		if (num >= 1000) return (num / 1000).toFixed(1) + "k";
-		return num.toString();
-	};
-
 	const queryClient = useQueryClient();
+	const searchParams = useResourcePaginatedSearchParams(
+		(state: ResourcePaginatedSearchParamsState) => state.searchParams,
+	) as ResourcePaginatedSearchParamsState["searchParams"];
+
+	// Create query key array for better reusability
+	const getQueryKey = () => [
+		"paginated-resources",
+		searchParams.category,
+		searchParams.sortValue,
+		searchParams.sortBy,
+		searchParams.tags,
+	];
 
 	const mutation = usePostLikeResourceMutation({
+		onMutate: async () => {
+			// Cancel any outgoing refetches
+			await queryClient.cancelQueries({
+				queryKey: getQueryKey(),
+			});
+
+			// Get current data from cache
+			const previousResources = queryClient.getQueryData(
+				getQueryKey(),
+			) as PreviousResourcesData;
+
+			if (previousResources) {
+				queryClient.setQueryData(getQueryKey(), {
+					...previousResources,
+					data: {
+						...previousResources.data,
+						rows: previousResources.data.rows.map((resource) => {
+							if (resource.id === resource_id) {
+								const likesCount = isLiked
+									? resource.likesCount - 1
+									: resource.likesCount + 1;
+								const likes = isLiked
+									? []
+									: [...resource.likes, { id: resource_id }];
+								return {
+									...resource,
+									likesCount,
+									likes,
+								};
+							}
+							return resource;
+						}),
+					},
+				});
+			}
+
+			// Return rollback function
+			return () => {
+				queryClient.setQueryData(getQueryKey(), previousResources);
+			};
+		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({
 				queryKey: ["paginated-resources"],
 			});
 		},
-		onError: () => {},
+		onError: (_, __, rollback: any) => {
+			if (rollback) rollback();
+
+			addToast({
+				title: "Error",
+				description: "Something went wrong",
+				color: "danger",
+			});
+		},
 	});
 
 	const onLike = () => {
-		// TODO: add like functionality
 		mutation.mutate({
 			resource_id: resource_id,
 		});
@@ -47,15 +126,13 @@ export const ResourceMetrics = ({
 				onClick={onLike}
 				className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
 			>
-				{mutation.isPending ? (
-					<Spinner size="sm" />
-				) : (
-					<Heart
-						fill={isLiked ? "#ef4444" : "none"}
-						className={`${isLiked ? "h-5 w-5 text-red-500" : "h-4 w-4"}`}
-					/>
-				)}
-				<span>{formatNumber(likes)} likes</span>
+				<Heart
+					fill={isLiked ? "#ef4444" : "none"}
+					className={`${isLiked ? "h-5 w-5 text-red-500" : "h-4 w-4"} transition-all duration-300`}
+				/>
+				<span className="transition-all duration-300">
+					{formatNumber(likes)} likes
+				</span>
 			</button>
 			<button className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
 				<ChartNoAxesColumn className="h-4 w-4" />
