@@ -443,7 +443,12 @@ export const findResources = async (
 
 		const filters: SQL[] = [];
 		if (search) {
-			filters.push(ilike(resources.name, sql.placeholder("search")));
+			filters.push(
+				or(
+					ilike(resources.name, sql.placeholder("search")),
+					ilike(resources.description, sql.placeholder("search")),
+				) as SQL,
+			);
 			console.log(`Added search filter for: ${search}`);
 		}
 
@@ -541,7 +546,7 @@ export const findResources = async (
 				},
 				where: and(...baseFilters, ...tagFilter),
 				offset: sql.placeholder("offset"),
-				limit: sql.placeholder("limit"),
+				...(limit !== -1 ? { limit: sql.placeholder("limit") } : {}),
 				orderBy: [sortValue],
 			})
 			.prepare("all_resources");
@@ -549,8 +554,8 @@ export const findResources = async (
 		// execute the prepared statement
 		const rows = await query.execute({
 			search: `%${search}%`,
-			offset: (page - 1) * limit,
-			limit: Number(limit),
+			offset: (page - 1) * (limit === -1 ? 1 : limit), // when limit is -1, we still need a valid offset
+			...(limit !== -1 ? { limit: Number(limit) } : {}),
 			categoryParams,
 		});
 		console.log(`Found ${rows.length} resources for page ${page}`);

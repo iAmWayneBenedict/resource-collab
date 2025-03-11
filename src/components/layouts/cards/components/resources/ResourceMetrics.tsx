@@ -54,6 +54,7 @@ export const ResourceMetrics = ({
 		searchParams.sortValue,
 		searchParams.sortBy,
 		searchParams.tags,
+		searchParams.search,
 	];
 
 	const mutation = usePostLikeResourceMutation({

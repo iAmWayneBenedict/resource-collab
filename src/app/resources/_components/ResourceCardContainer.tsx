@@ -27,6 +27,7 @@ const ResourceCardWrapper = () => {
 	const category = searchParams.get("category") ?? "";
 	const sortBySearchParams = searchParams.get("sortBy") ?? "";
 	const tagsSearchParams = searchParams.get("tags") ?? "";
+	const searchValue = searchParams.get("search") ?? "";
 
 	// sortBySearchParams can be "Newest", "Oldest", "Alphabetical", "Reverse Alphabetical", "Most Viewed"
 	// so we need to convert it to the sortBy and sortValue
@@ -53,8 +54,9 @@ const ResourceCardWrapper = () => {
 			sortBy: sortBy,
 			sortValue: sortValue,
 			tags: tagsSearchParams,
+			search: searchValue,
 		});
-	}, [category, sortValue, sortBy, tagsSearchParams]);
+	}, [category, sortValue, sortBy, tagsSearchParams, searchValue]);
 
 	const { data, isSuccess, isLoading, refetch } =
 		useGetPaginatedResourcesQuery(
@@ -65,8 +67,9 @@ const ResourceCardWrapper = () => {
 				tags: tagsSearchParams,
 				sort_by: sortBy,
 				sort_type: sortValue,
+				search: searchValue,
 			},
-			[category, sortValue, sortBy, tagsSearchParams],
+			[category, sortValue, sortBy, tagsSearchParams, searchValue],
 		);
 
 	const collections = useGetCollectionsQuery({
@@ -78,7 +81,6 @@ const ResourceCardWrapper = () => {
 
 		setCollections(collections.data?.data);
 	}, [collections.isSuccess, collections.data]);
-	console.log(data?.data);
 
 	if (isLoading) {
 		return (
