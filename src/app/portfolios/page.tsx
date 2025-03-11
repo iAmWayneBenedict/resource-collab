@@ -25,15 +25,31 @@ const Portfolios = () => {
 					<Section className="flex">
 						<Aside
 							links={[
-								{ title: "All", href: "/portfolios" },
-								{ title: "Entry Level", href: "/portfolios?filter=entry level" },
-								{ title: "Junior Level", href: "/portfolios?filter=junior level" },
-								{ title: "Mid Level", href: "/portfolios?filter=mid level" },
-								{ title: "Senior Level", href: "/portfolios?filter=senior level" },
+								{ id: 1, title: "All", href: "/portfolios" },
+								{
+									id: 2,
+									title: "Entry Level",
+									href: "/portfolios?filter=entry level",
+								},
+								{
+									id: 3,
+									title: "Junior Level",
+									href: "/portfolios?filter=junior level",
+								},
+								{
+									id: 4,
+									title: "Mid Level",
+									href: "/portfolios?filter=mid level",
+								},
+								{
+									id: 5,
+									title: "Senior Level",
+									href: "/portfolios?filter=senior level",
+								},
 							]}
 						/>
 						<div className="w-full">
-							<div className="mt-16 grid gap-4 2xl:gap-6 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
+							<div className="mt-16 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3 2xl:gap-6">
 								{[1, 2, 3, 4, 5, 6].map((el) => (
 									<PortfolioCard key={el} />
 								))}
