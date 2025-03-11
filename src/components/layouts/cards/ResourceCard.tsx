@@ -66,7 +66,7 @@ const ResourceCard = ({ data }: ResourceCardProps) => {
 								views={data.view_count || 0}
 								likes={data.likesCount}
 								shares={data.shares || 0}
-								isLiked={data.likes.length > 0}
+								isLiked={data?.likes?.length > 0}
 							/>
 						</div>
 					</div>

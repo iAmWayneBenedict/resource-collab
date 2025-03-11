@@ -513,15 +513,20 @@ export const findResources = async (
 								},
 								with: { collectionFolder: true },
 							}
-						: undefined,
+						: {},
 					resourceTags: {
 						columns: { resource_id: false, tag_id: false },
 						with: { tag: { columns: { name: true } } },
 					},
-					likes: {
-						columns: { liked_at: true },
-						where: eq(likeResources.user_id, userId as string),
-					},
+					likes: userId
+						? {
+								columns: { liked_at: true },
+								where: eq(
+									likeResources.user_id,
+									userId as string,
+								),
+							}
+						: undefined,
 				},
 				extras: {
 					bookmarksCount:

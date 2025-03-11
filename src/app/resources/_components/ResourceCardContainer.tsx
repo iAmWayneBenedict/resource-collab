@@ -4,16 +4,25 @@ import ResourceCard from "@/components/layouts/cards/ResourceCard";
 import { useGetCollectionsQuery } from "@/lib/queries/collections";
 import { useGetPaginatedResourcesQuery } from "@/lib/queries/resources";
 import { useAuthUser } from "@/store";
+import {
+	ResourcePaginatedSearchParamsProvider,
+	ResourcePaginatedSearchParamsState,
+} from "@/store/context/providers/ResourcePaginatedSearchParams";
+import useResourcePaginatedSearchParams from "@/store/context/useResourcePaginatedSearchParams";
 import { useCollections } from "@/store/useCollections";
 import { Button, Skeleton } from "@heroui/react";
 import { RotateCcw } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import React, { useEffect } from "react";
 
-const ResourceCardContainer = () => {
+const ResourceCardWrapper = () => {
 	const searchParams = useSearchParams();
 	const authUser = useAuthUser((state) => state.authUser);
 	const setCollections = useCollections((state) => state.setCollections);
+	const setSearchParams = useResourcePaginatedSearchParams(
+		(state: ResourcePaginatedSearchParamsState) =>
+			state.actions.setSearchParams,
+	) as ResourcePaginatedSearchParamsState["actions"]["setSearchParams"];
 
 	const category = searchParams.get("category") ?? "";
 	const sortBySearchParams = searchParams.get("sortBy") ?? "";
@@ -38,6 +47,15 @@ const ResourceCardContainer = () => {
 		sortValue = "ascending";
 	}
 
+	useEffect(() => {
+		setSearchParams({
+			category: category,
+			sortBy: sortBy,
+			sortValue: sortValue,
+			tags: tagsSearchParams,
+		});
+	}, [category, sortValue, sortBy, tagsSearchParams]);
+
 	const { data, isSuccess, isLoading, refetch } =
 		useGetPaginatedResourcesQuery(
 			{
@@ -60,6 +78,7 @@ const ResourceCardContainer = () => {
 
 		setCollections(collections.data?.data);
 	}, [collections.isSuccess, collections.data]);
+	console.log(data?.data);
 
 	if (isLoading) {
 		return (
@@ -100,6 +119,14 @@ const ResourceCardContainer = () => {
 				<ResourceCard key={resource.id} data={resource} />
 			))}
 		</div>
+	);
+};
+
+const ResourceCardContainer = () => {
+	return (
+		<ResourcePaginatedSearchParamsProvider initialSearchParams={[]}>
+			<ResourceCardWrapper />
+		</ResourcePaginatedSearchParamsProvider>
 	);
 };
 
