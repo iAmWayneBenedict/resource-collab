@@ -27,11 +27,11 @@ const SearchModalTrigger = () => {
 					<div className="flex items-center gap-2 px-2 py-1">
 						<span className="text-sm">Search</span>
 						<div className="flex items-center gap-1">
-							<Kbd className="rounded border border-gray-200 bg-gray-100 px-2 py-0.5 text-xs dark:border-gray-700 dark:bg-gray-800">
+							<Kbd className="rounded border border-zinc-200 bg-zinc-100 px-2 py-0.5 text-xs dark:border-zinc-700 dark:bg-zinc-800">
 								CTRL
 							</Kbd>
 							<span className="text-xs">+</span>
-							<Kbd className="rounded border border-gray-200 bg-gray-100 px-2 py-0.5 text-xs dark:border-gray-700 dark:bg-gray-800">
+							<Kbd className="rounded border border-zinc-200 bg-zinc-100 px-2 py-0.5 text-xs dark:border-zinc-700 dark:bg-zinc-800">
 								K
 							</Kbd>
 						</div>

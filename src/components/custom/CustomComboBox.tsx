@@ -277,7 +277,7 @@ const ChipsContainer = ({
 						animate={{ scale: 1, opacity: 1 }}
 						exit={{ scale: 0.9, opacity: 0 }}
 						transition={{ ease: "easeInOut", duration: 0.2 }}
-						className="w-full text-center text-sm text-gray-500 dark:text-gray-400"
+						className="w-full text-center text-sm text-zinc-500 dark:text-zinc-400"
 					>
 						No items selected.
 					</motion.div>

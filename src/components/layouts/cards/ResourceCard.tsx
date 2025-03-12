@@ -78,10 +78,10 @@ const ResourceCard = ({ data }: ResourceCardProps) => {
 						/>
 					</div>
 					<div className="mt-2">
-						<h2 className="mt-5 line-clamp-1 font-bold ~text-lg/xl dark:text-gray-100">
+						<h2 className="mt-5 line-clamp-1 font-bold ~text-lg/xl dark:text-zinc-100">
 							{data.name}
 						</h2>
-						<p className="mt-2 line-clamp-2 ~text-sm/base dark:text-gray-300 lg:line-clamp-3">
+						<p className="mt-2 line-clamp-2 ~text-sm/base dark:text-zinc-300 lg:line-clamp-3">
 							{data.description}
 						</p>
 					</div>

@@ -160,7 +160,7 @@ const CollectionsList = ({
 					Create new collection
 				</Button>
 			</div>
-			<div className="mt-2 rounded-xl border border-gray-200 dark:border-gray-700">
+			<div className="mt-2 rounded-xl border border-zinc-200 dark:border-zinc-700">
 				<Listbox
 					aria-label="Collections"
 					className="w-full"

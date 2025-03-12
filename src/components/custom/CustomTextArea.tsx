@@ -62,14 +62,18 @@ const CustomTextArea: React.FC<Props> = ({
 	const labelRef = useRef<HTMLLabelElement>(null);
 
 	const handleLabel = (event: FocusEvent) => {
-		const textArea = document.querySelector(`#${name}`) as HTMLTextAreaElement;
+		const textArea = document.querySelector(
+			`#${name}`,
+		) as HTMLTextAreaElement;
 		labelRef.current!.classList.add("active");
 		if (event.type === "focusout" && textArea.value === "")
 			labelRef.current!.classList.remove("active");
 	};
 
 	const handleChange = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
-		const textArea = document.querySelector(`#${name}`) as HTMLTextAreaElement;
+		const textArea = document.querySelector(
+			`#${name}`,
+		) as HTMLTextAreaElement;
 		const self = event.target as HTMLTextAreaElement;
 		self.style.height = "0px";
 		let scrollHeight = textArea.scrollHeight;
@@ -77,7 +81,9 @@ const CustomTextArea: React.FC<Props> = ({
 	};
 
 	useEffect(() => {
-		const textArea = document.querySelector(`#${name}`) as HTMLTextAreaElement;
+		const textArea = document.querySelector(
+			`#${name}`,
+		) as HTMLTextAreaElement;
 		if (textArea) {
 			textArea.addEventListener("focus", handleLabel);
 			textArea.addEventListener("focusout", handleLabel);
@@ -85,35 +91,35 @@ const CustomTextArea: React.FC<Props> = ({
 	}, []);
 
 	return (
-		<div className="flex relative w-full">
+		<div className="relative flex w-full">
 			<Label
 				ref={labelRef}
-				className="input-label absolute w-full left-0 text-black dark:text-white text-xl cursor-[text] transition-all duration-300 ease"
+				className="input-label ease absolute left-0 w-full cursor-[text] text-xl text-black transition-all duration-300 dark:text-white"
 				htmlFor={name}
 			>
 				{label}
 			</Label>
-			<div className="flex relative w-full overflow-hidden">
+			<div className="relative flex w-full overflow-hidden">
 				<Textarea
 					style={{
 						minHeight: `${rawSizes[size]}px`,
 					}}
 					className={cn(
-						`mt-10 pb-3 px-0 text-2xl lg:text-3xl 2xl:text-4xl font-light h-0 resize-none overflow-hidden bg-transparent border-x-0 border-t-0 border-b-[1px] w-full border-b-gray-500 border-opacity-50 focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 active:outline-none outline-none`
+						`mt-10 h-0 w-full resize-none overflow-hidden border-x-0 border-b-[1px] border-t-0 border-b-zinc-500 border-opacity-50 bg-transparent px-0 pb-3 text-2xl font-light outline-none focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 active:outline-none lg:text-3xl 2xl:text-4xl`,
 					)}
 					id={name}
-					onKeyUp={(event: React.KeyboardEvent<HTMLTextAreaElement>) =>
-						handleChange(event)
-					}
+					onKeyUp={(
+						event: React.KeyboardEvent<HTMLTextAreaElement>,
+					) => handleChange(event)}
 					{...register}
 					{...props}
 				>
 					{children}
 				</Textarea>
-				<span className="absolute bottom-0 bg-black dark:bg-white h-[1px] w-full  transition-all duration-300 ease-out"></span>
+				<span className="absolute bottom-0 h-[1px] w-full bg-black transition-all duration-300 ease-out dark:bg-white"></span>
 			</div>
 			{error && (
-				<FormMessage className="absolute text-red-500 text-xs md:text-sm -bottom-[1.3rem] right-0">
+				<FormMessage className="absolute -bottom-[1.3rem] right-0 text-xs text-red-500 md:text-sm">
 					{error.message}
 				</FormMessage>
 			)}

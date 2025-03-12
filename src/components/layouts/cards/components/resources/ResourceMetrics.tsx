@@ -125,7 +125,7 @@ export const ResourceMetrics = ({
 		<div className="flex items-center gap-4">
 			<button
 				onClick={onLike}
-				className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+				className="flex items-center gap-1 text-sm text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200"
 			>
 				<Heart
 					fill={isLiked ? "#ef4444" : "none"}
@@ -135,12 +135,12 @@ export const ResourceMetrics = ({
 					{formatNumber(likes)} likes
 				</span>
 			</button>
-			<button className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+			<button className="flex items-center gap-1 text-sm text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200">
 				<ChartNoAxesColumn className="h-4 w-4" />
 				<span>{formatNumber(views)} views</span>
 			</button>
 
-			<button className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+			<button className="flex items-center gap-1 text-sm text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200">
 				<Share2 className="h-4 w-4" />
 				<span>Share</span>
 			</button>
