@@ -24,3 +24,13 @@ export const usePutResourceMutation = ({
 		method: "put",
 		...options,
 	});
+
+export const usePutViewResourceMutation = ({
+	params,
+	...options
+}: TMutationOptions) =>
+	useHookMutation({
+		endpoint: `/resources/${params}/view`,
+		method: "put",
+		...options,
+	});

@@ -6,7 +6,7 @@ import { ResourceMetrics } from "./components/resources/ResourceMetrics";
 import { motion } from "motion/react";
 import SaveResourcePopOver from "./components/resources/SaveResourcePopOver";
 import { useMemo } from "react";
-import { usePutResourceMutation } from "@/lib/mutations/resources";
+import { usePutViewResourceMutation } from "@/lib/mutations/resources";
 
 type ResourceCardProps = {
 	data: any;
@@ -21,7 +21,7 @@ const ResourceCard = ({ data }: ResourceCardProps) => {
 		[data.resourceCollections],
 	);
 
-	const mutation = usePutResourceMutation({
+	const mutation = usePutViewResourceMutation({
 		params: data.id,
 		onSuccess: () => {
 			// console.log("success");
@@ -42,14 +42,7 @@ const ResourceCard = ({ data }: ResourceCardProps) => {
 
 		// Only redirect if not clicking on an interactive element
 		if (!isInteractiveElement && data.url) {
-			// define the original values to update the resource view count
-			mutation.mutate({
-				name: data.name,
-				icon: data.icon,
-				category: data.category_id,
-				tags: data.resourceTags.map(({ tag }: any) => tag.name),
-				view_count: data.view_count + 1,
-			});
+			mutation.mutate({ view_count: data.view_count + 1 });
 
 			window.open(data.url, "_blank", "noopener,noreferrer");
 			return;
@@ -63,7 +56,7 @@ const ResourceCard = ({ data }: ResourceCardProps) => {
 			animate={{ opacity: 1, y: 0 }}
 			exit={{ opacity: 0, y: 10 }}
 			transition={{ ease: "easeInOut", duration: 0.2 }}
-			className="relative flex min-w-[19rem] flex-1 cursor-pointer flex-col rounded-2xl bg-white shadow-md dark:bg-black md:min-w-[22rem]"
+			className="relative flex min-w-[19rem] flex-1 cursor-pointer flex-col rounded-2xl bg-content1 shadow-md dark:border-small dark:border-default-200 md:min-w-[22rem]"
 			onClick={onCardClickHandler}
 		>
 			<div className="absolute right-7 top-7">
@@ -85,10 +78,10 @@ const ResourceCard = ({ data }: ResourceCardProps) => {
 						/>
 					</div>
 					<div className="mt-2">
-						<h2 className="mt-5 line-clamp-1 font-bold ~text-lg/xl">
+						<h2 className="mt-5 line-clamp-1 font-bold ~text-lg/xl dark:text-gray-100">
 							{data.name}
 						</h2>
-						<p className="mt-2 line-clamp-2 ~text-sm/base lg:line-clamp-3">
+						<p className="mt-2 line-clamp-2 ~text-sm/base dark:text-gray-300 lg:line-clamp-3">
 							{data.description}
 						</p>
 					</div>

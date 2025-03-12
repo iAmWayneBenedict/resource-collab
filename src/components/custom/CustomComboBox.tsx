@@ -16,7 +16,7 @@ import { cn, toggleScrollBody } from "../../lib/utils";
 import { ListFilterPlus, Search } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 
-const notButtonStyles = "rounded-xl bg-default-100 p-2";
+const notButtonStyles = "rounded-xl bg-default-100 dark:bg-default-100 p-2";
 
 type CustomComboBoxProps = {
 	triggerText: string;
@@ -124,7 +124,7 @@ const CustomComboBox = ({
 						isDisabled={isDisabled}
 						variant="light"
 						startContent={<ListFilterPlus />}
-						className="w-fit bg-white hover:opacity-90"
+						className="w-fit bg-white hover:bg-default-300 dark:bg-default-300 dark:hover:bg-default-400"
 					>
 						{triggerText}{" "}
 						<span className="font-bold text-violet">
@@ -149,7 +149,7 @@ const CustomComboBox = ({
 						}
 						classNames={{
 							inputWrapper:
-								"focus-within:ring-0 group-data-[focus-visible=true]:ring-0 group-data-[focus-visible=true]:ring-offset-0 group-data-[focus=true]:border-0 border-0 shadow-none bg-white",
+								"focus-within:ring-0 group-data-[focus-visible=true]:ring-0 group-data-[focus-visible=true]:ring-offset-0 group-data-[focus=true]:border-0 border-0 shadow-none bg-default-100 dark:bg-default-50",
 						}}
 					/>
 					<Divider />
@@ -263,7 +263,7 @@ const ChipsContainer = ({
 									onCloseChipHandler(key as string)
 								}
 								classNames={{
-									base: "bg-violet-100 text-violet-600 hover:bg-violet-200 hover:text-violet-700 focus:bg-violet-200 focus:text-violet-700",
+									base: "bg-violet-100 text-violet-600 hover:bg-violet-200 hover:text-violet-700 focus:bg-violet-200 focus:text-violet-700 dark:bg-violet-900 dark:text-violet-200 dark:hover:bg-violet-800 dark:hover:text-violet-100",
 								}}
 							>
 								{key}
@@ -277,7 +277,7 @@ const ChipsContainer = ({
 						animate={{ scale: 1, opacity: 1 }}
 						exit={{ scale: 0.9, opacity: 0 }}
 						transition={{ ease: "easeInOut", duration: 0.2 }}
-						className="w-full text-center text-sm text-gray-500"
+						className="w-full text-center text-sm text-gray-500 dark:text-gray-400"
 					>
 						No items selected.
 					</motion.div>
