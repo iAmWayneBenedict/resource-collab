@@ -5,7 +5,6 @@ import { ResourceTags } from "./components/resources/ResourceTags";
 import { ResourceMetrics } from "./components/resources/ResourceMetrics";
 import { motion } from "motion/react";
 import SaveResourcePopOver from "./components/resources/SaveResourcePopOver";
-import { useMemo } from "react";
 import { usePutViewResourceMutation } from "@/lib/mutations/resources";
 
 type ResourceCardProps = {
@@ -13,14 +12,6 @@ type ResourceCardProps = {
 };
 
 const ResourceCard = ({ data }: ResourceCardProps) => {
-	const collectionList = useMemo(
-		() =>
-			data.resourceCollections?.map(
-				(c: any) => c.collection_folder_id + "", //!convert to string for the listbox to work
-			) ?? [],
-		[data.resourceCollections],
-	);
-
 	const mutation = usePutViewResourceMutation({
 		params: data.id,
 		onSuccess: () => {
@@ -48,7 +39,9 @@ const ResourceCard = ({ data }: ResourceCardProps) => {
 			return;
 		}
 	};
-
+	const collectionList = data?.resourceCollections.map(
+		(id: number) => id + "",
+	);
 	return (
 		<motion.div
 			key={data.id}

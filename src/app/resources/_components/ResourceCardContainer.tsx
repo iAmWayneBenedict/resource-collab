@@ -1,6 +1,7 @@
 "use client";
 
 import ResourceCard from "@/components/layouts/cards/ResourceCard";
+import { useGetAISearchQuery } from "@/lib/queries/AISearch";
 import { useGetCollectionsQuery } from "@/lib/queries/collections";
 import { useGetPaginatedResourcesQuery } from "@/lib/queries/resources";
 import { useAuthUser } from "@/store";
@@ -9,11 +10,12 @@ import {
 	ResourcePaginatedSearchParamsState,
 } from "@/store/context/providers/ResourcePaginatedSearchParams";
 import useResourcePaginatedSearchParams from "@/store/context/useResourcePaginatedSearchParams";
+import { useAISearchStore } from "@/store/useAIResult";
 import { useCollections } from "@/store/useCollections";
 import { Button, Skeleton } from "@heroui/react";
 import { RotateCcw } from "lucide-react";
 import { useSearchParams } from "next/navigation";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 const ResourceCardWrapper = () => {
 	const searchParams = useSearchParams();
@@ -23,6 +25,7 @@ const ResourceCardWrapper = () => {
 		(state: ResourcePaginatedSearchParamsState) =>
 			state.actions.setSearchParams,
 	) as ResourcePaginatedSearchParamsState["actions"]["setSearchParams"];
+	const { query } = useAISearchStore();
 
 	const category = searchParams.get("category") ?? "";
 	const sortBySearchParams = searchParams.get("sortBy") ?? "";
@@ -47,7 +50,10 @@ const ResourceCardWrapper = () => {
 		sortBy = "view_count";
 		sortValue = "ascending";
 	}
-
+	const aiResponse = useGetAISearchQuery({
+		enabled: !!query,
+		query,
+	});
 	useEffect(() => {
 		setSearchParams({
 			category: category,
@@ -55,22 +61,43 @@ const ResourceCardWrapper = () => {
 			sortValue: sortValue,
 			tags: tagsSearchParams,
 			search: searchValue,
+			resourceIds: aiResponse.data?.data.ids ?? [],
 		});
-	}, [category, sortValue, sortBy, tagsSearchParams, searchValue]);
+	}, [
+		category,
+		sortValue,
+		sortBy,
+		tagsSearchParams,
+		searchValue,
+		aiResponse?.data,
+	]);
 
 	const { data, isSuccess, isLoading, refetch } =
 		useGetPaginatedResourcesQuery(
 			{
 				page: 1,
 				limit: 20,
-				category: !isNaN(Number(category)) ? category : "",
-				tags: tagsSearchParams,
-				sort_by: sortBy,
-				sort_type: sortValue,
-				search: searchValue,
+				...(aiResponse.data?.data.ids
+					? { resource_ids: aiResponse.data.data.ids }
+					: {
+							category: !isNaN(Number(category)) ? category : "",
+							tags: tagsSearchParams,
+							sort_by: sortBy,
+							sort_type: sortValue,
+							search: searchValue,
+						}),
 			},
-			[category, sortValue, sortBy, tagsSearchParams, searchValue],
+			[
+				category,
+				sortValue,
+				sortBy,
+				tagsSearchParams,
+				searchValue,
+				aiResponse?.data,
+			],
 		);
+
+	useEffect(() => {}, [aiResponse.isSuccess, aiResponse.data]);
 
 	const collections = useGetCollectionsQuery({
 		enabled: !!authUser,
@@ -111,6 +138,14 @@ const ResourceCardWrapper = () => {
 						Reload
 					</Button>
 				</div>
+			</div>
+		);
+	}
+
+	if (data.data.rows.length === 0 || aiResponse.data?.data.ids.length === 0) {
+		return (
+			<div className="mt-32 flex w-full flex-col items-center">
+				<h3 className="text-xl">No resources found</h3>
 			</div>
 		);
 	}

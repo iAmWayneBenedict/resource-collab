@@ -127,7 +127,7 @@ const CustomComboBox = ({
 						className="w-fit bg-white hover:bg-default-300 dark:bg-default-300 dark:hover:bg-default-400"
 					>
 						{triggerText}{" "}
-						<span className="font-bold text-violet">
+						<span className="font-bold text-violet dark:text-violet-400">
 							{[...selectedKeys].length
 								? `(${[...selectedKeys].length})`
 								: null}
@@ -210,6 +210,7 @@ const ListboxContainer = memo(
 				option.toLowerCase().includes(searchValue.toLowerCase()),
 			);
 		}, [options, searchValue]);
+		console.log(filteredOptions);
 		return (
 			<Listbox
 				selectedKeys={selectedKeys}

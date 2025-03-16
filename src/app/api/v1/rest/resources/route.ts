@@ -13,6 +13,7 @@ import { AIService } from "@/services/ai";
 import { findAllCategory } from "@/services/category-service";
 import axios from "axios";
 import config from "@/config";
+import VectorService from "@/services/vector";
 
 type BodyParams = {
 	name: string;
@@ -22,6 +23,7 @@ type BodyParams = {
 	thumbnail: string;
 	description: string;
 	url: string;
+	resourceIds?: number[];
 };
 export async function POST(request: NextRequest): Promise<NextResponse> {
 	const body: BodyParams = await request.json();
@@ -101,7 +103,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 				tags: [],
 			};
 		}
-		console.log(resourceData);
+
 		const isCloudflareProtected = resourceData.title
 			.toLowerCase()
 			.includes("cloudflare");
@@ -170,6 +172,24 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 			...resourceData,
 			userId: user.id,
 		});
+
+		if (user.role === "admin") {
+			// upsert the resource to pinecone
+			const newResourceWithTags = await findResources({
+				page: 1,
+				limit: 1,
+				search: newResource.name ?? "",
+				sortBy: "",
+				sortType: null,
+				category: null,
+				tags: [],
+				userId: undefined,
+			});
+
+			await VectorService.pinecone.upsertResource(
+				newResourceWithTags.rows,
+			);
+		}
 
 		return NextResponse.json(
 			{ message: "Resource created", data: [newResource] },
@@ -240,6 +260,11 @@ export const DELETE = async (request: NextRequest) => {
 			type: type as "soft" | "hard",
 		});
 
+		if (user.role === "admin" && type === "hard")
+			await VectorService.pinecone.deleteResource(
+				deletedResources.map((n) => n + ""),
+			);
+
 		return NextResponse.json(
 			{
 				message: "Resource successfully retrieved",
@@ -273,6 +298,12 @@ export const GET = async (req: NextRequest) => {
 		| "ascending"
 		| "descending"
 		| null;
+	const resourceIds =
+		searchParams
+			.get("resource_ids")
+			?.split(",")
+			.filter((id) => id)
+			.map((id) => Number(id)) ?? [];
 
 	// filters
 	const categoryParams = searchParams.get("category");
@@ -289,6 +320,7 @@ export const GET = async (req: NextRequest) => {
 			search,
 			sortBy,
 			sortType,
+			resourceIds,
 			category: categoryParams,
 			tags: tagsParams,
 			userId: user?.id,

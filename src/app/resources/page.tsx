@@ -4,10 +4,15 @@ import Layout from "@/components/layouts/users/Layout";
 import Section from "@/components/layouts/Section";
 import React, { Suspense } from "react";
 import Container from "@/components/layouts/Container";
-import { FilterFormModal, SearchFormModal } from "./_components/modal";
+import {
+	AISearchModal,
+	FilterFormModal,
+	SearchFormModal,
+} from "./_components/modal";
 import { FilterModalTrigger, SearchModalTrigger } from "./_components/filter";
 import ResourceCardContainer from "./_components/ResourceCardContainer";
 import CategoriesAsideContainer from "./_components/CategoriesAsideContainer";
+import AISearchResult from "./_components/AISearchResult";
 
 const Page = () => {
 	return (
@@ -26,17 +31,19 @@ const Page = () => {
 
 					<Section className="flex flex-col lg:flex-row">
 						<CategoriesAsideContainer />
-						<div className="w-full">
+						<div className="w-full lg:max-w-[calc(100%-16rem)]">
 							<div className="flex items-center justify-end gap-2">
 								<SearchModalTrigger />
 								<FilterModalTrigger />
 							</div>
+							<AISearchResult />
 							<ResourceCardContainer />
 						</div>
 					</Section>
 				</Container>
 				<FilterFormModal />
 				<SearchFormModal />
+				<AISearchModal />
 			</Layout>
 		</Suspense>
 	);

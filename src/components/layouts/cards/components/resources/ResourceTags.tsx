@@ -1,19 +1,11 @@
 import { Chip } from "@heroui/react";
 
-type ResourceTagsProps = {
-	tags: Array<{ tag: { name: string } }>;
-};
-
-export const ResourceTags = ({ tags }: ResourceTagsProps) => {
+export const ResourceTags = ({ tags }: { tags: string[] }) => {
 	return (
 		<div className="flex flex-wrap gap-2">
-			{tags?.slice(0, 3).map(({ tag }) => (
-				<Chip
-					variant="flat"
-					key={tag.name}
-					className="text-xs 2xl:text-sm"
-				>
-					{tag.name}
+			{tags?.slice(0, 3).map((tag: string) => (
+				<Chip variant="flat" key={tag} className="text-xs 2xl:text-sm">
+					{tag}
 				</Chip>
 			))}
 			{tags?.length > 3 && (

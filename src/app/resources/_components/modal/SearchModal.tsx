@@ -14,7 +14,7 @@ import {
 	ListboxItem,
 	Chip,
 } from "@heroui/react";
-import { ChevronRight, Search, X } from "lucide-react";
+import { ChevronRight, Search } from "lucide-react";
 import {
 	KeyboardEvent,
 	useEffect,
@@ -22,7 +22,6 @@ import {
 	useState,
 	useMemo,
 	Key,
-	useLayoutEffect,
 } from "react";
 import { useGetPaginatedResourcesQuery } from "../../../../lib/queries/resources";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -53,7 +52,10 @@ const HighlightedText = ({
 						{part}
 					</span>
 				) : (
-					<span key={i} className="group-hover:text-white">
+					<span
+						key={i}
+						className="group-hover:text-white group-focus:text-white"
+					>
 						{part}
 					</span>
 				),
@@ -162,10 +164,15 @@ const SearchFormModal = () => {
 		onCloseModal();
 	};
 
+	const showSearchResult = filteredResources.length > 0;
+	const showEmptySearchResult = !filteredResources.length && searchDebounced;
+	const showRecentSearchResult = !searchDebounced && resources.length;
+	const showEmptyRecentSearchResult = !searchDebounced && !resources.length;
+
 	return (
 		<Modal
 			isOpen={isOpen}
-			placement="top-center"
+			placement="center"
 			onOpenChange={onCloseModal}
 			backdrop="blur"
 			size="xl"
@@ -229,7 +236,7 @@ const SearchFormModal = () => {
 										heading: "text-default-600",
 									}}
 								>
-									{filteredResources.length > 0 &&
+									{showSearchResult &&
 										filteredResources.map(
 											(resource: any) => (
 												<ListboxItem
@@ -275,21 +282,17 @@ const SearchFormModal = () => {
 												</ListboxItem>
 											),
 										)}
-									{!filteredResources.length &&
-										searchDebounced && (
-											<ListboxItem
-												key="empty"
-												classNames={{
-													title: "text-md text-center text-default-600",
-												}}
-											>
-												{searchDebounced
-													? `No results for "${searchDebounced}"`
-													: "Start typing to search..."}
-											</ListboxItem>
-										)}
-									{!searchDebounced &&
-										resources.length &&
+									{showEmptySearchResult && (
+										<ListboxItem
+											key="empty"
+											classNames={{
+												title: "text-md text-center text-default-600",
+											}}
+										>
+											{`No results for "${searchDebounced}"`}
+										</ListboxItem>
+									)}
+									{showRecentSearchResult &&
 										resources.map((resource) => (
 											<ListboxItem
 												key={resource}
@@ -308,6 +311,16 @@ const SearchFormModal = () => {
 												{resource}
 											</ListboxItem>
 										))}
+									{showEmptyRecentSearchResult && (
+										<ListboxItem
+											key="empty"
+											classNames={{
+												title: "text-md text-center text-default-600",
+											}}
+										>
+											Start typing to search...
+										</ListboxItem>
+									)}
 								</ListboxSection>
 							</Listbox>
 						</div>

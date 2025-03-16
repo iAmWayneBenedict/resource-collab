@@ -23,7 +23,6 @@ import {
 import { bindReactHookFormError, toggleScrollBody } from "@/lib/utils";
 import { useCollections } from "@/store/useCollections";
 import { useQueryClient } from "@tanstack/react-query";
-import { a } from "vitest/dist/chunks/suite.qtkXWc6R.js";
 
 // Collection item type
 // Update the Collection type to include additional information

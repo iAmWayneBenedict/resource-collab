@@ -6,7 +6,7 @@ import {
 import config from "../index";
 import { auth } from "@/lib/auth";
 export const authClient = createAuthClient({
-	baseURL: config.BASE_URL, // the base url of your auth server
+	baseURL: config.SERVER_API_URL + "/auth", // the base url of your auth server
 
 	plugins: [emailOTPClient(), customSessionClient<typeof auth>()],
 

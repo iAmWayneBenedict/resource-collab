@@ -17,9 +17,14 @@ const SearchModalTrigger = () => {
 		}, 2000); // Remove the animation after 2 seconds
 	};
 
-	const clickHandler = () => {
+	const clickSearchHandler = () => {
 		onOpenModal("Search Filter", null);
 	};
+
+	const clickAISearchHandler = () => {
+		onOpenModal("AI Search", null);
+	};
+
 	return (
 		<div className="flex items-center gap-2">
 			<Tooltip
@@ -42,12 +47,13 @@ const SearchModalTrigger = () => {
 					arrow: "bg-background",
 				}}
 			>
-				<Button isIconOnly variant="light" onPress={clickHandler}>
+				<Button isIconOnly variant="light" onPress={clickSearchHandler}>
 					<Search />
 				</Button>
 			</Tooltip>
 			<Button
 				disableRipple
+				onPress={clickAISearchHandler}
 				radius="full"
 				className="hover:gradient-animation data-[hover=true]:gradient-animation transform bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 px-4 py-2 font-bold text-white transition duration-500 ease-in-out"
 			>
