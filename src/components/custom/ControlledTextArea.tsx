@@ -57,7 +57,10 @@ const ControlledTextArea: React.FC<Props> = ({
 		labelTransform(type, textArea);
 	};
 	const labelTransform = (type: string, textArea: HTMLTextAreaElement) => {
-		labelRef.current!.classList.toggle("active", type === "focus" || textArea.value !== "");
+		labelRef.current!.classList.toggle(
+			"active",
+			type === "focus" || textArea.value !== "",
+		);
 	};
 	const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
 		const { currentTarget: textArea } = event;
@@ -78,35 +81,47 @@ const ControlledTextArea: React.FC<Props> = ({
 			name={name}
 			control={control}
 			render={({
-				field: { onBlur: onBlurReactHookForm, onChange: onChangeReactHookForm, ...field },
+				field: {
+					onBlur: onBlurReactHookForm,
+					onChange: onChangeReactHookForm,
+					...field
+				},
 			}) => (
-				<div className="flex relative w-full">
+				<div className="relative flex w-full">
 					<Label
 						ref={labelRef}
-						className="input-label absolute w-full left-0 text-black dark:text-white text-xl cursor-[text] transition-all duration-300 ease"
+						className="input-label ease absolute left-0 w-full cursor-[text] text-xl text-black transition-all duration-300 dark:text-white"
 						htmlFor={name}
 					>
 						{label}
 					</Label>
-					<div className="flex relative w-full overflow-hidden">
+					<div className="relative flex w-full overflow-hidden">
 						<Textarea
 							style={{
 								minHeight: `${rawSizes[size]}px`,
 							}}
 							className={cn(
-								`mt-10 pb-3 px-0 text-2xl lg:text-3xl 2xl:text-4xl font-light h-0 resize-none overflow-hidden bg-transparent border-x-0 border-t-0 border-b-[1px] w-full border-b-gray-500 border-opacity-50 focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 active:outline-none outline-none`,
-								error ? "border-b-red-500" : "border-b-gray-500"
+								`mt-10 h-0 w-full resize-none overflow-hidden border-x-0 border-b-[1px] border-t-0 border-b-zinc-500 border-opacity-50 bg-transparent px-0 pb-3 text-2xl font-light outline-none focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 active:outline-none lg:text-3xl 2xl:text-4xl`,
+								error
+									? "border-b-red-500"
+									: "border-b-zinc-500",
 							)}
 							id={name}
-							onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+							onChange={(
+								e: React.ChangeEvent<HTMLTextAreaElement>,
+							) => {
 								onChangeReactHookForm(e);
 								handleChange(e);
 							}}
-							onBlur={(e: React.FocusEvent<HTMLTextAreaElement>) => {
+							onBlur={(
+								e: React.FocusEvent<HTMLTextAreaElement>,
+							) => {
 								onBlurReactHookForm();
 								handleLabel(e);
 							}}
-							onFocus={(e: React.FocusEvent<HTMLTextAreaElement>) => {
+							onFocus={(
+								e: React.FocusEvent<HTMLTextAreaElement>,
+							) => {
 								handleLabel(e);
 							}}
 							suppressHydrationWarning // This is a workaround for a bug in Next.js where additional attributes are being added to the input element and causing a hydration mismatch due to the browser extensions
@@ -117,13 +132,13 @@ const ControlledTextArea: React.FC<Props> = ({
 						</Textarea>
 						<span
 							className={cn(
-								"absolute bottom-0 bg-black dark:bg-white h-[1px] w-full  transition-all duration-300 ease-out",
-								error ? "bg-red-500" : "bg-black dark:bg-white"
+								"absolute bottom-0 h-[1px] w-full bg-black transition-all duration-300 ease-out dark:bg-white",
+								error ? "bg-red-500" : "bg-black dark:bg-white",
 							)}
 						></span>
 					</div>
 					{error && (
-						<FormMessage className="absolute text-red-500 text-xs md:text-sm -bottom-[1.3rem] right-0">
+						<FormMessage className="absolute -bottom-[1.3rem] right-0 text-xs text-red-500 md:text-sm">
 							{error.message}
 						</FormMessage>
 					)}

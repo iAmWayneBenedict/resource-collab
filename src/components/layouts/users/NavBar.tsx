@@ -26,7 +26,7 @@ import { useAuthUser } from "@/store/useAuthUser";
 
 const NavBar = () => {
 	return (
-		<div className="fixed left-1/2 top-[30px] z-50 flex w-[95%] -translate-x-1/2 items-center justify-between rounded-full bg-blur-background px-10 py-4 shadow-lg backdrop-blur-md md:w-[90%]">
+		<div className="fixed left-1/2 top-[30px] z-50 flex w-[95%] -translate-x-1/2 items-center justify-between rounded-full bg-blur-background px-10 py-4 shadow-lg backdrop-blur-md dark:border dark:border-zinc-950 dark:bg-zinc-950/90 dark:shadow-black/50 dark:backdrop-blur-sm md:w-[90%]">
 			<div id="nav-left" style={{ flex: 1 }} className="flex">
 				<div className="flex items-center">
 					<Link href="/" className="flex items-center">
@@ -80,7 +80,11 @@ const SmallNav = () => {
 						<div className="h-[1px] w-full bg-black dark:bg-white"></div>
 					</div>
 				</SheetTrigger>
-				<SheetContent className={cn("w-full max-w-none sm:max-w-none")}>
+				<SheetContent
+					className={cn(
+						"w-full max-w-none dark:border-zinc-950 dark:bg-zinc-950 sm:max-w-none",
+					)}
+				>
 					<SheetHeader>
 						{/* <SheetTitle>Are you absolutely sure?</SheetTitle> */}
 						<SheetDescription>

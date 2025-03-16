@@ -12,6 +12,7 @@ import { eq } from "drizzle-orm";
 export const auth = betterAuth({
 	// init database
 	database: drizzleAdapter(db, { provider: "pg" }),
+	basePath: `/api/${config.SERVER_API_VERSION}/${config.SERVER_API_TYPE}/auth`,
 
 	// auth providers
 	emailAndPassword: {

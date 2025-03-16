@@ -46,13 +46,16 @@ const ControlledInput: React.FC<Props> = ({
 		event:
 			| React.FocusEvent<HTMLInputElement>
 			| React.ChangeEvent<HTMLInputElement>
-			| React.SyntheticEvent<HTMLInputElement, Event>
+			| React.SyntheticEvent<HTMLInputElement, Event>,
 	) => {
 		const { currentTarget: inputRef, type } = event;
 		labelTransform(type, inputRef);
 	};
 	const labelTransform = (type: string, inputRef: HTMLInputElement) => {
-		labelRef.current!.classList.toggle("active", type === "focus" || inputRef.value !== "");
+		labelRef.current!.classList.toggle(
+			"active",
+			type === "focus" || inputRef.value !== "",
+		);
 	};
 	useEffect(() => {
 		const inputRef = document.getElementById(name) as HTMLInputElement;
@@ -65,34 +68,44 @@ const ControlledInput: React.FC<Props> = ({
 			name={name}
 			control={control}
 			render={({
-				field: { onBlur: onBlurReactHookForm, onChange: onChangeReactHookForm, ...field },
+				field: {
+					onBlur: onBlurReactHookForm,
+					onChange: onChangeReactHookForm,
+					...field
+				},
 			}) => {
 				return (
-					<div className="flex relative flex-col w-full">
+					<div className="relative flex w-full flex-col">
 						<FormLabel
 							ref={labelRef}
 							className={cn(
-								"input-label absolute w-full left-0 text-xl cursor-[text] transition-all duration-300 ease",
-								error && "text-black"
+								"input-label ease absolute left-0 w-full cursor-[text] text-xl transition-all duration-300",
+								error && "text-black",
 							)}
 							htmlFor={name}
 						>
 							{label}
 						</FormLabel>
-						<div className="flex relative flex-col w-full overflow-hidden">
+						<div className="relative flex w-full flex-col overflow-hidden">
 							<FormControl>
 								<Input
 									className={cn(
-										"mt-10 pb-3 px-0 rounded-none text-2xl lg:text-3xl 2xl:text-4xl font-light bg-transparent border-x-0 border-t-0 ring-0 border-b-[1px] border-opacity-50 w-full focus-visible:ring-0 focus-visible:ring-offset-0 focus:outline-none active:outline-none outline-none",
-										error ? "border-b-red-500" : "border-b-gray-500"
+										"mt-10 w-full rounded-none border-x-0 border-b-[1px] border-t-0 border-opacity-50 bg-transparent px-0 pb-3 text-2xl font-light outline-none ring-0 focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 active:outline-none lg:text-3xl 2xl:text-4xl",
+										error
+											? "border-b-red-500"
+											: "border-b-zinc-500",
 									)}
 									id={name}
 									type={type}
-									onBlur={(e: React.FocusEvent<HTMLInputElement>) => {
+									onBlur={(
+										e: React.FocusEvent<HTMLInputElement>,
+									) => {
 										onBlurReactHookForm();
 										handleLabel(e);
 									}}
-									onFocus={(e: React.FocusEvent<HTMLInputElement>) => {
+									onFocus={(
+										e: React.FocusEvent<HTMLInputElement>,
+									) => {
 										handleLabel(e);
 									}}
 									onChange={(e) => {
@@ -106,12 +119,14 @@ const ControlledInput: React.FC<Props> = ({
 							</FormControl>
 							<span
 								className={cn(
-									"absolute bottom-0 h-[1px] w-full  transition-all duration-300 ease-out",
-									error ? "bg-red-500" : "bg-black dark:bg-white"
+									"absolute bottom-0 h-[1px] w-full transition-all duration-300 ease-out",
+									error
+										? "bg-red-500"
+										: "bg-black dark:bg-white",
 								)}
 							></span>
 						</div>
-						<FormMessage className="absolute text-red-500 text-xs md:text-sm -bottom-[1.3rem] right-0" />
+						<FormMessage className="absolute -bottom-[1.3rem] right-0 text-xs text-red-500 md:text-sm" />
 					</div>
 				);
 			}}

@@ -125,7 +125,10 @@ const FilterFormModal = () => {
 		>
 			<ModalContent>
 				{() => (
-					<form onSubmit={handleSubmit(onSubmit)}>
+					<form
+						onSubmit={handleSubmit(onSubmit)}
+						className="rounded-2xl border border-default-200 p-0"
+					>
 						<ModalHeader className="flex flex-col gap-1">
 							<span>Filters</span>
 						</ModalHeader>
@@ -178,7 +181,7 @@ const FilterFormModal = () => {
 							</Button>
 							<Button
 								color="primary"
-								className="bg-violet"
+								className="bg-violet text-white"
 								type="submit"
 								isLoading={isSubmitting}
 								radius="full"

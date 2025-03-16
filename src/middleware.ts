@@ -27,7 +27,10 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
 	// }
 
 	// catch callback from social auth
-	if (targetUrl === process.env.NEXT_PUBLIC_BASE_URL + "/api/auth") {
+	if (
+		targetUrl ===
+		`${process.env.NEXT_PUBLIC_BASE_URL}/api/${process.env.NEXT_PUBLIC_SERVER_API_VERSION}/${process.env.NEXT_PUBLIC_SERVER_API_TYPE}/auth`
+	) {
 		return NextResponse.redirect(new URL("/", request.url), {
 			status: 307,
 		});
@@ -44,7 +47,6 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
 	if (!originHeader || !hostHeader) {
 		return NextResponse.json({ error: "Missing headers" }, { status: 400 });
 	}
-
 	return NextResponse.next();
 }
 

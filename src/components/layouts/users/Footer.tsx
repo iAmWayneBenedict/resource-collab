@@ -7,7 +7,7 @@ import { useTime } from "@/hooks";
 const Footer = () => {
 	const year = useTime({ options: { year: "numeric" } });
 	return (
-		<div className="absolute bottom-[30px] left-1/2 z-50 flex w-[95%] -translate-x-1/2 items-center justify-between rounded-full bg-blur-background px-10 py-5 shadow-lg backdrop-blur-md md:w-[90%]">
+		<div className="absolute bottom-[30px] left-1/2 z-50 flex w-[95%] -translate-x-1/2 items-center justify-between rounded-full bg-blur-background px-10 py-5 shadow-lg backdrop-blur-md dark:border dark:border-zinc-950 dark:bg-zinc-950/90 dark:shadow-black/50 md:w-[90%]">
 			<div id="nav-left" className="hidden flex-1 md:flex">
 				<div className="flex items-center">
 					<Link href="/" className="flex items-center">

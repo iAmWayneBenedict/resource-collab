@@ -7,6 +7,7 @@ import {
 	updateResourceTransaction,
 } from "@/services/resource-service";
 import { auth, getSession } from "@/lib/auth";
+import VectorService from "@/services/vector";
 
 export async function GET(
 	_: NextRequest,
@@ -65,6 +66,10 @@ export const PUT = async (
 			id,
 			userId: user.id,
 		});
+
+		if (user.role === "admin") {
+			await VectorService.pinecone.updateResource(updatedResource);
+		}
 
 		return NextResponse.json(
 			{

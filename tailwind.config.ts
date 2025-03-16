@@ -95,11 +95,21 @@ const config = {
 					"0%,70%,100%": { opacity: "1" },
 					"20%,50%": { opacity: "0" },
 				},
+				fadeIn: {
+					"0%": { opacity: "0", transform: "translateY(10px)" },
+					"100%": { opacity: "1", transform: "translateY(0)" },
+				},
+				shine: {
+					"0%": { "background-position": "100%" },
+					"100%": { "background-position": "-100%" },
+				},
 			},
 			animation: {
 				"accordion-down": "accordion-down 0.2s ease-out",
 				"accordion-up": "accordion-up 0.2s ease-out",
 				"caret-blink": "caret-blink 1.25s ease-out infinite",
+				fadeIn: "fadeIn 0.3s ease-out forwards",
+				shine: "shine 5s linear infinite",
 			},
 		},
 	},

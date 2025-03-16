@@ -1,9 +1,18 @@
+import config from "@/config";
 import { db } from "@/data/connection";
 import { resourceCollections } from "@/data/schema";
+import { AIService } from "@/services/ai";
+import { ListOfSchema } from "@/services/ai/gemini";
+import { ListOfPrompt } from "@/services/ai/prompts";
+import { ListOfSystemInstruction } from "@/services/ai/system-instructions";
+import { findResources } from "@/services/resource-service";
+import VectorService from "@/services/vector";
+import pinecone from "@/services/vector/pinecone";
 import { eq } from "drizzle-orm";
+import { index } from "drizzle-orm/mysql-core";
 import { NextResponse, NextRequest } from "next/server";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
 	// sample using relations
 	// return NextResponse.json(
 	// 	await db.query.portfolioToSkills.findMany({
@@ -40,23 +49,56 @@ export async function GET() {
 	// 		// where: inArray(tags.name, ["Networking"]),
 	// 	}),
 	// });
+	const query = req.nextUrl.searchParams.get("query") ?? "";
+	console.log("preparing vector search");
+	console.time("vector search");
+	const r = await VectorService.pinecone.queryResources([query]);
+	console.timeEnd("vector search");
+	console.log("vector search done");
+	console.log("preparing ai search");
+	console.time("gen ai search");
+	const SCORE_CUTOFF = 0.78;
+	const f = r.matches
+		.map((a) => ({
+			score: a.score,
+			metadata: a.metadata,
+		}))
+		.filter((a) => typeof a?.score === "number" && a.score >= SCORE_CUTOFF);
 
-	return NextResponse.json({
-		data: await db.query.resources.findMany({
-			with: {
-				resourceCollections: {
-					where: eq(
-						resourceCollections.user_id,
-						"gaduDMR7AviJrbLuyXtxFl9aTqQSRitX",
-					),
-				},
-			},
+	const res = await AIService.gemini.generate({
+		prompt: ListOfPrompt.LIST_OF_RESOURCES({
+			query,
+			resources: f,
 		}),
+		config: ListOfSchema.LIST_OF_RESOURCES,
+		systemInstruction:
+			ListOfSystemInstruction.LIST_OF_RESOURCES_INSTRUCTION,
+	});
+	console.log("ai search done");
+	console.timeEnd("gen ai search");
+	return NextResponse.json({
+		data: {
+			vector: r,
+			filtered_vector: f,
+			ai: res,
+		},
 	});
 }
 
 // To handle a POST request to /api
 export async function POST() {
-	// Do whatever you want
-	return NextResponse.json({ message: "Hello World" });
+	const resources = await findResources({
+		page: 1,
+		limit: -1,
+		search: "",
+		sortBy: "created_at",
+		sortType: "descending",
+		category: "",
+		tags: [],
+		userId: undefined,
+	});
+
+	await VectorService.pinecone.upsertResource(resources.rows);
+
+	return NextResponse.json({ message: "Hello World", data: resources });
 }

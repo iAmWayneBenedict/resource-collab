@@ -35,19 +35,32 @@ const Gemini = async ({
 		responseSchema: config,
 	} as GenerationConfig;
 
-	const geminiModel = genAI.getGenerativeModel({
-		model,
-		generationConfig: hasConfig ? generationConfig : undefined,
-		systemInstruction,
-		safetySettings: SAFETY_SETTINGS,
-	});
-	const result = await geminiModel.generateContent(prompt);
+	try {
+		const geminiModel = genAI.getGenerativeModel({
+			model,
+			generationConfig: hasConfig ? generationConfig : undefined,
+			systemInstruction,
+			safetySettings: SAFETY_SETTINGS,
+		});
+		const result = await geminiModel.generateContent(prompt);
 
-	const text = result.response.text();
-	return {
-		response: JSON.parse(text),
-		usageMetaData: result.response.usageMetadata,
-	};
+		const text = result.response.text();
+
+		return {
+			response: JSON.parse(text),
+			usageMetaData: result.response.usageMetadata,
+		};
+	} catch (err: any) {
+		console.dir(err);
+		console.log("Error: " + err.message);
+
+		return {
+			response: {
+				error: err.message,
+			},
+			usageMetaData: undefined,
+		};
+	}
 };
 
 export default Gemini;
@@ -62,7 +75,7 @@ export const ListOfSchema = {
 			summary: {
 				type: SchemaType.STRING,
 				description:
-					"A prioritized summary of resources, ordered by user interest and popularity",
+					"A summary of the response, including reasoning and additional suggestions",
 			},
 			knowledge_cutoff: {
 				type: SchemaType.STRING,
@@ -70,40 +83,100 @@ export const ListOfSchema = {
 			},
 			resources: {
 				type: SchemaType.ARRAY,
+				description: "Ranking of resources based on metrics provided",
 				items: {
-					type: SchemaType.OBJECT,
-					properties: {
-						title: {
-							type: SchemaType.STRING,
-							description:
-								"The title of the resource from og:title meta tag or title tag",
-						},
-						url: {
-							type: SchemaType.STRING,
-							description: "The URL of the website or resource",
-						},
-						icon: {
-							type: SchemaType.STRING,
-							description:
-								"The URL of the resource's icon from favicon meta tag. This can be also be the URL of the website's icon",
-						},
-						thumbnail: {
-							type: SchemaType.STRING,
-							description:
-								"The URL of the resource's thumbnail from og:image meta tag. This can be also be the URL of the website's background image",
-						},
-						description: {
-							type: SchemaType.STRING,
-							description: "A brief description of the resource",
-						},
-					},
-					required: [
-						"title",
-						"url",
-						"icon",
-						"thumbnail",
-						"description",
-					],
+					type: SchemaType.INTEGER,
+					description: "ID of the resources",
+					// properties: {
+					// 	title: {
+					// 		type: SchemaType.STRING,
+					// 		description:
+					// 			"The title of the resource from og:title meta tag or title tag",
+					// 	},
+					// 	url: {
+					// 		type: SchemaType.STRING,
+					// 		description: "The URL of the website or resource",
+					// 	},
+					// 	icon: {
+					// 		type: SchemaType.STRING,
+					// 		description:
+					// 			"The URL of the resource's icon from favicon meta tag",
+					// 	},
+					// 	thumbnail: {
+					// 		type: SchemaType.STRING,
+					// 		description:
+					// 			"The URL of the resource's thumbnail from og:image meta tag",
+					// 	},
+					// 	description: {
+					// 		type: SchemaType.STRING,
+					// 		description: "A brief description of the resource",
+					// 	},
+					// 	category: {
+					// 		type: SchemaType.STRING,
+					// 		description: "The category of the resource",
+					// 	},
+					// 	view_count: {
+					// 		type: SchemaType.INTEGER,
+					// 		description:
+					// 			"The number of times this resource has been viewed",
+					// 	},
+					// 	bookmarks_count: {
+					// 		type: SchemaType.INTEGER,
+					// 		description:
+					// 			"The number of times this resource has been bookmarked",
+					// 	},
+					// 	likes_count: {
+					// 		type: SchemaType.INTEGER,
+					// 		description:
+					// 			"The number of times this resource has been liked",
+					// 	},
+					// 	resource_tags: {
+					// 		type: SchemaType.ARRAY,
+					// 		description: "Tags associated with the resource",
+					// 		items: {
+					// 			type: SchemaType.STRING,
+					// 		},
+					// 	},
+					// 	created_at: {
+					// 		type: SchemaType.STRING,
+					// 		description:
+					// 			"The timestamp when the resource was created",
+					// 	},
+					// 	updated_at: {
+					// 		type: SchemaType.STRING,
+					// 		description:
+					// 			"The timestamp when the resource was last updated",
+					// 	},
+					// 	likes: {
+					// 		type: SchemaType.ARRAY,
+					// 		description: "A list of likes on the resource",
+					// 		items: {
+					// 			type: SchemaType.OBJECT,
+					// 			properties: {
+					// 				liked_at: {
+					// 					type: SchemaType.STRING,
+					// 					description:
+					// 						"Timestamp of when the resource was liked",
+					// 				},
+					// 			},
+					// 		},
+					// 	},
+					// },
+					// required: [
+					// 	"title",
+					// 	"url",
+					// 	"icon",
+					// 	"thumbnail",
+					// 	"description",
+					// 	"category",
+					// 	"view_count",
+					// 	"bookmarks_count",
+					// 	"likes_count",
+					// 	"resource_tags",
+					// 	"created_at",
+					// 	"updated_at",
+					// 	"likes",
+					// ],
 				},
 			},
 		},

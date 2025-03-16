@@ -43,10 +43,10 @@ export default async function RootLayout({
 					routerConfig={extractRouterConfig(ourFileRouter)}
 				/>
 				<ThemeProvider
-				// attribute="class"
-				// defaultTheme="system"
-				// enableSystem
-				// disableTransitionOnChange
+					attribute="class"
+					defaultTheme="system"
+					enableSystem
+					// disableTransitionOnChange
 				>
 					<Toaster richColors position="top-center" />
 					<Providers data={session?.user}>

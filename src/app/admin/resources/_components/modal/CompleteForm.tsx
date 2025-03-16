@@ -90,24 +90,24 @@ const CompleteForm = ({
 					return {
 						id: category.id,
 						name: category.name,
-						tags: category.tags.map((tag: any) => tag.name),
+						tags: category.tags,
 					};
 				},
 			);
 		}
 
-		if (data?.category?.id)
-			return [{ id: data?.category?.id, name: data?.category?.name }];
+		if (data?.category_id)
+			return [{ id: data?.category_id, name: data?.category }];
 
 		return [{ id: "", name: "" }];
 	}, [categoriesWithTagsResponse.data]);
 
 	useEffect(() => {
-		if (data?.category?.id && categoriesWithTagsResponse.data) {
+		if (data?.category_id && categoriesWithTagsResponse.data) {
 			reset({
 				...data,
-				category: data.category?.id + "",
-				tags: data.resourceTags.map(({ tag }: any) => tag.name),
+				category: data.category_id + "",
+				tags: data.resourceTags,
 			});
 		} else {
 			reset(DEFAULT_VALUES);
@@ -120,10 +120,12 @@ const CompleteForm = ({
 
 	const tagsList = useMemo(
 		() =>
-			categoriesWithTags.find(
-				(category: any) =>
-					category.id === Number(getValues("category")),
-			)?.tags ?? [],
+			categoriesWithTags
+				.find(
+					(category: any) =>
+						category.id === Number(getValues("category")),
+				)
+				?.tags.map((tag: any) => tag.name) ?? [],
 		[watch("category"), categoriesWithTagsResponse.data],
 	);
 
@@ -188,7 +190,7 @@ const CompleteForm = ({
 		setIsDisableForm(true);
 		setIsSubmitting(true);
 
-		if (data?.category?.id) {
+		if (data?.category_id) {
 			payload["id"] = data?.id;
 			updateResourceMutation.mutate(payload);
 			return;

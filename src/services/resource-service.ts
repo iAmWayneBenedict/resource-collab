@@ -9,6 +9,7 @@ import {
 	tags,
 	userResources,
 } from "@/data/schema";
+import { getSession } from "@/lib/auth";
 import {
 	and,
 	asc,
@@ -406,6 +407,7 @@ type FindResourcesParams = {
 	category: string | null;
 	tags: string[];
 	userId: string | undefined;
+	resourceIds?: number[];
 };
 export const findResources = async (
 	body: FindResourcesParams,
@@ -413,6 +415,8 @@ export const findResources = async (
 	rows: Partial<InferSelectModel<ResourcesType>>[];
 	totalCount: number;
 }> => {
+	const session = await getSession();
+	const isAdmin = session?.user.role === "admin";
 	const {
 		page = 1,
 		limit = 10,
@@ -422,6 +426,7 @@ export const findResources = async (
 		category: categoryParams = "",
 		tags: tagsParams = [],
 		userId,
+		resourceIds = [],
 	} = body;
 
 	console.log(`Finding resources with params:`, {
@@ -435,134 +440,175 @@ export const findResources = async (
 		userId,
 	});
 
-	return await db.transaction(async (tx) => {
-		const [{ totalCount }] = await tx
-			.select({ totalCount: count() })
-			.from(resources);
-		console.log(`Total resources count: ${totalCount}`);
+	return await db.transaction(
+		async (
+			tx,
+		): Promise<{
+			rows: Partial<InferSelectModel<ResourcesType>>[];
+			totalCount: number;
+		}> => {
+			const [{ totalCount }] = await tx
+				.select({ totalCount: count() })
+				.from(resources);
+			console.log(`Total resources count: ${totalCount}`);
 
-		const filters: SQL[] = [];
-		if (search) {
-			filters.push(
-				or(
-					ilike(resources.name, sql.placeholder("search")),
-					ilike(resources.description, sql.placeholder("search")),
-				) as SQL,
-			);
-			console.log(`Added search filter for: ${search}`);
-		}
+			const filters: SQL[] = [];
+			if (search) {
+				filters.push(
+					or(
+						ilike(resources.name, sql.placeholder("search")),
+						ilike(resources.description, sql.placeholder("search")),
+					) as SQL,
+				);
+				console.log(`Added search filter for: ${search}`);
+			}
 
-		if (categoryParams) {
-			filters.push(
-				eq(resources.category_id, sql.placeholder("categoryParams")),
-			);
-			console.log(`Added category filter for: ${categoryParams}`);
-		}
+			if (resourceIds.length) {
+				filters.push(inArray(resources.id, resourceIds));
+			}
 
-		// get the id of the tags
-		const tagIds = await db
-			.select({ id: tags.id })
-			.from(tags)
-			.where(inArray(tags.name, tagsParams));
-		console.log(
-			`Found tag IDs:`,
-			tagIds.map((t) => t.id),
-		);
-
-		// add the tag filters
-		const baseFilters = filters.length ? filters : [];
-		const tagFilter = tagsParams.length
-			? [
-					exists(
-						tx
-							.select()
-							.from(resourceTags)
-							.where(
-								and(
-									eq(resourceTags.resource_id, resources.id),
-									inArray(
-										resourceTags.tag_id,
-										tagIds.map((tag) => tag.id),
-									), // ! NOTE: array is not supported for prepared statements
-								),
-							),
+			if (categoryParams) {
+				filters.push(
+					eq(
+						resources.category_id,
+						sql.placeholder("categoryParams"),
 					),
-				]
-			: [];
+				);
+				console.log(`Added category filter for: ${categoryParams}`);
+			}
 
-		if (tagsParams.length) {
-			console.log(`Added tag filters for: ${tagsParams.join(", ")}`);
-		}
+			// get the id of the tags
+			const tagIds = await db
+				.select({ id: tags.id })
+				.from(tags)
+				.where(inArray(tags.name, tagsParams));
+			console.log(
+				`Found tag IDs:`,
+				tagIds.map((t) => t.id),
+			);
 
-		const sortValue = sortBy
-			? (sortType === "ascending" ? asc : desc)(
-					resources[sortBy as keyof ResourcesSelectType],
-				)
-			: asc(resources.id);
-		console.log(`Sorting by ${sortBy} in ${sortType} order`);
-
-		// prepare the query
-		console.log("Preparing query with filters and sorting");
-		const query = tx.query.resources
-			.findMany({
-				columns: { owner_id: false },
-				with: {
-					category: { columns: { id: true, name: true } },
-					resourceCollections: userId
-						? {
-								where: eq(resourceCollections.user_id, userId),
-								columns: {
-									id: true,
-									resource_id: true,
-									collection_folder_id: true,
-								},
-								with: { collectionFolder: true },
-							}
-						: undefined,
-					resourceTags: {
-						columns: { resource_id: false, tag_id: false },
-						with: { tag: { columns: { name: true } } },
-					},
-					likes: userId
-						? {
-								columns: { liked_at: true },
-								where: eq(
-									likeResources.user_id,
-									userId as string,
+			// add the tag filters
+			const baseFilters = filters.length ? filters : [];
+			const tagFilter = tagsParams.length
+				? [
+						exists(
+							tx
+								.select()
+								.from(resourceTags)
+								.where(
+									and(
+										eq(
+											resourceTags.resource_id,
+											resources.id,
+										),
+										inArray(
+											resourceTags.tag_id,
+											tagIds.map((tag) => tag.id),
+										), // ! NOTE: array is not supported for prepared statements
+									),
 								),
+						),
+					]
+				: [];
+
+			if (tagsParams.length) {
+				console.log(`Added tag filters for: ${tagsParams.join(", ")}`);
+			}
+
+			const sortValue = sortBy
+				? (sortType === "ascending" ? asc : desc)(
+						resources[sortBy as keyof ResourcesSelectType],
+					)
+				: asc(resources.id);
+			console.log(`Sorting by ${sortBy} in ${sortType} order`);
+
+			// prepare the query
+			console.log("Preparing query with filters and sorting");
+			const query = tx.query.resources
+				.findMany({
+					columns: isAdmin
+						? {
+								owner_id: false,
 							}
-						: undefined,
-				},
-				extras: {
-					bookmarksCount:
-						sql<number>`CAST((${tx.select({ count: count() }).from(resourceCollections).where(eq(resourceCollections.resource_id, resources.id))}) AS integer)`.as(
-							"bookmarksCount",
-						),
+						: {
+								owner_id: false,
+								created_at: false,
+								updated_at: false,
+							},
+					with: {
+						category: { columns: { id: true, name: true } },
+						resourceCollections: userId
+							? {
+									where: eq(
+										resourceCollections.user_id,
+										userId,
+									),
+									columns: {
+										id: true,
+										resource_id: true,
+										collection_folder_id: true,
+									},
+									with: { collectionFolder: true },
+								}
+							: undefined,
+						resourceTags: {
+							columns: { resource_id: false, tag_id: false },
+							with: { tag: { columns: { name: true } } },
+						},
+						likes: userId
+							? {
+									columns: { liked_at: true },
+									where: eq(
+										likeResources.user_id,
+										userId as string,
+									),
+								}
+							: undefined,
+					},
+					extras: {
+						bookmarksCount:
+							sql<number>`CAST((${tx.select({ count: count() }).from(resourceCollections).where(eq(resourceCollections.resource_id, resources.id))}) AS integer)`.as(
+								"bookmarksCount",
+							),
 
-					likesCount:
-						sql<number>`CAST((${tx.select({ count: count() }).from(likeResources).where(eq(likeResources.resource_id, resources.id))}) AS integer)`.as(
-							"likesCount",
-						),
-				},
-				where: and(...baseFilters, ...tagFilter),
-				offset: sql.placeholder("offset"),
-				...(limit !== -1 ? { limit: sql.placeholder("limit") } : {}),
-				orderBy: [sortValue],
-			})
-			.prepare("all_resources");
+						likesCount:
+							sql<number>`CAST((${tx.select({ count: count() }).from(likeResources).where(eq(likeResources.resource_id, resources.id))}) AS integer)`.as(
+								"likesCount",
+							),
+					},
+					where: and(...baseFilters, ...tagFilter),
+					offset: sql.placeholder("offset"),
+					...(limit !== -1
+						? { limit: sql.placeholder("limit") }
+						: {}),
+					orderBy: [sortValue],
+				})
+				.prepare("all_resources");
 
-		// execute the prepared statement
-		const rows = await query.execute({
-			search: `%${search}%`,
-			offset: (page - 1) * (limit === -1 ? 1 : limit), // when limit is -1, we still need a valid offset
-			...(limit !== -1 ? { limit: Number(limit) } : {}),
-			categoryParams,
-		});
-		console.log(`Found ${rows.length} resources for page ${page}`);
+			// execute the prepared statement
+			const result = await query.execute({
+				search: `%${search}%`,
+				offset: (page - 1) * (limit === -1 ? 1 : limit), // when limit is -1, we still need a valid offset
+				...(limit !== -1 ? { limit: Number(limit) } : {}),
+				categoryParams,
+			});
+			console.log(`Found ${result.length} resources for page ${page}`);
 
-		return {
-			rows,
-			totalCount,
-		};
-	});
+			// restructure
+			const rows = result.map((resource) => ({
+				...resource,
+				category: resource.category.name,
+				resourceCollections:
+					resource?.resourceCollections?.map(
+						(collection) => collection.collection_folder_id,
+					) ?? [],
+				resourceTags:
+					resource?.resourceTags?.map((tag) => tag.tag.name) ?? [],
+			})) as Partial<InferSelectModel<ResourcesType>>[];
+			return {
+				rows,
+				totalCount,
+			};
+		},
+	);
 };

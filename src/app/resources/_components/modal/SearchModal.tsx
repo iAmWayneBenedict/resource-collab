@@ -14,7 +14,7 @@ import {
 	ListboxItem,
 	Chip,
 } from "@heroui/react";
-import { ChevronRight, Search, X } from "lucide-react";
+import { ChevronRight, Search } from "lucide-react";
 import {
 	KeyboardEvent,
 	useEffect,
@@ -27,6 +27,7 @@ import { useGetPaginatedResourcesQuery } from "../../../../lib/queries/resources
 import { useRouter, useSearchParams } from "next/navigation";
 import { reInitQueryParams } from "@/lib/utils";
 import { useRecentSearches } from "@/store/useRecentSearches";
+import { useKeyboardShortcut } from "@/hooks/useKeyboardShortcut";
 
 // Helper function to highlight matching text
 const HighlightedText = ({
@@ -51,7 +52,10 @@ const HighlightedText = ({
 						{part}
 					</span>
 				) : (
-					<span key={i} className="group-hover:text-white">
+					<span
+						key={i}
+						className="group-hover:text-white group-focus:text-white"
+					>
 						{part}
 					</span>
 				),
@@ -72,13 +76,22 @@ const SearchFormModal = () => {
 	const router = useRouter();
 	const searchRef = useRef<HTMLInputElement>(null);
 
-	const { name: modalName, onClose, data: dataModal, type } = useModal();
+	const {
+		name: modalName,
+		onClose,
+		data: dataModal,
+		onOpen: onOpenModal,
+	} = useModal();
 
 	const searchDebounced = useDebounce(searchValue, 250);
 
 	const { data } = useGetPaginatedResourcesQuery({
 		page: 1,
 		limit: -1,
+	});
+
+	useKeyboardShortcut({ ctrlKey: true, key: "k" }, () => {
+		onOpenModal("Search Filter", null);
 	});
 
 	useEffect(() => {
@@ -151,17 +164,23 @@ const SearchFormModal = () => {
 		onCloseModal();
 	};
 
+	const showSearchResult = filteredResources.length > 0;
+	const showEmptySearchResult = !filteredResources.length && searchDebounced;
+	const showRecentSearchResult = !searchDebounced && resources.length;
+	const showEmptyRecentSearchResult = !searchDebounced && !resources.length;
+
 	return (
 		<Modal
 			isOpen={isOpen}
-			placement="top-center"
+			placement="center"
 			onOpenChange={onCloseModal}
 			backdrop="blur"
 			size="xl"
+			hideCloseButton
 		>
 			<ModalContent>
 				{() => (
-					<ModalBody className="gap-1 border border-black/10 p-0">
+					<ModalBody className="gap-1 rounded-2xl border border-default-200 p-0">
 						<Input
 							ref={searchRef}
 							isClearable
@@ -173,7 +192,7 @@ const SearchFormModal = () => {
 							className="mt-1"
 							classNames={{
 								inputWrapper:
-									"h-14 focus-within:ring-0 group-data-[focus=true]:border-0 border-0 shadow-none bg-white",
+									"h-14 focus-within:ring-0 group-data-[focus=true]:border-0 border-0 shadow-none",
 								input: "max-w-[83%]",
 							}}
 							startContent={
@@ -181,13 +200,10 @@ const SearchFormModal = () => {
 							}
 							endContent={
 								<div className="flex items-center gap-1">
-									<span className="rounded-full bg-default-700 p-1 text-white">
-										<X size={10} />
-									</span>
 									<Chip
 										size="sm"
 										classNames={{
-											base: "min-w-0 px-1.5 bg-default-200 text-default-900 hover:bg-default-200 hover:text-default-900 hover:shadow-none text-xs py-2",
+											base: "min-w-0 px-1.5 bg-default-100 text-default-600 hover:bg-default-200 text-xs py-2",
 										}}
 									>
 										ESC
@@ -199,7 +215,7 @@ const SearchFormModal = () => {
 							onChange={onChangeHandler}
 							value={searchValue}
 						/>
-						<Divider />
+						<Divider className="bg-default-200" />
 						<div className="px-2">
 							<Listbox
 								className="w-full border-0"
@@ -217,9 +233,10 @@ const SearchFormModal = () => {
 									}
 									classNames={{
 										group: "flex flex-col gap-2",
+										heading: "text-default-600",
 									}}
 								>
-									{filteredResources.length > 0 &&
+									{showSearchResult &&
 										filteredResources.map(
 											(resource: any) => (
 												<ListboxItem
@@ -229,17 +246,20 @@ const SearchFormModal = () => {
 													classNames={{
 														title: "text-md",
 														description:
-															"group-focus:text-white",
+															"text-default-500 group-focus:text-white group-hover:text-white",
 														base: "group-focus:text-white",
 													}}
-													startContent={<Search />}
+													startContent={
+														<Search className="text-default-500 group-hover:text-white group-focus:text-white" />
+													}
 													endContent={
 														<ChevronRight
 															size={18}
+															className="text-default-500 group-hover:text-white group-focus:text-white"
 														/>
 													}
 													description={
-														<div className="line-clamp-1 group-hover:text-white">
+														<div className="line-clamp-1 text-default-500 group-hover:text-white">
 															<HighlightedText
 																text={
 																	resource.description
@@ -262,34 +282,45 @@ const SearchFormModal = () => {
 												</ListboxItem>
 											),
 										)}
-									{!filteredResources.length &&
-										!resources.length && (
-											<ListboxItem
-												key="empty"
-												classNames={{
-													title: "text-md text-center text-gray-900",
-												}}
-											>
-												{searchDebounced
-													? `No results for "${searchDebounced}"`
-													: "Start typing to search..."}
-											</ListboxItem>
-										)}
-									{!searchDebounced &&
-										resources.length &&
+									{showEmptySearchResult && (
+										<ListboxItem
+											key="empty"
+											classNames={{
+												title: "text-md text-center text-default-600",
+											}}
+										>
+											{`No results for "${searchDebounced}"`}
+										</ListboxItem>
+									)}
+									{showRecentSearchResult &&
 										resources.map((resource) => (
 											<ListboxItem
 												key={resource}
 												textValue={resource}
 												className="group bg-default-100 py-3 pl-3 text-default-700 hover:bg-violet hover:text-white focus:bg-violet focus:text-white focus:outline-none data-[hover=true]:bg-violet data-[hover=true]:text-white data-[focus-visible=true]:outline-0 data-[selectable=true]:focus:bg-violet data-[selectable=true]:focus:text-white"
-												startContent={<Search />}
+												startContent={
+													<Search className="text-default-500 group-hover:text-white group-focus:text-white" />
+												}
 												endContent={
-													<ChevronRight size={18} />
+													<ChevronRight
+														size={18}
+														className="text-default-500 group-hover:text-white group-focus:text-white"
+													/>
 												}
 											>
 												{resource}
 											</ListboxItem>
 										))}
+									{showEmptyRecentSearchResult && (
+										<ListboxItem
+											key="empty"
+											classNames={{
+												title: "text-md text-center text-default-600",
+											}}
+										>
+											Start typing to search...
+										</ListboxItem>
+									)}
 								</ListboxSection>
 							</Listbox>
 						</div>

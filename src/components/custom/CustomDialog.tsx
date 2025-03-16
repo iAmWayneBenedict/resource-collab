@@ -52,7 +52,7 @@ const CustomAlertDialog = () => {
 		if (alertDialogDetails?.actionLink)
 			router.push(alertDialogDetails?.actionLink);
 
-		if (onConfirm) onConfirm();
+		if (onConfirm && alertDialogDetails.dialogType === "alert") onConfirm();
 
 		onCloseHandler();
 	};

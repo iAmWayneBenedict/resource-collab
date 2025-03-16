@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import React from "react";
 import NavBar from "./NavBar";
 import Footer from "./Footer";
+import { DarkModeToggler } from "./DarkModeToggler";
 
 type Props = {
 	children: React.ReactNode;
@@ -20,12 +21,21 @@ type Props = {
  * @param {React.RefObject<HTMLDivElement>} [props.refObject] - Ref object for the div element.
  * @returns {React.ReactElement} The rendered component.
  */
-const Layout: React.FC<Props> = ({ children, className, refObject, ...props }) => {
+const Layout: React.FC<Props> = ({
+	children,
+	className,
+	refObject,
+	...props
+}) => {
 	return (
-		<div {...props} ref={refObject} className={cn("relative pb-56", className)}>
+		<div
+			{...props}
+			ref={refObject}
+			className={cn("relative pb-56", className)}
+		>
 			<NavBar />
 			{children}
-			{/* <DarkModeToggler /> */}
+			<DarkModeToggler />
 			<Footer />
 		</div>
 	);

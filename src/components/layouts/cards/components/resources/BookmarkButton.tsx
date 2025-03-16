@@ -16,7 +16,7 @@ const ICON_COLORS = {
 	},
 	inactive: {
 		fill: "none",
-		stroke: "#000000",
+		stroke: "hsl(var(--foreground))",
 	},
 };
 
@@ -34,7 +34,10 @@ export const BookmarkButton = ({
 		const newIconColors = {
 			bookmarked: ICON_COLORS.active,
 			default: ICON_COLORS.inactive,
-			hover: { ...ICON_COLORS.inactive, stroke: "#6B7280" },
+			hover: {
+				...ICON_COLORS.inactive,
+				stroke: "hsl(var(--muted-foreground))",
+			},
 			pressed: { ...ICON_COLORS.active, fill: "#6D2AE8" },
 		}[isBookmarked ? "bookmarked" : "default"];
 
@@ -70,7 +73,7 @@ export const BookmarkButton = ({
 					/>
 				</motion.div>
 			</Button>
-			<span className="absolute -bottom-[.8rem] left-1/2 z-[1] flex h-4 w-4 -translate-x-1/2 items-center justify-center rounded-full text-[12px] font-medium text-gray-800">
+			<span className="absolute -bottom-[.8rem] left-1/2 z-[1] flex h-4 w-4 -translate-x-1/2 items-center justify-center rounded-full text-[12px] font-medium text-foreground">
 				{formatNumber(count)}
 			</span>
 		</div>

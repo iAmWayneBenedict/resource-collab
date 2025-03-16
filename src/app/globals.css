@@ -145,7 +145,7 @@
 	}
 
 	.input-label.active {
-		@apply top-[.5rem] text-base text-gray-900 dark:text-gray-400;
+		@apply top-[.5rem] text-base text-zinc-900 dark:text-zinc-400;
 	}
 	.input-label.active ~ div span {
 		@apply left-0;
