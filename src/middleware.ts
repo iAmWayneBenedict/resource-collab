@@ -11,7 +11,6 @@ const allowedHosts = [
 
 export async function middleware(request: NextRequest): Promise<NextResponse> {
 	const sessionCookie = getSessionCookie(request);
-	const targetUrl = request.url;
 	const targetPath = request.nextUrl.pathname;
 
 	// Check if the request is for an auth route, if so redirect to home
@@ -31,16 +30,6 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
 	// if (!sessionCookie && hasMatchProtectedRoute) {
 	// 	return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 	// }
-
-	// catch callback from social auth
-	if (
-		targetUrl ===
-		`${process.env.NEXT_PUBLIC_BASE_URL}/api/${process.env.NEXT_PUBLIC_SERVER_API_VERSION}/${process.env.NEXT_PUBLIC_SERVER_API_TYPE}/auth`
-	) {
-		return NextResponse.redirect(new URL("/", request.url), {
-			status: 307,
-		});
-	}
 
 	// Allow requests from localhost in development
 	if (process.env.NODE_ENVIRONMENT === "development") {
