@@ -13,12 +13,11 @@ import {
 } from "@heroui/react";
 import { ArrowUp, Sparkles } from "lucide-react";
 import { KeyboardEvent, useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
 import ShinyText from "@/components/animations/ShinyText/ShinyText";
 import { toggleScrollBody } from "@/lib/utils";
-import { useGetAISearchQuery } from "@/lib/queries/AISearch";
 import { useAISearchStore } from "@/store/useAIResult";
+import { useQueryClient } from "@tanstack/react-query";
 
 // Define the suggestion buttons data
 const primarySuggestions = [
@@ -40,16 +39,11 @@ const secondarySuggestions = [
 const AISearchModal = () => {
 	const { isOpen, onOpen, onOpenChange } = useDisclosure();
 	const [searchValue, setSearchValue] = useState("");
-	const [searchEnabled, setSearchEnabled] = useState(false);
-	const [isExpanded, setIsExpanded] = useState(false);
 	const setQuery = useAISearchStore((state) => state.setQuery);
-
-	const router = useRouter();
+	const queryClient = useQueryClient();
 	const searchRef = useRef<HTMLTextAreaElement>(null);
 
-	const { name: modalName, onClose, onOpen: onOpenModal } = useModal();
-
-	const searchDebounced = useDebounce(searchValue, 250);
+	const { name: modalName, onClose } = useModal();
 
 	useEffect(() => {
 		if (modalName === "AI Search") {
@@ -73,32 +67,37 @@ const AISearchModal = () => {
 
 	const onButtonHover = () => {
 		setShowAllButtons(true);
-		if (!searchValue) setIsExpanded(false);
 	};
 
 	const onButtonLeave = () => {
 		setShowAllButtons(false);
-		if (!searchValue) setIsExpanded(true);
 	};
 
 	const onChangeHandler = (e: any) => {
 		setSearchValue(e.target.value);
-		if (e.target.value) setIsExpanded(true);
-		else setIsExpanded(false);
 	};
 
 	const onKeyDownHandler = (e: KeyboardEvent<HTMLInputElement>) => {
 		if (e.key === "Escape") onCloseModal();
 		if (e.key === "Enter") {
 			e.preventDefault();
-			onCloseModal();
-			setQuery(searchValue);
+			onSubmitHandler();
 		}
 	};
 
 	const onSubmitHandler = () => {
+		if (!searchValue)
+			queryClient.removeQueries({ queryKey: ["ai-search"] });
 		setQuery(searchValue);
+		onCloseModal();
 	};
+
+	const onPressSuggestionHandler = (value: string) => {
+		setSearchValue(value);
+		setQuery(value);
+		onCloseModal();
+	};
+
 	return (
 		<Modal
 			isOpen={isOpen}
@@ -200,11 +199,11 @@ const AISearchModal = () => {
 											variant="flat"
 											size="sm"
 											className="justify-start bg-default-100 text-default-700 transition-all hover:scale-105 hover:bg-default-100"
-											// startContent={
-											// 	<span className="text-lg">
-											// 		{suggestion.emoji}
-											// 	</span>
-											// }
+											onPress={() =>
+												onPressSuggestionHandler(
+													suggestion.text,
+												)
+											}
 										>
 											{suggestion.text}
 										</Button>
@@ -256,13 +255,11 @@ const AISearchModal = () => {
 														variant="flat"
 														size="sm"
 														className="justify-start bg-default-100 text-default-700 transition-all hover:scale-105 hover:bg-default-100"
-														// startContent={
-														// 	<span className="text-lg">
-														// 		{
-														// 			suggestion.emoji
-														// 		}
-														// 	</span>
-														// }
+														onPress={() =>
+															onPressSuggestionHandler(
+																suggestion.text,
+															)
+														}
 													>
 														{suggestion.text}
 													</Button>

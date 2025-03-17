@@ -61,7 +61,7 @@ const ResourceCardWrapper = () => {
 			sortValue: sortValue,
 			tags: tagsSearchParams,
 			search: searchValue,
-			resourceIds: aiResponse.data?.data.ids ?? [],
+			resourceIds: aiResponse.data,
 		});
 	}, [
 		category,

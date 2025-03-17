@@ -3,6 +3,12 @@ import type { NextRequest } from "next/server";
 import { authRoutes, protectedRoutes } from "./routes";
 import { getSessionCookie } from "better-auth";
 
+// Define allowed hosts
+const allowedHosts = [
+	process.env.NEXT_PUBLIC_BASE_URL?.replace(/^https?:\/\//, ""),
+	"localhost:3000", // For local development
+];
+
 export async function middleware(request: NextRequest): Promise<NextResponse> {
 	const sessionCookie = getSessionCookie(request);
 	const targetUrl = request.url;
@@ -44,9 +50,38 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
 	const originHeader = request.headers.get("Origin");
 	const hostHeader =
 		request.headers.get("X-Forwarded-Host") || request.headers.get("Host");
-	if (!originHeader || !hostHeader) {
-		return NextResponse.json({ error: "Missing headers" }, { status: 400 });
+
+	// Validate host header
+	if (!hostHeader) {
+		return NextResponse.json(
+			{ error: "Missing host header" },
+			{ status: 400 },
+		);
 	}
+
+	// Check if the host is in the allowed hosts list
+	const isAllowedHost = allowedHosts.some(
+		(host) => host && hostHeader.includes(host),
+	);
+	if (!isAllowedHost) {
+		return NextResponse.json({ error: "Invalid host" }, { status: 403 });
+	}
+
+	// Validate origin for CORS if present
+	if (originHeader) {
+		const origin = new URL(originHeader).host;
+		const isAllowedOrigin = allowedHosts.some(
+			(host) => host && origin.includes(host),
+		);
+
+		if (!isAllowedOrigin) {
+			return NextResponse.json(
+				{ error: "Invalid origin" },
+				{ status: 403 },
+			);
+		}
+	}
+
 	return NextResponse.next();
 }
 
