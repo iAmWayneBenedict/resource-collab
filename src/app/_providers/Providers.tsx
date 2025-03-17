@@ -7,6 +7,7 @@ import { ToastProvider } from "@heroui/toast";
 import { useAppTheme } from "@/hooks";
 import { useAuthUser } from "@/store/useAuthUser";
 import CustomAlertDialog from "@/components/custom/CustomDialog";
+import { PostHogProvider } from "./PostHogProvider";
 
 const queryClient = new QueryClient();
 const Providers = ({ data, children }: any) => {
@@ -19,21 +20,23 @@ const Providers = ({ data, children }: any) => {
 	}, [data]);
 
 	return (
-		<QueryClientProvider client={queryClient}>
-			<HeroUIProvider>
-				<ToastProvider
-					placement="bottom-right"
-					toastOffset={100}
-					toastProps={{
-						radius: "lg",
-						variant: "flat",
-						timeout: 6000,
-					}}
-				/>
-				{children}
-				<CustomAlertDialog />
-			</HeroUIProvider>
-		</QueryClientProvider>
+		<PostHogProvider>
+			<QueryClientProvider client={queryClient}>
+				<HeroUIProvider>
+					<ToastProvider
+						placement="bottom-right"
+						toastOffset={100}
+						toastProps={{
+							radius: "lg",
+							variant: "flat",
+							timeout: 6000,
+						}}
+					/>
+					{children}
+					<CustomAlertDialog />
+				</HeroUIProvider>
+			</QueryClientProvider>
+		</PostHogProvider>
 	);
 };
 

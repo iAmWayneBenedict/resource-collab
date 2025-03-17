@@ -59,6 +59,7 @@
 		"nodemailer": "^6.10.0",
 		"pg": "^8.13.1",
 		"postgres": "^3.4.5",
+		"posthog-js": "^1.231.0",
 		"puppeteer": "^24.2.1",
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0",
