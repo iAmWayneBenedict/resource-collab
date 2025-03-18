@@ -27,6 +27,7 @@ export function SaveResourceDrawer({
 	};
 
 	const onOpenChangeHandler = (isOpen: boolean) => {
+		console.log(isOpen);
 		setIsOpen(isOpen);
 		setShowCreateForm(false);
 	};

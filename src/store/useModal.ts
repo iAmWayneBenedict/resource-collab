@@ -7,7 +7,7 @@ type TModalState = {
 	data: any;
 	isOpen: boolean;
 	onSubmitCallback: (data: any) => void;
-	onOpen: (name: string, data: any, type?: string) => void;
+	onOpen: (name: string, data: any, type?: string, title?: string) => void;
 	onClose: () => void;
 	reset: () => void;
 };
@@ -19,9 +19,11 @@ export const useModal = create<TModalState>((set) => ({
 	data: null,
 	isOpen: false,
 	onSubmitCallback: (data) => {},
-	onOpen: (name, data, type) =>
-		set({ name, data, type: type ?? "create", isOpen: true }),
-	onClose: () => set({ isOpen: false, data: null, name: "", type: "" }),
+	onOpen: (name, data, type, title) =>
+		set({ name, data, type: type ?? "create", isOpen: true, title }),
+	onClose: () =>
+		set({ isOpen: false, data: null, name: "", type: "", title: "" }),
 
-	reset: () => set({ name: "", data: null, isOpen: false, type: "" }),
+	reset: () =>
+		set({ name: "", data: null, isOpen: false, type: "", title: "" }),
 }));
