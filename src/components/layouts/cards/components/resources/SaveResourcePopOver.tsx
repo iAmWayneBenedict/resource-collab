@@ -20,9 +20,10 @@ import {
 	usePostCreateCollectionsMutation,
 	usePostCreateResourceCollectionsMutation,
 } from "@/lib/mutations/collections";
-import { bindReactHookFormError, toggleScrollBody } from "@/lib/utils";
+import { bindReactHookFormError, cn, toggleScrollBody } from "@/lib/utils";
 import { useCollections } from "@/store/useCollections";
 import { useQueryClient } from "@tanstack/react-query";
+import { useMediaQuery } from "react-responsive";
 
 // Collection item type
 // Update the Collection type to include additional information
@@ -57,13 +58,16 @@ const collectionItemIcons = {
 };
 
 // Collections list component
-const CollectionsList = ({
+export const CollectionsList = ({
 	onCreateNew,
 	titleProps,
 	onComplete,
 	collectionList,
 	resourceId,
 }: CollectionsListProps) => {
+	const isSmallDevices = useMediaQuery({
+		query: "(max-width: 64rem)",
+	});
 	const getCollections = useCollections((state) => state.getCollections);
 	const [selectedKeys, setSelectedKeys] = useState<Selection>(
 		new Set([...collectionList]),
@@ -142,7 +146,7 @@ const CollectionsList = ({
 			className="w-full p-2"
 		>
 			<p
-				className="mb-2 px-1 text-small font-bold text-foreground"
+				className="mb-2 px-1 text-base font-bold text-foreground lg:text-small"
 				{...titleProps}
 			>
 				Save to collection
@@ -151,7 +155,7 @@ const CollectionsList = ({
 				<Button
 					color="primary"
 					startContent={<Plus size={16} />}
-					size="sm"
+					size={isSmallDevices ? "md" : "sm"}
 					className="w-full"
 					radius="full"
 					onPress={onCreateNew}
@@ -168,7 +172,7 @@ const CollectionsList = ({
 					selectedKeys={selectedKeys}
 					onSelectionChange={setSelectedKeys}
 					virtualization={{
-						maxListboxHeight: 200,
+						maxListboxHeight: isSmallDevices ? 300 : 200,
 						itemHeight: 48,
 					}}
 				>
@@ -190,7 +194,7 @@ const CollectionsList = ({
 			</div>
 			<div className="mt-2 flex w-full justify-end">
 				<Button
-					size="sm"
+					size={isSmallDevices ? "md" : "sm"}
 					className="bg-violet text-white"
 					radius="full"
 					onPress={onDoneSubmit}
@@ -208,11 +212,14 @@ const collectionFormSchema = z.object({
 	name: z.string().min(1, "Collection name is required"),
 });
 // Create collection form component
-const CreateCollectionForm = ({
+export const CreateCollectionForm = ({
 	resourceId,
 	onBack,
 	onComplete,
 }: CreateCollectionFormProps) => {
+	const isSmallDevices = useMediaQuery({
+		query: "(max-width: 64rem)",
+	});
 	const queryClient = useQueryClient();
 	const {
 		control,
@@ -280,7 +287,7 @@ const CreateCollectionForm = ({
 				>
 					<ArrowLeft size={16} />
 				</Button>
-				<p className="ml-1 text-small font-bold text-foreground">
+				<p className="ml-1 text-base font-bold text-foreground lg:text-small">
 					Create new collection
 				</p>
 			</div>
@@ -288,7 +295,12 @@ const CreateCollectionForm = ({
 				className="flex w-full flex-col"
 				onSubmit={handleSubmit(onSubmit)}
 			>
-				<div className="flex gap-2">
+				<div
+					className={cn(
+						"flex gap-2",
+						isSmallDevices && "flex-col gap-4",
+					)}
+				>
 					<Controller
 						name="name"
 						control={control}
@@ -300,14 +312,14 @@ const CreateCollectionForm = ({
 								errorMessage={error?.message}
 								isDisabled={false}
 								placeholder="Collection name"
-								size="sm"
+								size={isSmallDevices ? "md" : "sm"}
 								className="flex-1"
 								autoFocus
 							/>
 						)}
 					/>
 					<Button
-						size="sm"
+						size={isSmallDevices ? "md" : "sm"}
 						radius="full"
 						type="submit"
 						className="bg-violet text-white"

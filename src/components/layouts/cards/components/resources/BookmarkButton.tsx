@@ -56,7 +56,7 @@ export const BookmarkButton = ({
 				// size="icon"
 				isIconOnly
 				size="sm"
-				className="overflow-visible bg-none p-0 transition-none"
+				className="h-11 w-11 overflow-visible bg-none p-1.5 transition-none"
 				{...props}
 			>
 				<motion.div
