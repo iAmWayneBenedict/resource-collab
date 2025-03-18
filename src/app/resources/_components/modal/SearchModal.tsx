@@ -119,8 +119,6 @@ const SearchFormModal = () => {
 			setTimeout(() => {
 				searchRef.current?.focus();
 			}, 500);
-		} else {
-			onClose();
 		}
 	}, [modalName, onClose, onOpen]);
 

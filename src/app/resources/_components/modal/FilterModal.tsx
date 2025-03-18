@@ -89,10 +89,8 @@ const FilterFormModal = () => {
 		if (modalName === "Resource Filter") {
 			toggleScrollBody(true);
 			onOpen();
-		} else {
-			onClose();
 		}
-	}, [modalName, onClose, onOpen]);
+	}, [modalName, onOpen]);
 
 	const onCloseModal = () => {
 		toggleScrollBody(false);

@@ -28,7 +28,7 @@ const ResourceCard = ({ data }: ResourceCardProps) => {
 			console.log(err);
 		},
 	});
-	console.log(isOpenDrawer);
+
 	const onCardClickHandler = (e: React.MouseEvent) => {
 		console.log("inside", isOpenDrawer);
 		if (isOpenDrawer) return;
@@ -106,6 +106,7 @@ const ResourceCard = ({ data }: ResourceCardProps) => {
 						<div className="mt-4">
 							<ResourceMetrics
 								resource_id={data.id}
+								resource_url={data.url}
 								views={data.view_count || 0}
 								likes={data.likesCount}
 								shares={data.shares || 0}

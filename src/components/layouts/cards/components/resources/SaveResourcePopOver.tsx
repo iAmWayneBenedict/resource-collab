@@ -158,6 +158,7 @@ export const CollectionsList = ({
 					size={isSmallDevices ? "md" : "sm"}
 					className="w-full"
 					radius="full"
+					variant="ghost"
 					onPress={onCreateNew}
 				>
 					Create new collection
@@ -192,10 +193,10 @@ export const CollectionsList = ({
 					))}
 				</Listbox>
 			</div>
-			<div className="mt-2 flex w-full justify-end">
+			<div className="mt-2 flex w-full">
 				<Button
 					size={isSmallDevices ? "md" : "sm"}
-					className="bg-violet text-white"
+					className="w-full bg-violet text-white"
 					radius="full"
 					onPress={onDoneSubmit}
 					isLoading={mutation.isPending}
@@ -279,17 +280,17 @@ export const CreateCollectionForm = ({
 		>
 			<div className="mb-2 flex items-center">
 				<Button
-					isIconOnly
+					className="p-0 hover:bg-transparent data-[hover=true]:bg-transparent"
 					variant="light"
 					size="sm"
 					radius="full"
 					onPress={onBack}
+					startContent={<ArrowLeft size={16} />}
 				>
-					<ArrowLeft size={16} />
+					<p className="ml-1 text-base font-bold text-foreground lg:text-small">
+						Create new collection
+					</p>
 				</Button>
-				<p className="ml-1 text-base font-bold text-foreground lg:text-small">
-					Create new collection
-				</p>
 			</div>
 			<form
 				className="flex w-full flex-col"

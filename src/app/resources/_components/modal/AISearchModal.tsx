@@ -52,10 +52,8 @@ const AISearchModal = () => {
 				searchRef.current?.focus();
 			}, 500);
 			toggleScrollBody(true);
-		} else {
-			onClose();
 		}
-	}, [modalName, onClose, onOpen]);
+	}, [modalName, onOpen]);
 
 	const onCloseModal = () => {
 		onOpenChange();

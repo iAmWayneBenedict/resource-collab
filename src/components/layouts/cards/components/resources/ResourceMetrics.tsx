@@ -1,4 +1,5 @@
 import { usePostLikeResourceMutation } from "@/lib/mutations/like";
+import { useModal } from "@/store";
 import { ResourcePaginatedSearchParamsState } from "@/store/context/providers/ResourcePaginatedSearchParams";
 import useResourcePaginatedSearchParams from "@/store/context/useResourcePaginatedSearchParams";
 import { addToast, Spinner } from "@heroui/react";
@@ -7,6 +8,7 @@ import { ChartNoAxesColumn, Heart, Share2 } from "lucide-react";
 
 type ResourceMetricsProps = {
 	resource_id: number;
+	resource_url: string;
 	views: number;
 	shares: number;
 	likes?: number;
@@ -37,6 +39,7 @@ type PreviousResourcesData = {
 
 export const ResourceMetrics = ({
 	resource_id,
+	resource_url,
 	views,
 	shares,
 	likes = 0,
@@ -46,6 +49,7 @@ export const ResourceMetrics = ({
 	const searchParams = useResourcePaginatedSearchParams(
 		(state: ResourcePaginatedSearchParamsState) => state.searchParams,
 	) as ResourcePaginatedSearchParamsState["searchParams"];
+	const onOpenModal = useModal((state) => state.onOpen);
 
 	// Create query key array for better reusability
 	const getQueryKey = () => [
@@ -141,7 +145,17 @@ export const ResourceMetrics = ({
 				<span>{formatNumber(views)} views</span>
 			</button>
 
-			<button className="flex items-center gap-1 text-sm text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200">
+			<button
+				onClick={() =>
+					onOpenModal(
+						"share-resource",
+						{ url: resource_url },
+						undefined,
+						"Share Resource",
+					)
+				}
+				className="flex items-center gap-1 text-sm text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200"
+			>
 				<Share2 className="h-4 w-4" />
 				<span>Share</span>
 			</button>

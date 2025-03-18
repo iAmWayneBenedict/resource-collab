@@ -1,3 +1,5 @@
+"use client";
+
 import BannerContent from "@/components/layouts/users/BannerContent";
 import BannerGradient from "@/components/layouts/users/BannerGradient";
 import Layout from "@/components/layouts/users/Layout";
@@ -13,6 +15,7 @@ import { FilterModalTrigger, SearchModalTrigger } from "./_components/filter";
 import ResourceCardContainer from "./_components/ResourceCardContainer";
 import CategoriesAsideContainer from "./_components/CategoriesAsideContainer";
 import AISearchResult from "./_components/AISearchResult";
+import ShareModal from "@/components/modal/ShareModal";
 
 const Page = () => {
 	return (
@@ -44,6 +47,7 @@ const Page = () => {
 				<FilterFormModal />
 				<SearchFormModal />
 				<AISearchModal />
+				<ShareModal />
 			</Layout>
 		</Suspense>
 	);
