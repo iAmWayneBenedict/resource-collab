@@ -40,7 +40,7 @@ export function SaveResourceDrawer({
 				/>
 			</DrawerTrigger>
 			<DrawerContent>
-				<div className="mx-auto w-full max-w-sm">
+				<div className="mx-auto min-h-[30rem] w-full max-w-sm">
 					<VisuallyHidden>
 						<DialogTitle>Save to collection</DialogTitle>
 					</VisuallyHidden>
