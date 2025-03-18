@@ -10,4 +10,4 @@ export const verifications = pgTable("verifications", {
 		mode: "date",
 		withTimezone: true,
 	}).notNull(),
-});
+}).enableRLS();

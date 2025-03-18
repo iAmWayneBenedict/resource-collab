@@ -27,4 +27,4 @@ export const oauthAccounts = pgTable(
 			columns: [table.provider_id, table.provider_user_id],
 		}),
 	],
-);
+).enableRLS();

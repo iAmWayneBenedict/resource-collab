@@ -32,7 +32,7 @@ export const likeResources = pgTable(
 			columns: [table.user_id, table.resource_id],
 		}),
 	],
-);
+).enableRLS();
 
 export const likeResourcesRelations = relations(likeResources, ({ one }) => ({
 	user: one(users, {

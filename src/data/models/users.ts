@@ -49,7 +49,7 @@ export const users = pgTable("users", {
 	password: text("password"),
 	created_at: timestamp("created_at", { mode: "date" }).defaultNow(),
 	updated_at: timestamp("updated_at", { mode: "date" }).defaultNow(),
-});
+}).enableRLS();
 
 export const userRelations = relations(users, ({ many, one }) => ({
 	session: one(sessions, {

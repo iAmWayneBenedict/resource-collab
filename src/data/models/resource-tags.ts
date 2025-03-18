@@ -25,7 +25,7 @@ export const resourceTags = pgTable(
 			columns: [table.tag_id, table.resource_id],
 		}),
 	],
-);
+).enableRLS();
 
 export const resourceTagsRelations = relations(resourceTags, ({ one }) => ({
 	resource: one(resources, {
