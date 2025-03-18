@@ -156,14 +156,14 @@ const AISearchModal = () => {
 														isIconOnly
 														radius="full"
 														color="primary"
-														className="h-8 w-8 min-w-8 p-0"
+														className="h-7 w-7 min-w-7 p-0"
 														onPress={
 															onSubmitHandler
 														}
 													>
 														<ArrowUp
 															strokeWidth={2}
-															size={20}
+															size={18}
 														/>
 													</Button>
 												</motion.span>

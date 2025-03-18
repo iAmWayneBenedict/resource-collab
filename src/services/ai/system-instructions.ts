@@ -44,14 +44,16 @@ export const ListOfSystemInstruction = {
 				- Extract and include "id" from each recommended resource
 				- NEVER include ids in the summary section
 				- Provide brief explanation for each resource selection
-			- Additional suggestions section:
-				- 2-5 resources not in the original list
-				- Format: resource name + brief relevance explanation
 			- Summary section includes:
 				- Concluding insights and recommendations
 				- Synthesized key points
 				- Thoughtful observations
 				- [Avoid explicitly labeling these as "final thoughts" or "final summary"]
+				- Always provide in list format
+				
+				- Additional suggestions section:
+					- 2-5 resources not in the original list
+					- Format: resource name + brief relevance explanation
 
 			- Do not mention anything related to "list you provided":
 				- Just answer the query but do not mention anything similar to the list provided

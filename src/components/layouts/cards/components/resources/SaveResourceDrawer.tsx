@@ -8,48 +8,6 @@ import { useState } from "react";
 import { DialogTitle } from "@/components/ui/dialog";
 import { VisuallyHidden } from "@heroui/react";
 
-const data = [
-	{
-		goal: 400,
-	},
-	{
-		goal: 300,
-	},
-	{
-		goal: 200,
-	},
-	{
-		goal: 300,
-	},
-	{
-		goal: 200,
-	},
-	{
-		goal: 278,
-	},
-	{
-		goal: 189,
-	},
-	{
-		goal: 239,
-	},
-	{
-		goal: 300,
-	},
-	{
-		goal: 200,
-	},
-	{
-		goal: 278,
-	},
-	{
-		goal: 189,
-	},
-	{
-		goal: 349,
-	},
-];
-
 export function SaveResourceDrawer({
 	bookmarkCount,
 	id,
@@ -82,12 +40,12 @@ export function SaveResourceDrawer({
 				/>
 			</DrawerTrigger>
 			<DrawerContent>
-				<div className="mx-auto min-h-96 w-full max-w-sm">
+				<div className="mx-auto w-full max-w-sm">
 					<VisuallyHidden>
 						<DialogTitle>Save to collection</DialogTitle>
 					</VisuallyHidden>
 					<div className="relative h-full w-full overflow-hidden">
-						<AnimatePresence mode="popLayout" initial={false}>
+						<AnimatePresence mode="wait" initial={false}>
 							{!showCreateForm ? (
 								<CollectionsList
 									onCreateNew={() => setShowCreateForm(true)}
