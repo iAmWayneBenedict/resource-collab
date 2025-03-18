@@ -4,6 +4,7 @@ import { TextGenerator } from "@/components/ui/text-generator";
 import { useGetAISearchQuery } from "@/lib/queries/AISearch";
 import { useAISearchStore } from "@/store/useAIResult";
 import { Spinner } from "@heroui/react";
+import { useQueryClient } from "@tanstack/react-query";
 import { AlertCircle, Sparkle, Sparkles } from "lucide-react";
 import { usePathname, useSearchParams } from "next/navigation";
 import React, { useEffect } from "react";
@@ -12,6 +13,7 @@ const AISearchResult = () => {
 	const { query, reset } = useAISearchStore();
 	const searchParams = useSearchParams();
 	const pathname = usePathname();
+	const queryClient = useQueryClient();
 
 	const { data, isLoading, isPending, isFetching, isError, refetch } =
 		useGetAISearchQuery({
@@ -24,7 +26,10 @@ const AISearchResult = () => {
 	}, [query]);
 
 	useEffect(() => {
-		if (data) reset();
+		if (data) {
+			reset();
+			queryClient.removeQueries({ queryKey: ["ai-search"] });
+		}
 	}, [searchParams, pathname]);
 
 	if (!query) return null;

@@ -3,9 +3,14 @@ import type { NextRequest } from "next/server";
 import { authRoutes, protectedRoutes } from "./routes";
 import { getSessionCookie } from "better-auth";
 
+// Define allowed hosts
+const allowedHosts = [
+	process.env.NEXT_PUBLIC_BASE_URL?.replace(/^https?:\/\//, ""),
+	"localhost:3000", // For local development
+];
+
 export async function middleware(request: NextRequest): Promise<NextResponse> {
 	const sessionCookie = getSessionCookie(request);
-	const targetUrl = request.url;
 	const targetPath = request.nextUrl.pathname;
 
 	// Check if the request is for an auth route, if so redirect to home
@@ -26,16 +31,6 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
 	// 	return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 	// }
 
-	// catch callback from social auth
-	if (
-		targetUrl ===
-		`${process.env.NEXT_PUBLIC_BASE_URL}/api/${process.env.NEXT_PUBLIC_SERVER_API_VERSION}/${process.env.NEXT_PUBLIC_SERVER_API_TYPE}/auth`
-	) {
-		return NextResponse.redirect(new URL("/", request.url), {
-			status: 307,
-		});
-	}
-
 	// Allow requests from localhost in development
 	if (process.env.NODE_ENVIRONMENT === "development") {
 		return NextResponse.next();
@@ -44,9 +39,38 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
 	const originHeader = request.headers.get("Origin");
 	const hostHeader =
 		request.headers.get("X-Forwarded-Host") || request.headers.get("Host");
-	if (!originHeader || !hostHeader) {
-		return NextResponse.json({ error: "Missing headers" }, { status: 400 });
+
+	// Validate host header
+	if (!hostHeader) {
+		return NextResponse.json(
+			{ error: "Missing host header" },
+			{ status: 400 },
+		);
 	}
+
+	// Check if the host is in the allowed hosts list
+	const isAllowedHost = allowedHosts.some(
+		(host) => host && hostHeader.includes(host),
+	);
+	if (!isAllowedHost) {
+		return NextResponse.json({ error: "Invalid host" }, { status: 403 });
+	}
+
+	// Validate origin for CORS if present
+	if (originHeader) {
+		const origin = new URL(originHeader).host;
+		const isAllowedOrigin = allowedHosts.some(
+			(host) => host && origin.includes(host),
+		);
+
+		if (!isAllowedOrigin) {
+			return NextResponse.json(
+				{ error: "Invalid origin" },
+				{ status: 403 },
+			);
+		}
+	}
+
 	return NextResponse.next();
 }
 

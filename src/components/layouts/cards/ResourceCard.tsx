@@ -6,12 +6,19 @@ import { ResourceMetrics } from "./components/resources/ResourceMetrics";
 import { motion } from "motion/react";
 import SaveResourcePopOver from "./components/resources/SaveResourcePopOver";
 import { usePutViewResourceMutation } from "@/lib/mutations/resources";
+import { SaveResourceDrawer } from "./components/resources/SaveResourceDrawer";
+import { useCallback, useState } from "react";
+import { useMediaQuery } from "react-responsive";
 
 type ResourceCardProps = {
 	data: any;
 };
 
 const ResourceCard = ({ data }: ResourceCardProps) => {
+	const [isOpenDrawer, setIsOpenDrawer] = useState<boolean>(false);
+	const isSmallDevices = useMediaQuery({
+		query: "(max-width: 64rem)",
+	});
 	const mutation = usePutViewResourceMutation({
 		params: data.id,
 		onSuccess: () => {
@@ -21,8 +28,10 @@ const ResourceCard = ({ data }: ResourceCardProps) => {
 			console.log(err);
 		},
 	});
-
+	console.log(isOpenDrawer);
 	const onCardClickHandler = (e: React.MouseEvent) => {
+		console.log("inside", isOpenDrawer);
+		if (isOpenDrawer) return;
 		// Check if the click is on an interactive element
 		const target = e.target as HTMLElement;
 		const isInteractiveElement =
@@ -50,17 +59,28 @@ const ResourceCard = ({ data }: ResourceCardProps) => {
 			exit={{ opacity: 0, y: 10 }}
 			transition={{ ease: "easeInOut", duration: 0.2 }}
 			className="relative flex min-w-[19rem] flex-1 cursor-pointer flex-col rounded-2xl bg-content1 shadow-md dark:border-small dark:border-default-200 md:min-w-[22rem]"
-			onClick={onCardClickHandler}
 		>
 			<div className="absolute right-7 top-7">
-				<SaveResourcePopOver
-					bookmarkCount={data.bookmarksCount}
-					isBookmarked={!!data?.resourceCollections?.length}
-					collectionList={collectionList}
-					id={data.id}
-				/>
+				{isSmallDevices ? (
+					<SaveResourceDrawer
+						bookmarkCount={data.bookmarksCount}
+						isBookmarked={!!data?.resourceCollections?.length}
+						collectionList={collectionList}
+						id={data.id}
+					/>
+				) : (
+					<SaveResourcePopOver
+						bookmarkCount={data.bookmarksCount}
+						isBookmarked={!!data?.resourceCollections?.length}
+						collectionList={collectionList}
+						id={data.id}
+					/>
+				)}
 			</div>
-			<div className="h-full">
+			<div
+				className="h-full"
+				onClick={isOpenDrawer ? () => {} : onCardClickHandler}
+			>
 				<div className="flex h-full flex-col p-5 xl:p-7">
 					<div className="flex justify-start">
 						<Image

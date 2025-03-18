@@ -149,7 +149,7 @@ const CustomComboBox = ({
 						}
 						classNames={{
 							inputWrapper:
-								"focus-within:ring-0 group-data-[focus-visible=true]:ring-0 group-data-[focus-visible=true]:ring-offset-0 group-data-[focus=true]:border-0 border-0 shadow-none bg-default-100 dark:bg-default-50",
+								"focus-within:ring-0 group-data-[focus-visible=true]:ring-0 group-data-[focus-visible=true]:ring-offset-0 group-data-[focus=true]:border-0 border-0 shadow-none bg-transparent dark:bg-default-50",
 						}}
 					/>
 					<Divider />
