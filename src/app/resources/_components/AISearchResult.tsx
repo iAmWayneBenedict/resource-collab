@@ -60,18 +60,16 @@ const AISearchResult = () => {
 	return (
 		<div className="mt-5 rounded-2xl bg-content1 px-5 py-4 shadow-md dark:border-small dark:border-default-200">
 			{/* search query */}
-			<div className="flex items-start justify-between">
-				<p className="mb-2 flex items-center gap-2 italic text-default-500">
-					<Sparkles size={16} />
-					{query}
-				</p>
-				<div className="flex items-center gap-1 text-xs text-muted-foreground">
-					<Sparkles className="h-3 w-3" />
-					<span>Powered using RAG</span>
-				</div>
-			</div>
+			<p className="mb-2 flex items-center gap-2 italic text-default-500">
+				<Sparkles size={16} />
+				{query}
+			</p>
 			{/* search result */}
 			<TextGenerator text={data.data.summary} />
+			<div className="mt-2 flex justify-end gap-1 text-xs text-muted-foreground">
+				<Sparkles className="h-3 w-3" />
+				<span>Powered using RAG</span>
+			</div>
 		</div>
 	);
 };
