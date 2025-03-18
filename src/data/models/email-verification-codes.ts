@@ -14,7 +14,7 @@ export const emailVerificationCodes = pgTable("email_verification_codes", {
 	email: text("email").notNull(),
 	created_at: timestamp("created_at", { mode: "date" }).defaultNow(),
 	expires_at: timestamp("expires_at", { mode: "date" }).notNull(),
-});
+}).enableRLS();
 
 export const emailVerificationCodesRelations = relations(
 	emailVerificationCodes,

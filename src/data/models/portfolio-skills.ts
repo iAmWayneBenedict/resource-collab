@@ -25,7 +25,7 @@ export const portfolioSkills = pgTable(
 			columns: [table.portfolio_id, table.skill_id],
 		}),
 	],
-);
+).enableRLS();
 
 export const portfolioSkillsRelations = relations(
 	portfolioSkills,

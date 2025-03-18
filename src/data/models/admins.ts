@@ -12,7 +12,7 @@ export const admins = pgTable("admins", {
 		.notNull(),
 	created_at: timestamp("created_at", { mode: "date" }).defaultNow(),
 	updated_at: timestamp("updated_at", { mode: "date" }).defaultNow(),
-});
+}).enableRLS();
 
 export const adminUserRelations = relations(admins, ({ one }) => ({
 	user: one(users, {

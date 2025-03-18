@@ -22,7 +22,7 @@ export const collectionFolders = pgTable("collection_folders", {
 	visibility: collectionFoldersVisibility("visibility")
 		.notNull()
 		.default("private"),
-});
+}).enableRLS();
 
 export const collectionFoldersRelations = relations(
 	collectionFolders,

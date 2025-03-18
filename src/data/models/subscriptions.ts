@@ -21,7 +21,7 @@ export const subscriptionEnum = pgEnum("subscription_enum", [
 export const subscriptions = pgTable("subscriptions", {
 	id: serial("id").primaryKey(),
 	type: subscriptionEnum("type").notNull().default("early access"),
-});
+}).enableRLS();
 
 export const subscriptionsRelations = relations(subscriptions, ({ many }) => ({
 	userSubscriptions: many(userSubscription),

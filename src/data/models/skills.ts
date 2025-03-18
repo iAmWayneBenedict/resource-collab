@@ -7,7 +7,7 @@ export const skills = pgTable("skills", {
 	name: varchar("name").notNull(),
 	created_at: timestamp("created_at", { mode: "date" }).defaultNow(),
 	updated_at: timestamp("updated_at", { mode: "date" }).defaultNow(),
-});
+}).enableRLS();
 
 export const skillRelations = relations(skills, ({ many }) => ({
 	portfolios: many(portfolioSkills),

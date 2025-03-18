@@ -22,7 +22,7 @@ export const portfolioCollections = pgTable("portfolio_collections", {
 		onDelete: "cascade",
 		onUpdate: "cascade",
 	}),
-});
+}).enableRLS();
 
 export const portfolioCollectionsRelations = relations(
 	portfolioCollections,

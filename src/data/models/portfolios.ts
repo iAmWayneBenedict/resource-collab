@@ -35,7 +35,7 @@ export const portfolios = pgTable("portfolios", {
 	is_public: boolean("is_public").notNull().default(false),
 	created_at: timestamp("created_at", { mode: "date" }).defaultNow(),
 	updated_at: timestamp("updated_at", { mode: "date" }).defaultNow(),
-});
+}).enableRLS();
 
 export const portfolioRelations = relations(portfolios, ({ one, many }) => ({
 	user: one(users, {

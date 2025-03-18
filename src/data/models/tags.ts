@@ -13,7 +13,7 @@ export const tags = pgTable("tags", {
 		})
 		.notNull(),
 	name: varchar("name").notNull(),
-});
+}).enableRLS();
 
 export type TagType = typeof tags;
 export type TagSelectType = typeof tags.$inferSelect;

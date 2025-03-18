@@ -25,7 +25,7 @@ export const resources = pgTable("resources", {
 	view_count: serial("view_count").notNull(),
 	created_at: timestamp("created_at", { mode: "date" }).defaultNow(),
 	updated_at: timestamp("updated_at", { mode: "date" }).defaultNow(),
-});
+}).enableRLS();
 
 export const resourceRelations = relations(resources, ({ many, one }) => ({
 	userResources: many(userResources),

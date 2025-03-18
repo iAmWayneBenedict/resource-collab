@@ -25,7 +25,7 @@ export const accounts = pgTable("accounts", {
 	password: text("password"),
 	created_at: timestamp("created_at", { mode: "date" }).defaultNow(),
 	updated_at: timestamp("updated_at", { mode: "date" }).defaultNow(),
-});
+}).enableRLS();
 
 export const accountRelations = relations(accounts, ({ one }) => ({
 	user: one(users, {

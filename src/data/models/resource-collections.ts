@@ -23,7 +23,7 @@ export const resourceCollections = pgTable("resource_collections", {
 		onDelete: "cascade",
 		onUpdate: "cascade",
 	}),
-});
+}).enableRLS();
 
 export const resourceCollectionsRelations = relations(
 	resourceCollections,

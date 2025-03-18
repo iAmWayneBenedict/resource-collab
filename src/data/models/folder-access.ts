@@ -12,7 +12,7 @@ export const folderAccess = pgTable("folder_access", {
 		.notNull(),
 	email: varchar("email").notNull(),
 	is_viewed: boolean("is_viewed").notNull().default(false),
-});
+}).enableRLS();
 
 export const folderAccessRelations = relations(folderAccess, ({ one }) => ({
 	collectionFolder: one(collectionFolders, {

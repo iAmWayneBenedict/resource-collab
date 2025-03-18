@@ -25,7 +25,7 @@ export const portfolioTags = pgTable(
 			columns: [table.tag_id, table.portfolio_id],
 		}),
 	],
-);
+).enableRLS();
 
 export const portfolioTagsRelations = relations(portfolioTags, ({ one }) => ({
 	portfolio: one(portfolios, {

@@ -19,7 +19,7 @@ export const sessions = pgTable("sessions", {
 	}).notNull(),
 	created_at: timestamp("created_at", { mode: "date" }).defaultNow(),
 	updated_at: timestamp("updated_at", { mode: "date" }).defaultNow(),
-});
+}).enableRLS();
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({
 	user: one(users, {
