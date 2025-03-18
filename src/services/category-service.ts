@@ -1,7 +1,7 @@
 import { db } from "@/data/connection";
 import { CategorySelectType, CategoryType } from "@/data/models/categories";
 import { TagType } from "@/data/models/tags";
-import { categories } from "@/data/schema";
+import { categories, resources } from "@/data/schema";
 import {
 	and,
 	asc,
@@ -77,7 +77,7 @@ export const createCategory = ({
 type FindAllCategoryParams = {
 	type: "all" | "with";
 	filters?: { [key: string]: string | number | SQL };
-	with?: { [key: string]: boolean };
+	with?: { [key: string]: any };
 };
 type FindAllCategoryRowsType =
 	| InferSelectModel<CategoryType & { tags: TagType[] }>[]
@@ -92,76 +92,88 @@ export const findAllCategory = async ({
 	with: withRelations = undefined,
 }: FindAllCategoryParams): Promise<FindAllCategoryReturnType> => {
 	try {
-		const [{ totalCount }] = await db
-			.select({ totalCount: count() })
-			.from(categories);
+		return db.transaction(async (tx) => {
+			const [{ totalCount }] = await tx
+				.select({ totalCount: count() })
+				.from(categories);
 
-		if (type === "all" && !withRelations) {
-			return {
-				rows: await db.query.categories.findMany(),
-				count: totalCount,
-			};
-		}
+			if (type === "all" && !withRelations) {
+				return {
+					rows: await tx.query.categories.findMany(),
+					count: totalCount,
+				};
+			}
 
-		if (type === "all" && !Object.keys(filters).length) {
-			return {
-				rows: await db.query.categories.findMany({
+			if (type === "all" && !Object.keys(filters).length) {
+				return {
+					rows: await tx.query.categories.findMany({
+						with: withRelations,
+					}),
+					count: totalCount,
+				};
+			}
+
+			const {
+				page,
+				limit,
+				search,
+				sortBy,
+				sortType,
+				filterBy,
+				filterValue,
+			} = filters;
+
+			const filtersValue = [];
+			if (search)
+				filtersValue.push(
+					ilike(categories.name, sql.placeholder("search")),
+				);
+
+			if (filterBy && filterValue) {
+				filtersValue.push(
+					eq(
+						categories[filterBy as keyof CategorySelectType],
+						sql.placeholder("filterValue"),
+					),
+				);
+			}
+
+			let sortValue;
+			if (sortBy) {
+				sortValue = (sortType === "ascending" ? asc : desc)(
+					categories[sortBy as keyof CategorySelectType],
+				);
+			} else {
+				sortValue = asc(categories.id);
+			}
+
+			const query = tx.query.categories
+				.findMany({
 					with: withRelations,
-				}),
+
+					where:
+						filtersValue.length > 0
+							? and(...filtersValue)
+							: undefined,
+					offset: sql.placeholder("offset"),
+					limit: sql.placeholder("limit"),
+					orderBy: [sortValue],
+				})
+				.prepare("all_categories");
+
+			const rows = await query.execute({
+				search: `%${search as string}%`,
+				offset: (Number(page) as -1) * Number(limit),
+				limit: Number(limit),
+				filterBy,
+				filterValue,
+			});
+
+			return {
+				rows,
 				count: totalCount,
 			};
-		}
-
-		const { page, limit, search, sortBy, sortType, filterBy, filterValue } =
-			filters;
-
-		const filtersValue = [];
-		if (search)
-			filtersValue.push(
-				ilike(categories.name, sql.placeholder("search")),
-			);
-
-		if (filterBy && filterValue) {
-			filtersValue.push(
-				eq(
-					categories[filterBy as keyof CategorySelectType],
-					sql.placeholder("filterValue"),
-				),
-			);
-		}
-
-		let sortValue;
-		if (sortBy) {
-			sortValue = (sortType === "ascending" ? asc : desc)(
-				categories[sortBy as keyof CategorySelectType],
-			);
-		} else {
-			sortValue = asc(categories.id);
-		}
-
-		const query = db.query.categories
-			.findMany({
-				with: withRelations,
-				where:
-					filtersValue.length > 0 ? and(...filtersValue) : undefined,
-				offset: sql.placeholder("offset"),
-				limit: sql.placeholder("limit"),
-				orderBy: [sortValue],
-			})
-			.prepare("all_categories");
-
-		const rows = await query.execute({
-			search: `%${search as string}%`,
-			offset: (Number(page) as -1) * Number(limit),
-			limit: Number(limit),
-			filterBy,
-			filterValue,
 		});
-
-		return {
-			rows,
-			count: totalCount,
-		};
 	} catch (error) {
 		return Promise.reject(error as Error);
 	}

@@ -8,6 +8,7 @@ import {
 	Listbox,
 	addToast,
 	Selection,
+	Image,
 } from "@heroui/react";
 import React, { Key, useCallback, useEffect, useMemo, useState } from "react";
 import { BookmarkButton } from "./BookmarkButton";
@@ -32,6 +33,7 @@ type Collection = {
 	key: string;
 	name: string;
 	resourceCount: number;
+	thumbnail: string;
 	visibility: "private" | "public" | "shared";
 };
 
@@ -185,6 +187,17 @@ export const CollectionsList = ({
 								<div className="flex items-center gap-2">
 									{collectionItemIcons[collection.visibility]}
 								</div>
+							}
+							startContent={
+								collection?.thumbnail ? (
+									<Image
+										alt=""
+										src={collection.thumbnail}
+										className="h-9 w-24 rounded-lg"
+									/>
+								) : (
+									<div className="h-9 w-24 rounded-md bg-default-100" />
+								)
 							}
 							description={`${collection.resourceCount} item(s)`}
 						>
