@@ -44,7 +44,7 @@ export function SaveResourceDrawer({
 					<VisuallyHidden>
 						<DialogTitle>Save to collection</DialogTitle>
 					</VisuallyHidden>
-					<div className="relative h-full w-full">
+					<div className="relative h-fit w-full">
 						<AnimatePresence mode="wait" initial={false}>
 							{!showCreateForm ? (
 								<CollectionsList
