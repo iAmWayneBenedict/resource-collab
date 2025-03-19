@@ -23,6 +23,7 @@ export const auth = betterAuth({
 		github: {
 			clientId: config.GITHUB_CLIENT_ID ?? "",
 			clientSecret: config.GITHUB_CLIENT_SECRET ?? "",
+			mapProfileToUser: () => ({ emailVerified: true }), // ! BUG: better-auth is not verifying email through github. needs manual verifying
 		},
 		google: {
 			clientId: config.GOOGLE_CLIENT_ID ?? "",
@@ -86,6 +87,9 @@ export const auth = betterAuth({
 			enabled: true,
 			maxAge: 5 * 60, // 5 minutes
 		},
+
+		expiresIn: 60 * 60 * 24, // 1 day
+		updateAge: 60 * 60 * 24, // 1 day (every 1 day the session expiration is updated)
 	},
 	account: {
 		modelName: "accounts",
@@ -130,6 +134,22 @@ export const auth = betterAuth({
 				window: 30,
 				max: 10,
 			},
+		},
+	},
+
+	advanced: {
+		ipAddress: {
+			ipAddressHeaders: [
+				"x-forwarded-for",
+				"x-real-ip",
+				"x-client-ip",
+				"x-forwarded",
+				"x-cluster-client-ip",
+				"forwarded-for",
+				"forwarded",
+				"via",
+				"connect-src",
+			],
 		},
 	},
 });

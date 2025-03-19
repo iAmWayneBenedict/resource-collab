@@ -80,6 +80,7 @@ const CategoriesAsideContainer = () => {
 
 		links = tempLinks;
 	}
+
 	return <Aside links={links} />;
 };
 

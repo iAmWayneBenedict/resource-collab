@@ -5,10 +5,13 @@ import { folderAccess } from "./folder-access";
 import { resourceCollections } from "./resource-collections";
 import { portfolioCollections } from "./portfolio-collections";
 
-export const collectionFoldersVisibility = pgEnum(
-	"collection_folders_visibility",
-	["public", "private", "shared"],
-);
+export const accessLevel = pgEnum("access_level", [
+	"public",
+	"private",
+	"shared",
+]);
+
+export const permissionLevel = pgEnum("permission_level", ["view", "edit"]);
 
 export const collectionFolders = pgTable("collection_folders", {
 	id: serial("id").primaryKey(),
@@ -19,9 +22,10 @@ export const collectionFolders = pgTable("collection_folders", {
 		})
 		.notNull(),
 	name: varchar("name").notNull(),
-	visibility: collectionFoldersVisibility("visibility")
+	access_level: accessLevel("access_level").notNull().default("private"),
+	permission_level: permissionLevel("permission_level")
 		.notNull()
-		.default("private"),
+		.default("view"),
 }).enableRLS();
 
 export const collectionFoldersRelations = relations(

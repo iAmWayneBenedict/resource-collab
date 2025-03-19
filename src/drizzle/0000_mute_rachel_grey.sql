@@ -1,4 +1,5 @@
-CREATE TYPE "public"."collection_folders_visibility" AS ENUM('public', 'private', 'shared');--> statement-breakpoint
+CREATE TYPE "public"."access_level" AS ENUM('public', 'private', 'shared');--> statement-breakpoint
+CREATE TYPE "public"."permission_level" AS ENUM('view', 'edit');--> statement-breakpoint
 CREATE TYPE "public"."subscription_enum" AS ENUM('early access', 'free', 'premium', 'enterprise');--> statement-breakpoint
 CREATE TYPE "public"."users_enum" AS ENUM('user', 'admin', 'guest');--> statement-breakpoint
 CREATE TYPE "public"."users_status_enum" AS ENUM('active', 'inactive', 'archived');--> statement-breakpoint
@@ -18,6 +19,7 @@ CREATE TABLE "accounts" (
 	"updated_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
+ALTER TABLE "accounts" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "admins" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"user_id" text NOT NULL,
@@ -25,6 +27,7 @@ CREATE TABLE "admins" (
 	"updated_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
+ALTER TABLE "admins" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "categories" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"name" varchar NOT NULL,
@@ -32,13 +35,16 @@ CREATE TABLE "categories" (
 	"updated_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
+ALTER TABLE "categories" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "collection_folders" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"user_id" varchar NOT NULL,
 	"name" varchar NOT NULL,
-	"visibility" "collection_folders_visibility" DEFAULT 'private' NOT NULL
+	"access_level" "access_level" DEFAULT 'private' NOT NULL,
+	"permission_level" "permission_level" DEFAULT 'view' NOT NULL
 );
 --> statement-breakpoint
+ALTER TABLE "collection_folders" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "email_verification_codes" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"user_id" text NOT NULL,
@@ -48,6 +54,7 @@ CREATE TABLE "email_verification_codes" (
 	"expires_at" timestamp NOT NULL
 );
 --> statement-breakpoint
+ALTER TABLE "email_verification_codes" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "external_messages" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"name" varchar NOT NULL,
@@ -58,13 +65,14 @@ CREATE TABLE "external_messages" (
 	"updated_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
+ALTER TABLE "external_messages" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "folder_access" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"collection_folder_id" serial NOT NULL,
-	"email" varchar NOT NULL,
-	"is_viewed" boolean DEFAULT false NOT NULL
+	"emails" jsonb DEFAULT '[]'::jsonb NOT NULL
 );
 --> statement-breakpoint
+ALTER TABLE "folder_access" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "like_resources" (
 	"user_id" varchar NOT NULL,
 	"resource_id" integer NOT NULL,
@@ -72,6 +80,7 @@ CREATE TABLE "like_resources" (
 	CONSTRAINT "like_resources_pk" PRIMARY KEY("user_id","resource_id")
 );
 --> statement-breakpoint
+ALTER TABLE "like_resources" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "oauth_account" (
 	"provider_id" text NOT NULL,
 	"provider_user_id" text NOT NULL,
@@ -79,6 +88,7 @@ CREATE TABLE "oauth_account" (
 	CONSTRAINT "oauth_account_pk" PRIMARY KEY("provider_id","provider_user_id")
 );
 --> statement-breakpoint
+ALTER TABLE "oauth_account" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "portfolio_collections" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"user_id" varchar NOT NULL,
@@ -86,18 +96,21 @@ CREATE TABLE "portfolio_collections" (
 	"portfolio_id" integer
 );
 --> statement-breakpoint
+ALTER TABLE "portfolio_collections" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "portfolio_skills" (
 	"portfolio_id" serial NOT NULL,
 	"skill_id" serial NOT NULL,
 	CONSTRAINT "portfolio_skills_pk" PRIMARY KEY("portfolio_id","skill_id")
 );
 --> statement-breakpoint
+ALTER TABLE "portfolio_skills" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "portfolio_tags" (
 	"portfolio_id" serial NOT NULL,
 	"tag_id" serial NOT NULL,
 	CONSTRAINT "portfolio_tags_pk" PRIMARY KEY("tag_id","portfolio_id")
 );
 --> statement-breakpoint
+ALTER TABLE "portfolio_tags" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "portfolios" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"user_id" text NOT NULL,
@@ -113,6 +126,14 @@ CREATE TABLE "portfolios" (
 	"updated_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
+ALTER TABLE "portfolios" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
+CREATE TABLE "resource_access" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"resource_short_url_id" serial NOT NULL,
+	"emails" text[] DEFAULT ARRAY[]::text[]
+);
+--> statement-breakpoint
+ALTER TABLE "resource_access" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "resource_collections" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"user_id" varchar NOT NULL,
@@ -120,12 +141,25 @@ CREATE TABLE "resource_collections" (
 	"resource_id" integer
 );
 --> statement-breakpoint
+ALTER TABLE "resource_collections" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
+CREATE TABLE "resource_short_urls" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"full_path" text NOT NULL,
+	"short_code" varchar(10) NOT NULL,
+	"resource_id" serial NOT NULL,
+	"user_id" text,
+	"expired_at" timestamp with time zone DEFAULT now(),
+	CONSTRAINT "resource_short_urls_short_code_unique" UNIQUE("short_code")
+);
+--> statement-breakpoint
+ALTER TABLE "resource_short_urls" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "resource_tags" (
 	"resource_id" serial NOT NULL,
 	"tag_id" serial NOT NULL,
 	CONSTRAINT "resource_tags_pk" PRIMARY KEY("tag_id","resource_id")
 );
 --> statement-breakpoint
+ALTER TABLE "resource_tags" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "resources" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"category_id" serial NOT NULL,
@@ -140,6 +174,7 @@ CREATE TABLE "resources" (
 	"updated_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
+ALTER TABLE "resources" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "sessions" (
 	"id" text PRIMARY KEY NOT NULL,
 	"user_id" text NOT NULL,
@@ -151,6 +186,7 @@ CREATE TABLE "sessions" (
 	"updated_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
+ALTER TABLE "sessions" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "skills" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"name" varchar NOT NULL,
@@ -158,23 +194,36 @@ CREATE TABLE "skills" (
 	"updated_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
+ALTER TABLE "skills" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "subscriptions" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"type" "subscription_enum" DEFAULT 'early access' NOT NULL
 );
 --> statement-breakpoint
+ALTER TABLE "subscriptions" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "tags" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"category_id" serial NOT NULL,
 	"name" varchar NOT NULL
 );
 --> statement-breakpoint
+ALTER TABLE "tags" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
+CREATE TABLE "user_messages" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"user_id" text NOT NULL,
+	"message" text NOT NULL,
+	"created_at" timestamp DEFAULT now(),
+	"updated_at" timestamp DEFAULT now()
+);
+--> statement-breakpoint
+ALTER TABLE "user_messages" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "user_resources" (
 	"user_id" varchar NOT NULL,
 	"resource_id" serial NOT NULL,
 	CONSTRAINT "user_resources_pk" PRIMARY KEY("user_id","resource_id")
 );
 --> statement-breakpoint
+ALTER TABLE "user_resources" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "user_subscriptions" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"user_id" varchar NOT NULL,
@@ -183,6 +232,7 @@ CREATE TABLE "user_subscriptions" (
 	"updated_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
+ALTER TABLE "user_subscriptions" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "users" (
 	"id" text PRIMARY KEY NOT NULL,
 	"name" varchar NOT NULL,
@@ -197,6 +247,7 @@ CREATE TABLE "users" (
 	CONSTRAINT "users_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint
+ALTER TABLE "users" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "verifications" (
 	"id" text PRIMARY KEY NOT NULL,
 	"value" text NOT NULL,
@@ -206,6 +257,7 @@ CREATE TABLE "verifications" (
 	"expires_at" timestamp with time zone NOT NULL
 );
 --> statement-breakpoint
+ALTER TABLE "verifications" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 ALTER TABLE "accounts" ADD CONSTRAINT "accounts_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
 ALTER TABLE "admins" ADD CONSTRAINT "admins_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
 ALTER TABLE "collection_folders" ADD CONSTRAINT "collection_folders_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
@@ -223,15 +275,19 @@ ALTER TABLE "portfolio_tags" ADD CONSTRAINT "portfolio_tags_portfolio_id_portfol
 ALTER TABLE "portfolio_tags" ADD CONSTRAINT "portfolio_tags_tag_id_tags_id_fk" FOREIGN KEY ("tag_id") REFERENCES "public"."tags"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
 ALTER TABLE "portfolios" ADD CONSTRAINT "portfolios_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
 ALTER TABLE "portfolios" ADD CONSTRAINT "portfolios_category_id_categories_id_fk" FOREIGN KEY ("category_id") REFERENCES "public"."categories"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
+ALTER TABLE "resource_access" ADD CONSTRAINT "resource_access_resource_short_url_id_resource_short_urls_id_fk" FOREIGN KEY ("resource_short_url_id") REFERENCES "public"."resource_short_urls"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
 ALTER TABLE "resource_collections" ADD CONSTRAINT "resource_collections_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
 ALTER TABLE "resource_collections" ADD CONSTRAINT "resource_collections_collection_folder_id_collection_folders_id_fk" FOREIGN KEY ("collection_folder_id") REFERENCES "public"."collection_folders"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
 ALTER TABLE "resource_collections" ADD CONSTRAINT "resource_collections_resource_id_resources_id_fk" FOREIGN KEY ("resource_id") REFERENCES "public"."resources"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
+ALTER TABLE "resource_short_urls" ADD CONSTRAINT "resource_short_urls_resource_id_resources_id_fk" FOREIGN KEY ("resource_id") REFERENCES "public"."resources"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
+ALTER TABLE "resource_short_urls" ADD CONSTRAINT "resource_short_urls_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
 ALTER TABLE "resource_tags" ADD CONSTRAINT "resource_tags_resource_id_resources_id_fk" FOREIGN KEY ("resource_id") REFERENCES "public"."resources"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
 ALTER TABLE "resource_tags" ADD CONSTRAINT "resource_tags_tag_id_tags_id_fk" FOREIGN KEY ("tag_id") REFERENCES "public"."tags"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
 ALTER TABLE "resources" ADD CONSTRAINT "resources_category_id_categories_id_fk" FOREIGN KEY ("category_id") REFERENCES "public"."categories"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
 ALTER TABLE "resources" ADD CONSTRAINT "resources_owner_id_users_id_fk" FOREIGN KEY ("owner_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
 ALTER TABLE "sessions" ADD CONSTRAINT "sessions_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
 ALTER TABLE "tags" ADD CONSTRAINT "tags_category_id_categories_id_fk" FOREIGN KEY ("category_id") REFERENCES "public"."categories"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
+ALTER TABLE "user_messages" ADD CONSTRAINT "user_messages_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
 ALTER TABLE "user_resources" ADD CONSTRAINT "user_resources_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
 ALTER TABLE "user_resources" ADD CONSTRAINT "user_resources_resource_id_resources_id_fk" FOREIGN KEY ("resource_id") REFERENCES "public"."resources"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
 ALTER TABLE "user_subscriptions" ADD CONSTRAINT "user_subscriptions_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint

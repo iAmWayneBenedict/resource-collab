@@ -5,10 +5,13 @@ import useResourcePaginatedSearchParams from "@/store/context/useResourcePaginat
 import { addToast, Spinner } from "@heroui/react";
 import { useQueryClient } from "@tanstack/react-query";
 import { ChartNoAxesColumn, Heart, Share2 } from "lucide-react";
+import { usePostResourceShortUrlMutation } from "../../../../../lib/mutations/short_urls";
+import { useState } from "react";
 
 type ResourceMetricsProps = {
-	resource_id: number;
-	resource_url: string;
+	id: number;
+	url: string;
+	name: string;
 	views: number;
 	shares: number;
 	likes?: number;
@@ -38,8 +41,9 @@ type PreviousResourcesData = {
 };
 
 export const ResourceMetrics = ({
-	resource_id,
-	resource_url,
+	id,
+	url,
+	name,
 	views,
 	shares,
 	likes = 0,
@@ -50,6 +54,52 @@ export const ResourceMetrics = ({
 		(state: ResourcePaginatedSearchParamsState) => state.searchParams,
 	) as ResourcePaginatedSearchParamsState["searchParams"];
 	const onOpenModal = useModal((state) => state.onOpen);
+	const setSubmitCallback = useModal((state) => state.setSubmitCallback);
+	const [shareData, setShareData] = useState<Record<string, any> | null>(
+		null,
+	);
+	const resourceShortUrlMutation = usePostResourceShortUrlMutation({
+		onSuccess: (data) => {
+			// console.log(data);
+			setShareData({
+				id: data.data.id,
+				url: data.data.short_url,
+				restrictedTo: "public",
+				type: "Resource",
+			});
+			onOpenModal(
+				"share-resource",
+				{
+					id: data.data.id,
+					url: data.data.short_url,
+					restrictedTo: "public",
+					type: "Resource",
+				},
+				undefined,
+				name,
+			);
+		},
+		onError: () => {},
+	});
+
+	const onSubmitShare = (data: any) => {
+		const req = {
+			...data,
+			full_path: url,
+			resource_id: id,
+		};
+		resourceShortUrlMutation.mutate(req);
+	};
+
+	const onClickShareHandler = () => {
+		const data = shareData ?? {
+			url: null,
+			restrictedTo: "public",
+			type: "Resource",
+		};
+		onOpenModal("share-resource", data, undefined, name);
+		setSubmitCallback(onSubmitShare);
+	};
 
 	// Create query key array for better reusability
 	const getQueryKey = () => [
@@ -80,13 +130,13 @@ export const ResourceMetrics = ({
 					data: {
 						...previousResources.data,
 						rows: previousResources.data.rows.map((resource) => {
-							if (resource.id === resource_id) {
+							if (resource.id === id) {
 								const likesCount = isLiked
 									? resource.likesCount - 1
 									: resource.likesCount + 1;
 								const likes = isLiked
 									? []
-									: [...resource.likes, { id: resource_id }];
+									: [...resource.likes, { id: id }];
 								return {
 									...resource,
 									likesCount,
@@ -122,15 +172,15 @@ export const ResourceMetrics = ({
 
 	const onLike = () => {
 		mutation.mutate({
-			resource_id: resource_id,
+			id: id,
 		});
 	};
 
 	return (
-		<div className="flex items-center gap-4">
+		<div className="flex items-center">
 			<button
 				onClick={onLike}
-				className="flex items-center gap-1 text-sm text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200"
+				className="flex items-center gap-1 p-2 text-sm text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200"
 			>
 				<Heart
 					fill={isLiked ? "#ef4444" : "none"}
@@ -140,21 +190,14 @@ export const ResourceMetrics = ({
 					{formatNumber(likes)} likes
 				</span>
 			</button>
-			<button className="flex items-center gap-1 text-sm text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200">
+			<button className="flex items-center gap-1 p-2 text-sm text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200">
 				<ChartNoAxesColumn className="h-4 w-4" />
 				<span>{formatNumber(views)} views</span>
 			</button>
 
 			<button
-				onClick={() =>
-					onOpenModal(
-						"share-resource",
-						{ url: resource_url },
-						undefined,
-						"Share Resource",
-					)
-				}
-				className="flex items-center gap-1 text-sm text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200"
+				onClick={onClickShareHandler}
+				className="flex items-center gap-1 p-2 text-sm text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200"
 			>
 				<Share2 className="h-4 w-4" />
 				<span>Share</span>
