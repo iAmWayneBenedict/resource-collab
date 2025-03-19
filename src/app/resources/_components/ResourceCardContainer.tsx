@@ -111,7 +111,7 @@ const ResourceCardWrapper = () => {
 
 	if (isLoading) {
 		return (
-			<div className="mt-10 flex w-full flex-wrap gap-6">
+			<div className="mt-10 flex w-full flex-wrap gap-4">
 				{/* <h3 className="text-xl">Loading...</h3> */}
 				{Array.from({ length: 6 }).map((_, index) => (
 					<Skeleton
@@ -151,7 +151,7 @@ const ResourceCardWrapper = () => {
 	}
 
 	return (
-		<div className="mt-10 flex flex-wrap gap-4 md:gap-6">
+		<div className="mt-10 flex flex-wrap gap-4">
 			{data?.data.rows.map((resource: any) => (
 				<ResourceCard key={resource.id} data={resource} />
 			))}

@@ -1,6 +1,4 @@
 "use client";
-
-import Image from "next/image";
 import { ResourceTags } from "./components/resources/ResourceTags";
 import { ResourceMetrics } from "./components/resources/ResourceMetrics";
 import { motion } from "motion/react";
@@ -9,6 +7,7 @@ import { usePutViewResourceMutation } from "@/lib/mutations/resources";
 import { SaveResourceDrawer } from "./components/resources/SaveResourceDrawer";
 import { useCallback, useState } from "react";
 import { useMediaQuery } from "react-responsive";
+import { Image } from "@heroui/react";
 
 type ResourceCardProps = {
 	data: any;
@@ -16,6 +15,7 @@ type ResourceCardProps = {
 
 const ResourceCard = ({ data }: ResourceCardProps) => {
 	const [isOpenDrawer, setIsOpenDrawer] = useState<boolean>(false);
+	const [icon, setIcon] = useState(data?.icon);
 	const isSmallDevices = useMediaQuery({
 		query: "(max-width: 64rem)",
 	});
@@ -30,7 +30,6 @@ const ResourceCard = ({ data }: ResourceCardProps) => {
 	});
 
 	const onCardClickHandler = (e: React.MouseEvent) => {
-		console.log("inside", isOpenDrawer);
 		if (isOpenDrawer) return;
 		// Check if the click is on an interactive element
 		const target = e.target as HTMLElement;
@@ -84,10 +83,13 @@ const ResourceCard = ({ data }: ResourceCardProps) => {
 				<div className="flex h-full flex-col p-5 xl:p-7">
 					<div className="flex justify-start">
 						<Image
-							src={data.icon}
+							src={icon}
 							alt="image"
 							width={45}
 							height={45}
+							onError={() =>
+								setIcon("https://placehold.co/200x200")
+							}
 						/>
 					</div>
 					<div className="mt-2">
@@ -105,8 +107,9 @@ const ResourceCard = ({ data }: ResourceCardProps) => {
 						<ResourceTags tags={data.resourceTags} />
 						<div className="mt-4">
 							<ResourceMetrics
-								resource_id={data.id}
-								resource_url={data.url}
+								name={data.name}
+								id={data.id}
+								url={data.url}
 								views={data.view_count || 0}
 								likes={data.likesCount}
 								shares={data.shares || 0}

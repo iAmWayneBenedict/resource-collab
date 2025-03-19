@@ -34,7 +34,7 @@ type Collection = {
 	name: string;
 	resourceCount: number;
 	thumbnail: string;
-	visibility: "private" | "public" | "shared";
+	access_level: "private" | "public" | "shared";
 };
 
 // Props for the CollectionsList component
@@ -185,7 +185,11 @@ export const CollectionsList = ({
 							className="py-2"
 							endContent={
 								<div className="flex items-center gap-2">
-									{collectionItemIcons[collection.visibility]}
+									{
+										collectionItemIcons[
+											collection.access_level
+										]
+									}
 								</div>
 							}
 							startContent={
@@ -193,10 +197,13 @@ export const CollectionsList = ({
 									<Image
 										alt=""
 										src={collection.thumbnail}
-										className="h-9 w-24 rounded-lg"
+										radius="md"
+										className="h-9 w-16 min-w-16 max-w-16"
+										disableSkeleton
+										fallbackSrc="https://placehold.co/600x400"
 									/>
 								) : (
-									<div className="h-9 w-24 rounded-md bg-default-100" />
+									<div className="h-9 min-w-16 rounded-md bg-default-200" />
 								)
 							}
 							description={`${collection.resourceCount} item(s)`}

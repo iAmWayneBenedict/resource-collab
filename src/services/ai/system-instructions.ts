@@ -49,7 +49,8 @@ export const ListOfSystemInstruction = {
 				- Synthesized key points
 				- Thoughtful observations
 				- [Avoid explicitly labeling these as "final thoughts" or "final summary"]
-				- Always provide in list format
+				- Always provide in list format 
+					- use bullet points
 				
 				- Additional suggestions section:
 					- 2-5 resources not in the original list

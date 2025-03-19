@@ -1,5 +1,5 @@
-import { relations } from "drizzle-orm";
-import { boolean, pgTable, serial, varchar } from "drizzle-orm/pg-core";
+import { relations, sql } from "drizzle-orm";
+import { boolean, jsonb, pgTable, serial, varchar } from "drizzle-orm/pg-core";
 import { collectionFolders } from "./collection-folders";
 
 export const folderAccess = pgTable("folder_access", {
@@ -10,8 +10,9 @@ export const folderAccess = pgTable("folder_access", {
 			onUpdate: "cascade",
 		})
 		.notNull(),
-	email: varchar("email").notNull(),
-	is_viewed: boolean("is_viewed").notNull().default(false),
+	emails: jsonb("emails")
+		.default(sql`'[]'::jsonb`)
+		.notNull(),
 }).enableRLS();
 
 export const folderAccessRelations = relations(folderAccess, ({ one }) => ({

@@ -73,7 +73,7 @@ export const BookmarkButton = ({
 					/>
 				</motion.div>
 			</Button>
-			<span className="absolute -bottom-[.8rem] left-1/2 z-[1] flex h-4 w-4 -translate-x-1/2 items-center justify-center rounded-full text-[12px] font-medium text-foreground">
+			<span className="absolute -bottom-[.8rem] left-1/2 flex h-4 w-4 -translate-x-1/2 items-center justify-center rounded-full text-[12px] font-medium text-foreground">
 				{formatNumber(count)}
 			</span>
 		</div>
