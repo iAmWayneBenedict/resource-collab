@@ -11,11 +11,11 @@ export const POST = async (req: NextRequest) => {
 
 	if (!user)
 		return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-	if (!body.resource_id) {
+	if (!body.id) {
 		return NextResponse.json(
 			{
 				message: "Resource ID is required",
-				data: { path: ["resource_id"] },
+				data: { path: ["id"] },
 			},
 			{ status: 400 },
 		);
@@ -28,14 +28,14 @@ export const POST = async (req: NextRequest) => {
 				.where(
 					and(
 						eq(likeResources.user_id, user.id),
-						eq(likeResources.resource_id, body.resource_id),
+						eq(likeResources.resource_id, body.id),
 					),
 				);
 
 			if (!result.count) {
 				await tx.insert(likeResources).values({
 					user_id: user.id,
-					resource_id: body.resource_id,
+					resource_id: body.id,
 				});
 			}
 		});

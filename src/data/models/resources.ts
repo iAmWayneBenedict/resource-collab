@@ -6,7 +6,7 @@ import { resourceCollections } from "./resource-collections";
 import { resourceTags } from "./resource-tags";
 import { users } from "./users";
 import { likeResources } from "./like-resources";
-import { resourceShortUrls } from "./resource-short-url";
+import { resourceShortUrlAccess } from "./resource-short-url";
 import { resourceAccess } from "./resource-access";
 
 export const resources = pgTable("resources", {
@@ -42,7 +42,7 @@ export const resourceRelations = relations(resources, ({ many, one }) => ({
 	resourceCollections: many(resourceCollections),
 	resourceTags: many(resourceTags),
 	likes: many(likeResources),
-	resourceShortUrls: many(resourceShortUrls),
+	resourceShortUrlAccess: many(resourceShortUrlAccess),
 	resourceAccess: many(resourceAccess),
 }));
 

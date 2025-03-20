@@ -1,9 +1,10 @@
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import { pgTable, serial, text, timestamp, varchar } from "drizzle-orm/pg-core";
 import { resources } from "./resources";
 import { users } from "./users";
+import { resourceAccess } from "./resource-access";
 
-export const resourceShortUrls = pgTable("resource_short_urls", {
+export const resourceShortUrlAccess = pgTable("resource_short_urls", {
 	id: serial("id").primaryKey(),
 	full_path: text().notNull(),
 	short_code: varchar("short_code", { length: 10 }).notNull().unique(),
@@ -15,22 +16,29 @@ export const resourceShortUrls = pgTable("resource_short_urls", {
 		onDelete: "cascade",
 		onUpdate: "cascade",
 	}),
+	emails: text("emails")
+		.array()
+		.default(sql`ARRAY[]::text[]`),
 	expired_at: timestamp("expired_at", {
 		mode: "date",
 		withTimezone: true,
 	}).defaultNow(),
 }).enableRLS();
 
-export const resourceShortUrlRelations = relations(
-	resourceShortUrls,
+export const resourceShortUrlAccessRelations = relations(
+	resourceShortUrlAccess,
 	({ one }) => ({
 		resource: one(resources, {
-			fields: [resourceShortUrls.resource_id],
+			fields: [resourceShortUrlAccess.resource_id],
 			references: [resources.id],
 		}),
 		user: one(users, {
-			fields: [resourceShortUrls.user_id],
+			fields: [resourceShortUrlAccess.user_id],
 			references: [users.id],
+		}),
+		resourceAccess: one(resourceAccess, {
+			fields: [resourceShortUrlAccess.id],
+			references: [resourceAccess.resource_short_url_id],
 		}),
 	}),
 );

@@ -1,5 +1,5 @@
 {
-  "id": "19a12ac0-f6eb-48ee-883a-82af1ef8fd6c",
+  "id": "4b9bbc07-e28f-4554-8ba4-ba3ceb469f77",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -879,13 +879,6 @@
           "type": "serial",
           "primaryKey": false,
           "notNull": true
-        },
-        "emails": {
-          "name": "emails",
-          "type": "text[]",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "ARRAY[]::text[]"
         }
       },
       "indexes": {},
@@ -1020,6 +1013,13 @@
           "type": "text",
           "primaryKey": false,
           "notNull": false
+        },
+        "emails": {
+          "name": "emails",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "ARRAY[]::text[]"
         },
         "expired_at": {
           "name": "expired_at",

@@ -129,8 +129,7 @@ CREATE TABLE "portfolios" (
 ALTER TABLE "portfolios" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "resource_access" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"resource_short_url_id" serial NOT NULL,
-	"emails" text[] DEFAULT ARRAY[]::text[]
+	"resource_short_url_id" serial NOT NULL
 );
 --> statement-breakpoint
 ALTER TABLE "resource_access" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
@@ -148,6 +147,7 @@ CREATE TABLE "resource_short_urls" (
 	"short_code" varchar(10) NOT NULL,
 	"resource_id" serial NOT NULL,
 	"user_id" text,
+	"emails" text[] DEFAULT ARRAY[]::text[],
 	"expired_at" timestamp with time zone DEFAULT now(),
 	CONSTRAINT "resource_short_urls_short_code_unique" UNIQUE("short_code")
 );
