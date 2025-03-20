@@ -2,26 +2,9 @@
 "use client";
 
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { cn } from "@/lib/utils";
-import {
-	NavigationMenu,
-	NavigationMenuItem,
-	NavigationMenuLink,
-	NavigationMenuList,
-	navigationMenuTriggerStyle,
-} from "@/components/ui/navigation-menu";
-import {
-	Sheet,
-	SheetContent,
-	SheetDescription,
-	SheetHeader,
-	SheetTrigger,
-} from "@/components/ui/sheet";
 
-// import { Button } from "@/components/ui/button";
-import { usePathname } from "next/navigation";
-import ProfileDropDown from "./Nav/ProfileDropDown";
 import { useAuthUser } from "@/store/useAuthUser";
 import {
 	Navbar,
@@ -32,19 +15,18 @@ import {
 	NavbarMenuItem,
 	NavbarMenuToggle,
 	Button,
+	Dropdown,
+	DropdownTrigger,
+	DropdownMenu,
+	DropdownItem,
+	Avatar,
 } from "@heroui/react";
+import { authClient } from "@/config/auth";
+import { usePathname } from "next/navigation";
 
 const NavBar = () => {
 	return (
 		<div className="fixed left-1/2 top-[30px] z-50 flex w-[95%] -translate-x-1/2 items-center justify-between rounded-full bg-blur-background shadow-lg backdrop-blur-md dark:border dark:border-zinc-950 dark:bg-zinc-950/90 dark:shadow-black/50 dark:backdrop-blur-sm md:w-[90%]">
-			{/* <div id="nav-left" style={{ flex: 1 }} className="flex">
-				<div className="flex items-center">
-					<Link href="/" className="flex items-center">
-						<span className="text-xl font-bold">RCo.</span>
-					</Link>
-				</div>
-			</div>
-			<SmallNav /> */}
 			<LargeNav />
 		</div>
 	);
@@ -86,38 +68,6 @@ const NavLinkStyleWrapper = ({
 			)}
 		>
 			{children}
-		</div>
-	);
-};
-
-const SmallNav = () => {
-	return (
-		<div className="flex lg:hidden">
-			<Sheet>
-				<SheetTrigger>
-					<div
-						className="flex h-[12px] w-[30px] cursor-pointer flex-col justify-between"
-						id="hamburger"
-					>
-						<div className="h-[1px] w-full bg-black dark:bg-white"></div>
-						<div className="h-[1px] w-full bg-black dark:bg-white"></div>
-					</div>
-				</SheetTrigger>
-				<SheetContent
-					className={cn(
-						"w-full max-w-none dark:border-zinc-950 dark:bg-zinc-950 sm:max-w-none",
-					)}
-				>
-					<SheetHeader>
-						{/* <SheetTitle>Are you absolutely sure?</SheetTitle> */}
-						<SheetDescription>
-							This action cannot be undone. This will permanently
-							delete your account and remove your data from our
-							servers.
-						</SheetDescription>
-					</SheetHeader>
-				</SheetContent>
-			</Sheet>
 		</div>
 	);
 };
@@ -164,6 +114,15 @@ const LargeNav = () => {
 		"Help & Feedback",
 		"Log Out",
 	];
+	const handleLogout = async () => {
+		await authClient.signOut({
+			fetchOptions: {
+				onSuccess: () => {
+					location.href = "/";
+				},
+			},
+		});
+	};
 	return (
 		<React.Fragment>
 			<Navbar
@@ -200,21 +159,77 @@ const LargeNav = () => {
 					})}
 				</NavbarContent>
 				<NavbarContent justify="end">
-					<NavbarItem className="hidden lg:flex">
-						<Link href="/auth/login">Login</Link>
-					</NavbarItem>
-					<NavbarItem>
-						<Button
-							as={Link}
-							color="primary"
-							href="/auth/signup"
-							variant="flat"
-							radius="full"
-							className="bg-violet text-white"
-						>
-							Sign Up
-						</Button>
-					</NavbarItem>
+					{!authUser ? (
+						<>
+							<NavbarItem className="hidden lg:flex">
+								<Link href="/auth/login">Login</Link>
+							</NavbarItem>
+							<NavbarItem>
+								<Button
+									as={Link}
+									color="primary"
+									href="/auth/signup"
+									variant="flat"
+									radius="full"
+									className="bg-violet text-white"
+								>
+									Sign Up
+								</Button>
+							</NavbarItem>
+						</>
+					) : (
+						<Dropdown placement="bottom-end">
+							<DropdownTrigger>
+								<Avatar
+									isBordered
+									as="button"
+									className="transition-transform"
+									name="Jason Hughes"
+									size="sm"
+									src="https://i.pravatar.cc/150?u=a042581f4e29026704d"
+								/>
+							</DropdownTrigger>
+							<DropdownMenu
+								aria-label="Profile Actions"
+								variant="flat"
+							>
+								<DropdownItem
+									key="profile"
+									className="h-14 gap-2"
+								>
+									<p className="font-semibold">
+										Signed in as
+									</p>
+									<p className="font-semibold">
+										zoey@example.com
+									</p>
+								</DropdownItem>
+								<DropdownItem key="settings">
+									My Settings
+								</DropdownItem>
+								<DropdownItem key="team_settings">
+									Team Settings
+								</DropdownItem>
+								<DropdownItem key="analytics">
+									Analytics
+								</DropdownItem>
+								<DropdownItem key="system">System</DropdownItem>
+								<DropdownItem key="configurations">
+									Configurations
+								</DropdownItem>
+								<DropdownItem key="help_and_feedback">
+									Help & Feedback
+								</DropdownItem>
+								<DropdownItem
+									key="logout"
+									color="danger"
+									onPress={handleLogout}
+								>
+									Log Out
+								</DropdownItem>
+							</DropdownMenu>
+						</Dropdown>
+					)}
 					<NavbarMenuToggle
 						aria-label={isMenuOpen ? "Close menu" : "Open menu"}
 						className="md:hidden"
@@ -248,58 +263,6 @@ const LargeNav = () => {
 					))}
 				</NavbarMenu>
 			</Navbar>
-			{/* <div style={{ flex: 1 }} className="hidden justify-center lg:flex">
-				<NavigationMenu>
-					<NavigationMenuList>
-						{NAV_LINKS.map(({ name, link }) => {
-							if (name == "admin" && authUser?.role !== "admin")
-								return null;
-							return (
-								<NavigationMenuItem key={name}>
-									<Link href={link} legacyBehavior passHref>
-										<NavigationMenuLink
-											className={cn(
-												navigationMenuTriggerStyle(),
-												"bg-transparent hover:bg-transparent focus:bg-transparent",
-											)}
-										>
-											<NavLinkStyleWrapper
-												name={name}
-												className="capitalize"
-											>
-												{name}
-											</NavLinkStyleWrapper>
-										</NavigationMenuLink>
-									</Link>
-								</NavigationMenuItem>
-							);
-						})}
-					</NavigationMenuList>
-				</NavigationMenu>
-			</div>
-			<div
-				style={{ flex: 1 }}
-				className="hidden items-center justify-end gap-3 lg:flex"
-			>
-				{!authUser && (
-					<>
-						<Link href="/auth/signup" passHref>
-							Sign up
-						</Link>
-						<Button
-							asChild
-							className={cn(
-								"rounded-full bg-violet px-7 hover:bg-violet-foreground",
-							)}
-						>
-							<Link href="/auth/login" passHref>
-								Login
-							</Link>
-						</Button>
-					</>
-				)}
-				{authUser && <ProfileDropDown />}
-			</div> */}
 		</React.Fragment>
 	);
 };
