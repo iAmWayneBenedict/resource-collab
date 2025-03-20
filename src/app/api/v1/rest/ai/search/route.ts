@@ -13,6 +13,9 @@ export const GET = async (req: NextRequest) => {
 	const session = await getSession(req.headers);
 	const user = session?.user;
 
+	if (!user)
+		return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+
 	if (!query) {
 		return NextResponse.json(
 			{
@@ -22,9 +25,6 @@ export const GET = async (req: NextRequest) => {
 			{ status: 400 },
 		);
 	}
-
-	if (!user)
-		return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 
 	try {
 		console.log("preparing vector search");
