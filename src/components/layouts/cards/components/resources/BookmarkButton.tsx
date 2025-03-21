@@ -55,18 +55,18 @@ export const BookmarkButton = ({
 				variant="light"
 				// size="icon"
 				isIconOnly
-				size="sm"
-				className="h-11 w-11 overflow-visible bg-none p-1.5 transition-none"
+				disableRipple
+				className="overflow-visible bg-transparent bg-none transition-none hover:bg-transparent"
 				{...props}
 			>
 				<motion.div
-					className="h-full w-full"
+					className=""
 					whileTap={{ scale: 0.8 }}
 					animate={{ scale: isBookmarked ? 1.2 : 1 }}
 					transition={{ type: "spring", stiffness: 300, damping: 15 }}
 				>
 					<Bookmark
-						className="h-full w-full"
+						className=""
 						fill={iconColors.fill}
 						stroke={iconColors.stroke}
 						size={28}

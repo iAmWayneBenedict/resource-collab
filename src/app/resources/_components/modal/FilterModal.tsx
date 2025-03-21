@@ -1,8 +1,6 @@
 "use client";
 
-import ControlledMultipleChipFilter from "@/components/custom/ControlledMultipleChipFilter";
 import CustomComboBox from "@/components/custom/CustomComboBox";
-import { useGetPaginatedResourcesQuery } from "@/lib/queries/resources";
 import { reInitQueryParams, toggleScrollBody } from "@/lib/utils";
 import { useModal } from "@/store";
 import {
@@ -22,9 +20,11 @@ import { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import { useGetCategoriesQuery } from "../../../../lib/queries/categories";
+import { useMediaQuery } from "react-responsive";
 
 const SORT_LIST = ["Newest", "Oldest", "Alphabetical", "Reverse Alphabetical"];
 const FilterFormSchema = z.object({
+	category: z.union([z.string(), z.number()]).nullish(),
 	sortBy: z.string().nullish(),
 	tags: z.array(z.string()).nullish(),
 });
@@ -32,23 +32,29 @@ const FilterFormSchema = z.object({
 const FilterFormModal = () => {
 	const { isOpen, onOpen, onOpenChange } = useDisclosure();
 	const [isSubmitting, setIsSubmitting] = useState(false);
+	const isSmallDevices = useMediaQuery({
+		query: "(max-width: 64rem)",
+	});
 
+	const router = useRouter();
 	const searchParams = useSearchParams();
-	// make sure it exist
+
 	const tagsSearchParams = searchParams
 		.get("tags")
 		?.split(",")
 		?.filter((tag) => tag);
 	const sortBySearchParams = searchParams.get("sortBy");
-
-	const router = useRouter();
-
 	const category = searchParams.get("category") ?? "";
+
+	const { name: modalName, onClose, data: dataModal, type } = useModal();
+
+	const categoriesResponse = useGetCategoriesQuery();
 
 	const { handleSubmit, control, reset } = useForm({
 		resolver: zodResolver(FilterFormSchema),
 		defaultValues: useMemo(
 			() => ({
+				category: category ?? "",
 				sortBy: sortBySearchParams ?? "",
 				tags: tagsSearchParams ?? [],
 			}),
@@ -59,14 +65,11 @@ const FilterFormModal = () => {
 	useEffect(() => {
 		if (!sortBySearchParams && !tagsSearchParams)
 			reset({
+				category: "",
 				sortBy: "",
 				tags: [],
 			});
 	}, [sortBySearchParams, tagsSearchParams]);
-
-	const { name: modalName, onClose, data: dataModal, type } = useModal();
-
-	const categoriesResponse = useGetCategoriesQuery();
 
 	const tags = useMemo(() => {
 		if (!categoriesResponse.isSuccess) return [];
@@ -107,7 +110,7 @@ const FilterFormModal = () => {
 
 	const onReset = () => {
 		let location = window.location.pathname;
-		if (category) location += `?category=${category}`;
+		if (category && !isSmallDevices) location += `?category=${category}`;
 
 		router.push(location, { scroll: false });
 		onCloseModal();
@@ -131,6 +134,30 @@ const FilterFormModal = () => {
 							<span>Filters</span>
 						</ModalHeader>
 						<ModalBody className="gap-4">
+							{isSmallDevices && (
+								<Controller
+									name="category"
+									control={control}
+									render={({ field }) => (
+										<Select
+											selectedKeys={[field.value ?? ""]}
+											onChange={field.onChange}
+											label="Category"
+											placeholder="Select category"
+										>
+											{categoriesResponse.data?.data.rows.map(
+												(category: any) => (
+													<SelectItem
+														key={category.id}
+													>
+														{category.name}
+													</SelectItem>
+												),
+											)}
+										</Select>
+									)}
+								/>
+							)}
 							<Controller
 								name="sortBy"
 								control={control}

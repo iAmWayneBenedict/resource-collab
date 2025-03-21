@@ -16,11 +16,12 @@ import ResourceCardContainer from "./_components/ResourceCardContainer";
 import CategoriesAsideContainer from "./_components/CategoriesAsideContainer";
 import AISearchResult from "./_components/AISearchResult";
 import ShareModal from "@/components/modal/ShareModal";
+import AuthModal from "@/components/modal/AuthModal";
 
 const Page = () => {
 	return (
 		<Suspense fallback={<div>Loading...</div>}>
-			<Layout className="mt-36">
+			<Layout className="mt-4">
 				<Container>
 					<BannerGradient classNames="w-full h-[8rem]" />
 
@@ -48,6 +49,7 @@ const Page = () => {
 				<SearchFormModal />
 				<AISearchModal />
 				<ShareModal />
+				<AuthModal />
 			</Layout>
 		</Suspense>
 	);

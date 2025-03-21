@@ -27,7 +27,7 @@ const Container = ({
 		<div
 			ref={refObject}
 			className={cn(
-				"mx-3 mt-36 sm:mx-6 md:mx-8 xl:mx-14 2xl:mx-24",
+				"mx-3 mt-10 sm:mx-6 md:mx-8 xl:mx-14 2xl:mx-24",
 				className,
 			)}
 			{...props}

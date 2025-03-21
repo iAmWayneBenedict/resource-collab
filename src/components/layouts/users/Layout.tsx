@@ -4,7 +4,6 @@ import { cn } from "@/lib/utils";
 import React from "react";
 import NavBar from "./NavBar";
 import Footer from "./Footer";
-import { DarkModeToggler } from "./DarkModeToggler";
 
 type Props = {
 	children: React.ReactNode;
@@ -31,11 +30,10 @@ const Layout: React.FC<Props> = ({
 		<div
 			{...props}
 			ref={refObject}
-			className={cn("relative pb-56", className)}
+			className={cn("relative mt-4 pb-56", className)}
 		>
 			<NavBar />
 			{children}
-			<DarkModeToggler />
 			<Footer />
 		</div>
 	);
