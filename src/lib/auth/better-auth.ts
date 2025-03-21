@@ -40,6 +40,7 @@ export const auth = betterAuth({
 			return {
 				user: {
 					...user,
+					image: userData?.image,
 					role: userData?.role,
 					status: userData?.status,
 				},

@@ -7,7 +7,7 @@ import SignUpForm from "./components/Form";
 export default async function Signup() {
 	return (
 		<Layout>
-			<Container className="mt-32 flex h-full flex-row gap-10 lg:mt-48 lg:gap-16 2xl:mt-52">
+			<Container className="flex h-full flex-row gap-10 lg:gap-16">
 				<div className="hidden md:flex">
 					<BannerGradient classNames="w-[25vw] max-w-[25rem] h-full" />
 				</div>

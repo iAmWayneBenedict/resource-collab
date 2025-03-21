@@ -1,27 +1,28 @@
 "use client";
 
-import { useModal } from "@/store";
+import { useAuthUser, useModal } from "@/store";
 import { Button, Kbd, Tooltip } from "@heroui/react";
 import { Search, Sparkles } from "lucide-react";
-import React, { useState } from "react";
+import React from "react";
 import "./styles.css";
+import { useMediaQuery } from "react-responsive";
 
 const SearchModalTrigger = () => {
 	const { onOpen: onOpenModal } = useModal();
-	const [animationActive, setAnimationActive] = useState(false);
-
-	const handleClick = () => {
-		setAnimationActive(true);
-		setTimeout(() => {
-			setAnimationActive(false);
-		}, 2000); // Remove the animation after 2 seconds
-	};
+	const { authUser } = useAuthUser();
+	const isSmallDevices = useMediaQuery({
+		query: "(max-width: 64rem)",
+	});
 
 	const clickSearchHandler = () => {
 		onOpenModal("Search Filter", null);
 	};
 
 	const clickAISearchHandler = () => {
+		if (!authUser) {
+			onOpenModal("auth-modal", null);
+			return;
+		}
 		onOpenModal("AI Search", null);
 	};
 
@@ -55,11 +56,14 @@ const SearchModalTrigger = () => {
 				disableRipple
 				onPress={clickAISearchHandler}
 				radius="full"
-				className="hover:gradient-animation data-[hover=true]:gradient-animation transform bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 px-4 py-2 font-bold text-white transition duration-500 ease-in-out"
+				className="hover:gradient-animation data-[hover=true]:gradient-animation transform bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 font-bold text-white transition duration-500 ease-in-out md:px-4 md:py-2"
 			>
-				<span className="flex items-center gap-2">
+				<span
+					suppressHydrationWarning
+					className="flex items-center gap-2"
+				>
 					<Sparkles />
-					Try AI Search
+					{!isSmallDevices ? "Try AI Search" : "AI Search"}
 				</span>
 			</Button>
 		</div>

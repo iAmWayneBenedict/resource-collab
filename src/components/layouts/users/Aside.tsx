@@ -5,6 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Bookmark } from "lucide-react";
+import { useAuthUser, useModal } from "@/store";
+import { Button } from "@heroui/react";
 
 type Props = {
 	links: LinkType[];
@@ -19,6 +21,8 @@ type LinkType = {
 const Aside: React.FC<Props> = ({ links }) => {
 	const params = useSearchParams();
 	const category = params.get("category") || "all";
+	const { authUser } = useAuthUser();
+	const onOpenModal = useModal((state) => state.onOpen);
 
 	const activeStyle =
 		"bg-black text-white hover:bg-black dark:hover:bg-white dark:bg-white dark:text-black";
@@ -30,23 +34,21 @@ const Aside: React.FC<Props> = ({ links }) => {
 			)}
 		>
 			<ul className="flex w-full flex-col gap-1">
-				<li className="mb-5 border-b border-neutral-400 pb-5 dark:border-neutral-500">
-					<Link
-						href={`${links[0].href}?category=bookmark`}
-						scroll={false}
-					>
-						<Badge
-							variant={"secondary"}
-							className={cn(
-								category === "bookmark" ? activeStyle : "",
-								"flex items-center gap-2",
-							)}
+				{!authUser && (
+					<li className="mb-5 border-b border-neutral-400 pb-5 dark:border-neutral-500">
+						<Button
+							onPress={() => onOpenModal("auth-modal", {})}
+							variant="light"
+							radius="full"
+							className="w-full justify-start py-7 text-left text-base font-medium"
+							startContent={
+								<Bookmark className="transition-none" />
+							}
 						>
-							<Bookmark className="transition-none" />{" "}
-							<span>Bookmark</span>
-						</Badge>
-					</Link>
-				</li>
+							Bookmark
+						</Button>
+					</li>
+				)}
 				{links.map((link, index) => (
 					<li key={index}>
 						<Link href={link.href} scroll={false}>

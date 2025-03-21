@@ -22,15 +22,15 @@ export const GET = async (
 
 	try {
 		const response = await db.transaction(async (tx) => {
-			const [result] = await tx
-				.select({
-					full_path: resourceShortUrlAccess.full_path,
-					resource_id: resourceShortUrlAccess.resource_id,
-					emails: resourceShortUrlAccess.emails,
-				})
-				.from(resourceShortUrlAccess)
-				.where(eq(resourceShortUrlAccess.short_code, p.short_code))
-				.limit(1);
+			const [result] = await tx.query.resourceShortUrlAccess.findMany({
+				columns: {
+					full_path: true,
+					resource_id: true,
+					emails: true,
+				},
+				where: eq(resourceShortUrlAccess.short_code, p.short_code),
+				limit: 1,
+			});
 
 			if (result.emails?.length) {
 				if (!user) {

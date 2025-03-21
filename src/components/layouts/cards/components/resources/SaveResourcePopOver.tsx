@@ -25,6 +25,7 @@ import { bindReactHookFormError, cn, toggleScrollBody } from "@/lib/utils";
 import { useCollections } from "@/store/useCollections";
 import { useQueryClient } from "@tanstack/react-query";
 import { useMediaQuery } from "react-responsive";
+import { useAuthUser, useModal } from "@/store";
 
 // Collection item type
 // Update the Collection type to include additional information
@@ -368,12 +369,18 @@ const SaveResourcePopOver = ({
 }) => {
 	const [showCreateForm, setShowCreateForm] = useState(false);
 	const [isOpen, setIsOpen] = useState(false);
+	const { authUser } = useAuthUser();
+	const onOpenModal = useModal((state) => state.onOpen);
 
 	const onCompleteHandler = () => {
 		onOpenChangeHandler(false);
 	};
 
 	const onOpenChangeHandler = (isOpen: boolean) => {
+		if (!authUser) {
+			onOpenModal("auth-modal", {});
+			return;
+		}
 		setIsOpen(isOpen);
 		setShowCreateForm(false);
 	};

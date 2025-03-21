@@ -1,5 +1,5 @@
 import { usePostLikeResourceMutation } from "@/lib/mutations/like";
-import { useModal } from "@/store";
+import { useAuthUser, useModal } from "@/store";
 import { ResourcePaginatedSearchParamsState } from "@/store/context/providers/ResourcePaginatedSearchParams";
 import useResourcePaginatedSearchParams from "@/store/context/useResourcePaginatedSearchParams";
 import { addToast, Spinner } from "@heroui/react";
@@ -58,6 +58,7 @@ export const ResourceMetrics = ({
 	const [shareData, setShareData] = useState<Record<string, any> | null>(
 		null,
 	);
+	const { authUser } = useAuthUser();
 	const resourceShortUrlMutation = usePostResourceShortUrlMutation({
 		onSuccess: (data) => {
 			// console.log(data);
@@ -171,6 +172,11 @@ export const ResourceMetrics = ({
 	});
 
 	const onLike = () => {
+		if (!authUser) {
+			onOpenModal("auth-modal", {});
+			return;
+		}
+
 		mutation.mutate({
 			id: id,
 		});
