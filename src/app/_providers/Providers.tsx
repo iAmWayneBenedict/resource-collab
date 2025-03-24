@@ -20,23 +20,23 @@ const Providers = ({ data, children }: any) => {
 	}, [data]);
 
 	return (
-		<PostHogProvider>
-			<QueryClientProvider client={queryClient}>
-				<HeroUIProvider>
-					<ToastProvider
-						placement="bottom-right"
-						toastOffset={100}
-						toastProps={{
-							radius: "lg",
-							variant: "flat",
-							timeout: 6000,
-						}}
-					/>
-					{children}
-					<CustomAlertDialog />
-				</HeroUIProvider>
-			</QueryClientProvider>
-		</PostHogProvider>
+		// <PostHogProvider>
+		// </PostHogProvider>
+		<QueryClientProvider client={queryClient}>
+			<HeroUIProvider>
+				<ToastProvider
+					placement="bottom-right"
+					toastOffset={100}
+					toastProps={{
+						radius: "lg",
+						variant: "flat",
+						timeout: 6000,
+					}}
+				/>
+				{children}
+				<CustomAlertDialog />
+			</HeroUIProvider>
+		</QueryClientProvider>
 	);
 };
 

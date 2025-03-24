@@ -1,3 +1,5 @@
+"use client";
+
 import { useModal } from "@/store";
 import { Button, Modal, ModalBody, ModalContent } from "@heroui/react";
 import { useEffect, useState } from "react";

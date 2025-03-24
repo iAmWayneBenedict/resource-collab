@@ -5,7 +5,7 @@ import { motion } from "motion/react";
 import SaveResourcePopOver from "./components/resources/SaveResourcePopOver";
 import { usePutViewResourceMutation } from "@/lib/mutations/resources";
 import { SaveResourceDrawer } from "./components/resources/SaveResourceDrawer";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { Image } from "@heroui/react";
 

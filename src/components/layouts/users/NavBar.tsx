@@ -21,7 +21,6 @@ import {
 	DropdownItem,
 	Avatar,
 	Image,
-	Divider,
 	DropdownSection,
 } from "@heroui/react";
 import { authClient } from "@/config/auth";
@@ -123,18 +122,7 @@ const LargeNav = () => {
 	const { authUser } = useAuthUser();
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
 	const { theme, setTheme } = useTheme();
-	const menuItems = [
-		"Profile",
-		"Dashboard",
-		"Activity",
-		"Analytics",
-		"System",
-		"Deployments",
-		"My Settings",
-		"Team Settings",
-		"Help & Feedback",
-		"Log Out",
-	];
+
 	const handleLogout = async () => {
 		await authClient.signOut({
 			fetchOptions: {
@@ -172,6 +160,7 @@ const LargeNav = () => {
 									src={favicon.src}
 									className="aspect-auto w-10"
 									disableSkeleton
+									disableAnimation
 								/>
 								<span className="hidden font-PlayFairDisplay text-lg font-black uppercase sm:flex">
 									Coollabs
@@ -244,12 +233,12 @@ const LargeNav = () => {
 						<Dropdown placement="bottom-end" backdrop="blur">
 							<DropdownTrigger className="flex-row-reverse">
 								<Avatar
-									isBordered
 									as="button"
-									className="transition-transform"
 									name={authUser.name}
-									size="sm"
 									src={authUser.image}
+									className="transition-transform"
+									isBordered
+									size="sm"
 								/>
 							</DropdownTrigger>
 							<DropdownMenu
@@ -280,16 +269,12 @@ const LargeNav = () => {
 								) : null}
 								<DropdownSection title="Contents">
 									<DropdownItem
-										key={"shared-collections"}
-										startContent={<Repeat size={16} />}
-									>
-										Shared Collection
-									</DropdownItem>
-									<DropdownItem
+										as={Link}
 										key={"my-resources"}
 										startContent={
 											<GalleryVerticalEnd size={16} />
 										}
+										href="/dashboard/resources"
 									>
 										My Resources
 									</DropdownItem>
@@ -298,6 +283,12 @@ const LargeNav = () => {
 										startContent={<Box size={16} />}
 									>
 										My Collection
+									</DropdownItem>
+									<DropdownItem
+										key={"shared-collections"}
+										startContent={<Repeat size={16} />}
+									>
+										Shared Collection
 									</DropdownItem>
 								</DropdownSection>
 
@@ -327,7 +318,7 @@ const LargeNav = () => {
 								color={
 									index === 2
 										? "primary"
-										: index === menuItems.length - 1
+										: index === NAV_LINKS.length - 1
 											? "danger"
 											: "foreground"
 								}
@@ -338,7 +329,6 @@ const LargeNav = () => {
 									name={item.name}
 									className="text-base"
 									position="right"
-									// type="dot"
 								>
 									{item.name}
 								</NavLinkStyleWrapper>

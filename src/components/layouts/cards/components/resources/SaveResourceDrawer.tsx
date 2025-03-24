@@ -7,6 +7,7 @@ import { CollectionsList, CreateCollectionForm } from "./SaveResourcePopOver";
 import { useState } from "react";
 import { DialogTitle } from "@/components/ui/dialog";
 import { VisuallyHidden } from "@heroui/react";
+import { useAuthUser, useModal } from "@/store";
 
 export function SaveResourceDrawer({
 	bookmarkCount,
@@ -21,6 +22,8 @@ export function SaveResourceDrawer({
 }) {
 	const [showCreateForm, setShowCreateForm] = useState(false);
 	const [isOpen, setIsOpen] = useState(false);
+	const { authUser } = useAuthUser();
+	const onOpenModal = useModal((state) => state.onOpen);
 
 	const onCompleteHandler = () => {
 		onOpenChangeHandler(false);
@@ -28,6 +31,10 @@ export function SaveResourceDrawer({
 
 	const onOpenChangeHandler = (isOpen: boolean) => {
 		console.log(isOpen);
+		if (!authUser) {
+			onOpenModal("auth-modal", {});
+			return;
+		}
 		setIsOpen(isOpen);
 		setShowCreateForm(false);
 	};

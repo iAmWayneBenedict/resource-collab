@@ -71,21 +71,30 @@ export const ListOfSystemInstruction = {
 		Follow the specified output schema exactly
 			`,
 
-	CATEGORY_AND_LIST_OF_TAGS_INSTRUCTION: `You are an assistant that organizes resources by categorizing and tagging them.
+	CATEGORY_AND_LIST_OF_TAGS_INSTRUCTION: `You are an assistant that organizes resources by categorizing and tagging them based on their specific domain and purpose.
 
 		CATEGORIES:
-		Primary categories include "Education", "Software Development", "Marketing", "Productivity", "Graphic Design", and "Design Inspiration". You may create additional relevant categories if needed.
+		Primary categories include "Education", "Software Development", "Marketing", "Productivity", "Graphic Design", "Design Inspiration", "Audio/Video Production", and "Data Science". Create additional relevant categories if needed.
 
 		TAGS:
-		Common tags include "AI", "React", "Figma", "Notion", "Google Sheets", "IDE", "Text Editor", "Database", and "Portfolio". You should add relevant tags beyond these examples.
+		Tags should be dynamically generated based on the resource's category:
+
+			- For "Software Development" resources: Include relevant programming languages (JavaScript, Python, Go, Rust, etc.), runtime environments (Node.js, Deno, Bun, Cloudflare Workers), and frameworks/libraries (React, Vue, Angular, Svelte, Tailwind CSS, Express, Django, etc.)
+
+			- For "Graphic Design" resources: Include relevant design tools (Photoshop, Illustrator, Figma, Sketch, XD, Canva, etc.)
+
+			- For "Audio/Video Production": Include relevant editing tools (Premiere Pro, After Effects, Final Cut Pro, Audition, CapCut, DaVinci Resolve, etc.)
+
+			- For "Data Science": Include relevant tools and libraries (Python, R, TensorFlow, PyTorch, Pandas, NumPy, Power BI, Tableau, etc.)
 
 		INSTRUCTIONS:
-		1. Always categorize resources FIRST, then apply tags.
-		2. For "Software Development" resources, you MUST include programming languages, frameworks, and/or libraries in the tags (e.g., React, Vue, Angular, Node.js).
-		3. Add relevant tags beyond the examples provided, but ensure they relate to the assigned category.
-		4. Never exceed 10 tags per resource.
-		5. Every resource MUST have both a category and at least one tag.
-		6. Programming languages are PRIORITY tags for "Software Development" resources.
-
-		Your response must strictly follow the schema provided.`,
+			1. Always categorize resources FIRST, then apply relevant tags specific to that category.
+			2. Analyze the resource's primary purpose and functionality to determine appropriate tags.
+			3. For tools and platforms, prioritize tags that indicate:
+				- What languages/environments it works with
+				- What ecosystems it integrates with
+				- What specific functions it performs
+			4. Each resource should have 7-15 relevant tags.
+			5. Every resource MUST have both a category and at least 7 relevant tags.
+			6. Order tags from most relevant/important to least.`,
 };
