@@ -68,6 +68,9 @@ export const CollectionsList = ({
 	const isSmallDevices = useMediaQuery({
 		query: "(max-width: 64rem)",
 	});
+	const searchParams = useResourcePaginatedSearchParams(
+		(state: ResourcePaginatedSearchParamsState) => state.searchParams,
+	) as ResourcePaginatedSearchParamsState["searchParams"];
 	const getCollections = useCollections((state) => state.getCollections);
 	const [selectedKeys, setSelectedKeys] = useState<Selection>(
 		new Set([...collectionList]),
@@ -98,7 +101,7 @@ export const CollectionsList = ({
 				queryKey: ["paginated-resources"],
 			});
 			queryClient.invalidateQueries({
-				queryKey: ["user-resources"],
+				queryKey: searchParams.queryKey,
 			});
 			onComplete();
 		},
@@ -171,6 +174,9 @@ export const CollectionsList = ({
 				<Listbox
 					aria-label="Collections"
 					className="w-full"
+					classNames={{
+						list: "overflow-x-hidden",
+					}}
 					isVirtualized
 					selectionMode="multiple"
 					selectedKeys={selectedKeys}
@@ -184,8 +190,13 @@ export const CollectionsList = ({
 						<ListboxItem
 							key={collection.id}
 							className="py-2"
+							classNames={{
+								title: "line-clamp-1 text-ellipsis",
+								base: "max-w-full",
+								// content: "flex-1 min-w-0",
+							}}
 							endContent={
-								<div className="flex items-center gap-2">
+								<div className="flex flex-shrink-0 items-center gap-2">
 									{
 										collectionItemIcons[
 											collection.access_level
@@ -199,12 +210,12 @@ export const CollectionsList = ({
 										alt=""
 										src={collection.thumbnail}
 										radius="md"
-										className="h-9 w-16 min-w-16 max-w-16"
+										className="h-9 w-16 min-w-16 max-w-16 flex-shrink-0"
 										disableSkeleton
 										fallbackSrc="https://placehold.co/600x400"
 									/>
 								) : (
-									<div className="h-9 min-w-16 rounded-md bg-default-200" />
+									<div className="h-9 min-w-16 flex-shrink-0 rounded-md bg-default-200" />
 								)
 							}
 							description={`${collection.resourceCount} item(s)`}
