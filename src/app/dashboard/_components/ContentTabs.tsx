@@ -12,6 +12,9 @@ import Link from "next/link";
 import TabBody from "./TabBody";
 import { useMediaQuery } from "react-responsive";
 import InternalTabs from "./InternalTabs";
+import ResourceTab from "./ResourceTab";
+import LikedTab from "./liked/LikedTab";
+import CollectionTab from "./collections/CollectionTab";
 
 let TABS = [
 	{
@@ -74,11 +77,12 @@ const ContentTabs = ({ type }: { type: string }) => {
 							</div>
 						}
 					>
-						{/* exclude resources and portfolios from the internal tabs */}
-						{["resources", "portfolios"].includes(type) ? (
-							<TabBody tab={type as any} />
-						) : (
-							<InternalTabs tab={item.id as any} />
+						{type === "resources" && (
+							<ResourceTab type={type as any} />
+						)}
+						{type === "liked" && <LikedTab />}
+						{type === "collections" && (
+							<CollectionTab type={type as any} />
 						)}
 					</Tab>
 				))}

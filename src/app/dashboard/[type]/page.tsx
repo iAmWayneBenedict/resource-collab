@@ -13,11 +13,13 @@ import {
 const Page = async ({ params }: { params: Promise<{ type: string }> }) => {
 	const { type } = await params;
 	return (
-		<Suspense fallback={<h1>Loading...</h1>}>
+		<Suspense fallback={<h1>Loading</h1>}>
 			<Layout className="mt-4">
 				<Container className="mt-16">
 					<UserProfile />
-					<ContentTabs type={type} />
+					<Suspense fallback={<h1>Loading...</h1>}>
+						<ContentTabs type={type} />
+					</Suspense>
 				</Container>
 				<FilterFormModal />
 				{/* <SearchFormModal /> */}

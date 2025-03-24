@@ -17,4 +17,14 @@ type TDataFormAPIResponse = {
 	path: string[];
 };
 
-type TResponseAPI<TData> = Promise<TSuccessAPIResponse<TData> | TErrorAPIResponse>;
+type TResponseAPI<TData> = Promise<
+	TSuccessAPIResponse<TData> | TErrorAPIResponse
+>;
+
+type CollectionResponse = {
+	id: number;
+	name: string;
+	access_level: "public" | "private" | "shared";
+	resourceCount: number;
+	thumbnail: string;
+};
