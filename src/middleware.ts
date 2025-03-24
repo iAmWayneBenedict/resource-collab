@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { authRoutes, protectedRoutes } from "./routes";
 import { getSessionCookie } from "better-auth";
+import { cookies } from "next/headers";
+import { jwtDecode } from "jwt-decode";
 
 // Define allowed hosts
 const allowedHosts = [
@@ -9,9 +11,16 @@ const allowedHosts = [
 	"localhost:3000", // For local development
 ];
 
+const decode = (token: string | undefined) => {
+	if (!token) return null;
+	return JSON.parse(Buffer.from(token ?? "{}", "base64").toString());
+};
+
 export async function middleware(request: NextRequest): Promise<NextResponse> {
 	const sessionCookie = getSessionCookie(request);
 	const targetPath = request.nextUrl.pathname;
+	// const cookie = (await cookies())?.get("better-auth.session_data")?.value;
+	// console.log("middleware", decode(cookie));
 
 	// Check if the request is for an auth route, if so redirect to home
 	const hasMatchAuthRoute = authRoutes.some((route) =>
@@ -30,7 +39,6 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
 	// if (!sessionCookie && hasMatchProtectedRoute) {
 	// 	return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 	// }
-
 	// Allow requests from localhost in development
 	if (process.env.NODE_ENVIRONMENT === "development") {
 		return NextResponse.next();

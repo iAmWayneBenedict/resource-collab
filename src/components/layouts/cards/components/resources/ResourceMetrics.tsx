@@ -7,6 +7,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { ChartNoAxesColumn, Heart, Share2 } from "lucide-react";
 import { usePostResourceShortUrlMutation } from "../../../../../lib/mutations/short_urls";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 
 type ResourceMetricsProps = {
 	id: number;
@@ -103,15 +104,7 @@ export const ResourceMetrics = ({
 	};
 
 	// Create query key array for better reusability
-	const getQueryKey = () => [
-		"paginated-resources",
-		searchParams.category,
-		searchParams.sortValue,
-		searchParams.sortBy,
-		searchParams.tags,
-		searchParams.search,
-		searchParams.resourceIds,
-	];
+	const getQueryKey = () => searchParams.queryKey;
 
 	const mutation = usePostLikeResourceMutation({
 		onMutate: async () => {
@@ -158,6 +151,9 @@ export const ResourceMetrics = ({
 		onSuccess: () => {
 			queryClient.invalidateQueries({
 				queryKey: ["paginated-resources"],
+			});
+			queryClient.invalidateQueries({
+				queryKey: searchParams.queryKey,
 			});
 		},
 		onError: (_, __, rollback: any) => {

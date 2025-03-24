@@ -54,14 +54,19 @@ const ResourceCardWrapper = () => {
 		enabled: !!query,
 		query,
 	});
+
+	// used in optimistic updated to monitor the query keys for useQuery
 	useEffect(() => {
 		setSearchParams({
-			category: category,
-			sortBy: sortBy,
-			sortValue: sortValue,
-			tags: tagsSearchParams,
-			search: searchValue,
-			resourceIds: aiResponse.data,
+			queryKey: [
+				"paginated-resources",
+				category,
+				sortBy,
+				sortValue,
+				tagsSearchParams,
+				searchValue,
+				aiResponse.data,
+			],
 		});
 	}, [
 		category,

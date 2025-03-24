@@ -25,7 +25,7 @@ const RedirectShortUrl = () => {
 
 	useEffect(() => {
 		if (isSuccess && data?.data?.redirect_url) {
-			// window.location.href = data.data.redirect_url;
+			window.location.href = data.data.redirect_url;
 		} else if (isSuccess && !data?.data?.redirect_url) {
 			setError("Invalid short URL");
 			setIsLoading(false);

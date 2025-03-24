@@ -26,6 +26,9 @@ import { useCollections } from "@/store/useCollections";
 import { useQueryClient } from "@tanstack/react-query";
 import { useMediaQuery } from "react-responsive";
 import { useAuthUser, useModal } from "@/store";
+import { collectionItemIcons } from "../../utils";
+import useResourcePaginatedSearchParams from "@/store/context/useResourcePaginatedSearchParams";
+import { ResourcePaginatedSearchParamsState } from "@/store/context/providers/ResourcePaginatedSearchParams";
 
 // Collection item type
 // Update the Collection type to include additional information
@@ -52,12 +55,6 @@ type CreateCollectionFormProps = {
 	resourceId: number;
 	onBack: () => void;
 	onComplete: () => void;
-};
-
-const collectionItemIcons = {
-	private: <Lock size={18} />,
-	public: <Eye size={18} />,
-	shared: <Users size={18} />,
 };
 
 // Collections list component
@@ -99,6 +96,9 @@ export const CollectionsList = ({
 			queryClient.invalidateQueries({ queryKey: ["collections"] });
 			queryClient.invalidateQueries({
 				queryKey: ["paginated-resources"],
+			});
+			queryClient.invalidateQueries({
+				queryKey: ["user-resources"],
 			});
 			onComplete();
 		},
@@ -242,6 +242,9 @@ export const CreateCollectionForm = ({
 	const isSmallDevices = useMediaQuery({
 		query: "(max-width: 64rem)",
 	});
+	const searchParams = useResourcePaginatedSearchParams(
+		(state: ResourcePaginatedSearchParamsState) => state.searchParams,
+	) as ResourcePaginatedSearchParamsState["searchParams"];
 	const queryClient = useQueryClient();
 	const {
 		control,
@@ -261,6 +264,9 @@ export const CreateCollectionForm = ({
 			queryClient.invalidateQueries({ queryKey: ["collections"] });
 			queryClient.invalidateQueries({
 				queryKey: ["paginated-resources"],
+			});
+			queryClient.invalidateQueries({
+				queryKey: searchParams.queryKey,
 			});
 			addToast({
 				title: "Success",
