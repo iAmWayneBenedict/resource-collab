@@ -73,6 +73,7 @@ const ContentTabs = ({ type, id }: { type: string; id?: number | string }) => {
 				variant={mobileDevices ? "underlined" : "solid"}
 				fullWidth={mobileDevices}
 				suppressHydrationWarning
+				shouldSelectOnPressUp={false}
 			>
 				{TABS.map((item) => (
 					<Tab
