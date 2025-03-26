@@ -2,7 +2,6 @@ import { relations } from "drizzle-orm";
 import { integer, pgTable, serial, varchar } from "drizzle-orm/pg-core";
 import { users } from "./users";
 import { resources } from "./resources";
-import { portfolios } from "./portfolios";
 import { collectionFolders } from "./collection-folders";
 
 export const resourceCollections = pgTable("resource_collections", {

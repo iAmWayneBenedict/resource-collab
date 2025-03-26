@@ -9,9 +9,10 @@ const nextConfig = {
 		],
 	},
 	transpilePackages: ["prettier"],
-	// experimental: {
-	// 	webpackBuildWorker: true,
-	// },
+	experimental: {
+		nodeMiddleware: true,
+		// webpackBuildWorker: true,
+	},
 	// serverExternalPackages: ["@node-rs/argon2", "@node-rs/bcrypt", "prettier"],
 	// experimental: {
 	// 	serverComponentsExternalPackages: ["prettier"],

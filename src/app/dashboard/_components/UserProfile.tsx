@@ -14,6 +14,7 @@ const UserProfile = () => {
 				<Avatar
 					name={authUser?.name}
 					src={authUser?.image}
+					fallback={authUser?.name?.charAt(0)?.toUpperCase()}
 					isBordered
 					classNames={{ base: "~w-16/24 ~h-16/24" }}
 				/>
@@ -30,7 +31,7 @@ const UserProfile = () => {
 						<Button
 							variant="solid"
 							radius="full"
-							className="bg-violet text-white"
+							// className="bg-violet text-white"
 						>
 							Edit Profile
 						</Button>

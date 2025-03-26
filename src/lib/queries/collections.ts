@@ -13,8 +13,7 @@ export const useGetCollectionsQuery = ({
 	return useQuery({
 		enabled,
 		queryKey: ["collections"],
-		queryFn: () =>
-			request({ url: `/resource-collections?hasCollections=true` }),
+		queryFn: () => request({ url: `/resource-collections` }),
 		...options,
 	});
 };

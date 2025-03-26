@@ -20,7 +20,7 @@ export const useGetUserResourcesQuery = (
 		queryKey: [`user-${options.type}`],
 		queryFn: () =>
 			request({
-				url: `/users/${options.user_id}/${options.type}?${searchParams.toString()}`,
+				url: `/users/${options.user_id}/${options.type}${options.id ? "/" + options.id : ""}?${searchParams.toString()}`,
 			}),
 	});
 };

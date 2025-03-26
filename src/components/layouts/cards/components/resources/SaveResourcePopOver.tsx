@@ -10,10 +10,10 @@ import {
 	Selection,
 	Image,
 } from "@heroui/react";
-import React, { Key, useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { BookmarkButton } from "./BookmarkButton";
 import { motion, AnimatePresence } from "motion/react";
-import { Plus, ArrowLeft, Lock, Eye, Users, Trash2 } from "lucide-react";
+import { Plus, ArrowLeft } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -24,11 +24,11 @@ import {
 import { bindReactHookFormError, cn, toggleScrollBody } from "@/lib/utils";
 import { useCollections } from "@/store/useCollections";
 import { useQueryClient } from "@tanstack/react-query";
-import { useMediaQuery } from "react-responsive";
 import { useAuthUser, useModal } from "@/store";
 import { collectionItemIcons } from "../../utils";
 import useResourcePaginatedSearchParams from "@/store/context/useResourcePaginatedSearchParams";
 import { ResourcePaginatedSearchParamsState } from "@/store/context/providers/ResourcePaginatedSearchParams";
+import { useTabletOrSmallerScreen } from "@/hooks/useMediaQueries";
 
 // Collection item type
 // Update the Collection type to include additional information
@@ -65,9 +65,7 @@ export const CollectionsList = ({
 	collectionList,
 	resourceId,
 }: CollectionsListProps) => {
-	const isSmallDevices = useMediaQuery({
-		query: "(max-width: 64rem)",
-	});
+	const isSmallDevices = useTabletOrSmallerScreen();
 	const searchParams = useResourcePaginatedSearchParams(
 		(state: ResourcePaginatedSearchParamsState) => state.searchParams,
 	) as ResourcePaginatedSearchParamsState["searchParams"];
@@ -250,9 +248,7 @@ export const CreateCollectionForm = ({
 	onBack,
 	onComplete,
 }: CreateCollectionFormProps) => {
-	const isSmallDevices = useMediaQuery({
-		query: "(max-width: 64rem)",
-	});
+	const isSmallDevices = useTabletOrSmallerScreen();
 	const searchParams = useResourcePaginatedSearchParams(
 		(state: ResourcePaginatedSearchParamsState) => state.searchParams,
 	) as ResourcePaginatedSearchParamsState["searchParams"];
@@ -287,7 +283,7 @@ export const CreateCollectionForm = ({
 			onComplete();
 		},
 		onError: (error) => {
-			console.error("Error creating collection:", error.response.data);
+			console.warn("Error creating collection:", error.response.data);
 			bindReactHookFormError(error.response.data, setError);
 			addToast({
 				title: "Error",

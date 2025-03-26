@@ -1,8 +1,8 @@
+import { useTabletOrSmallerScreen } from "@/hooks/useMediaQueries";
 import { cn } from "@/lib/utils";
 import { Radio, RadioGroup } from "@heroui/react";
 import { Globe, Lock } from "lucide-react";
 import React from "react";
-import { useMediaQuery } from "react-responsive";
 
 const ACCESS_LEVELS = [
 	{
@@ -26,9 +26,7 @@ type Props = {
 };
 
 const AccessLevel = ({ shareType, data, setShareType }: Props) => {
-	const isSmallDevices = useMediaQuery({
-		query: "(max-width: 64rem)",
-	});
+	const isSmallDevices = useTabletOrSmallerScreen();
 	return (
 		<RadioGroup
 			value={shareType}

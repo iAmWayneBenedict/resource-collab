@@ -8,24 +8,34 @@ import {
 } from "@/store/context/providers/ResourcePaginatedSearchParams";
 import useResourcePaginatedSearchParams from "@/store/context/useResourcePaginatedSearchParams";
 import { useCollections } from "@/store/useCollections";
-import { Skeleton } from "@heroui/react";
+import { useRequestStatus } from "@/store/useRequestStatus";
+import { Button, Skeleton } from "@heroui/react";
 import { useEffect } from "react";
 
 type Props = {
-	type: "resources" | "liked" | "collections" | "shared";
+	type:
+		| "resources"
+		| "liked"
+		| "collections"
+		| "shared"
+		| "collection-resources"
+		| "collection-portfolios";
+
+	id?: number | string;
 };
-const ResourceWrapper = ({ type }: Props) => {
+const ResourceWrapper = ({ type, id }: Props) => {
 	const { authUser } = useAuthUser();
 	const setSearchParams = useResourcePaginatedSearchParams(
 		(state: ResourcePaginatedSearchParamsState) =>
 			state.actions.setSearchParams,
 	) as ResourcePaginatedSearchParamsState["actions"]["setSearchParams"];
 	const setCollections = useCollections((state) => state.setCollections);
-
-	const { data, isSuccess, isLoading, isFetching } = useGetUserResourcesQuery(
-		{},
-		{ user_id: authUser?.id, type },
+	const setRequestStatus = useRequestStatus(
+		(state) => state.setRequestStatus,
 	);
+
+	const { data, isSuccess, isLoading, isFetching, error, isError } =
+		useGetUserResourcesQuery({}, { user_id: authUser?.id, type, id });
 
 	useEffect(() => {
 		setSearchParams({ queryKey: [`user-${type}`] });
@@ -41,7 +51,33 @@ const ResourceWrapper = ({ type }: Props) => {
 		setCollections(collections.data?.data);
 	}, [collections.isSuccess, collections.data]);
 
-	if (isLoading) {
+	const isCollectionResources = type === "collection-resources";
+
+	useEffect(() => {
+		let currentStatus = "idle";
+		if (isCollectionResources) {
+			if (isLoading) {
+				currentStatus = "loading";
+			} else if (isFetching) {
+				currentStatus = "fetching";
+			} else if (isSuccess) {
+				currentStatus = "success";
+			} else if (isError) {
+				currentStatus = "error";
+			}
+		}
+		setRequestStatus(currentStatus);
+	}, [isLoading, isFetching, isSuccess, isError, isCollectionResources]);
+
+	let isLoadingOrFetching = false;
+
+	if (isCollectionResources) {
+		isLoadingOrFetching = isLoading || isFetching;
+	} else {
+		isLoadingOrFetching = isLoading;
+	}
+
+	if (isLoadingOrFetching) {
 		return (
 			<div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
 				{/* <h3 className="text-xl">Loading...</h3> */}
@@ -57,6 +93,57 @@ const ResourceWrapper = ({ type }: Props) => {
 		);
 	}
 
+	if (isError) {
+		return (
+			<div className="flex flex-col items-center justify-center p-8 text-center">
+				<div className="mb-2 text-[8rem] font-bold leading-none text-gray-200 opacity-60">
+					404
+				</div>
+				<div>
+					<h3 className="mb-2 text-xl font-semibold">
+						Oops! Something went wrong
+					</h3>
+					<p className="mb-4 text-gray-600">
+						We couldn't load your resources. Please try again later.
+					</p>
+					<Button
+						radius="full"
+						onPress={() => window.location.reload()}
+					>
+						Try Again
+					</Button>
+				</div>
+			</div>
+		);
+	}
+
+	if (!data?.data.rows.length) {
+		return (
+			<div className="flex w-full flex-col items-center justify-center p-8 text-center">
+				<div className="mb-2 text-[8rem] font-bold leading-none text-gray-200 opacity-60">
+					0
+				</div>
+				<div>
+					<h3 className="mb-2 text-xl font-semibold">
+						No resources found
+					</h3>
+					<p className="mb-4 text-gray-600">
+						{type.includes("collection")
+							? "This collection doesn't have any resources yet."
+							: "You don't have any resources in this category yet."}
+					</p>
+					<Button
+						radius="full"
+						className="bg-violet text-white"
+						onPress={() => window.location.reload()}
+					>
+						Start adding now
+					</Button>
+				</div>
+			</div>
+		);
+	}
+
 	return (
 		<div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
 			{data?.data.rows.map((resource: any) => (
@@ -66,10 +153,10 @@ const ResourceWrapper = ({ type }: Props) => {
 	);
 };
 
-export const ResourceTab = ({ type }: Props) => {
+export const ResourceTab = ({ type, id }: Props) => {
 	return (
 		<ResourcePaginatedSearchParamsProvider initialSearchParams={{}}>
-			<ResourceWrapper type={type} />
+			<ResourceWrapper type={type} id={id} />
 		</ResourcePaginatedSearchParamsProvider>
 	);
 };

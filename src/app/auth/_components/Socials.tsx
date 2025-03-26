@@ -24,7 +24,10 @@ export default function Socials({
 		setDisabled && setDisabled(true);
 
 		// Sign in with the provider
-		await authClient.signIn.social({ provider, callbackURL: "/" }); // TODO: change the callbackURL
+		await authClient.signIn.social({
+			provider,
+			callbackURL: "/dashboard/resources",
+		});
 	};
 	return (
 		<Fragment>
