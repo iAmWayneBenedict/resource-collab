@@ -37,7 +37,7 @@ const CollectionTab = ({ type, id }: Props) => {
 				classNames={{
 					base: "sticky sm:relative top-[3rem] sm:top-0 z-10 sm:rounded-full  w-full sm:w-fit",
 					tabList:
-						"bg-[#f9f8f6] sm:bg-none rounded-none sm:rounded-full w-full pb-2 sm:pb-1",
+						"bg-[#f9f8f6] dark:bg-[#191919] sm:bg-none rounded-none sm:rounded-full w-full pb-2 sm:pb-1",
 				}}
 			>
 				<Tab key="resources" title="Resources">

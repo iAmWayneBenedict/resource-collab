@@ -51,7 +51,8 @@ export const GET = async (req: NextRequest) => {
 					.limit(1)})`.as("thumbnail"),
 			})
 			.from(collectionFolders)
-			.where(eq(collectionFolders.user_id, user.id));
+			.where(eq(collectionFolders.user_id, user.id))
+			.orderBy(desc(collectionFolders.id));
 
 		return NextResponse.json(
 			{

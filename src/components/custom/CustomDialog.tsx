@@ -142,7 +142,7 @@ const CustomAlertDialog = () => {
 									),
 								)
 							) : (
-								<p className="text-center">
+								<p className="text-center ~text-sm/base">
 									{alertDialogDetails?.message ||
 										"Something went wrong!"}
 								</p>
@@ -166,6 +166,7 @@ const CustomAlertDialog = () => {
 											<Button
 												color="default"
 												variant="light"
+												radius="full"
 												onPress={handleCancel}
 											>
 												Cancel
@@ -173,6 +174,7 @@ const CustomAlertDialog = () => {
 											<Button
 												color={confirmColorButton}
 												variant="solid"
+												radius="full"
 												onPress={handleConfirm}
 											>
 												Confirm

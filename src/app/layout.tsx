@@ -11,6 +11,7 @@ import { getSession } from "@/lib/auth";
 import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import { extractRouterConfig } from "uploadthing/server";
 import { ourFileRouter } from "./api/uploadthing/core";
+import Head from "next/head";
 
 export const metadata: Metadata = {
 	title: "Coollabs",
@@ -33,12 +34,16 @@ export default async function RootLayout({
 	const session = await getSession();
 	return (
 		<html lang="en" suppressHydrationWarning={true}>
-			<head>
+			<Head>
 				<script
 					crossOrigin="anonymous"
 					src="//unpkg.com/react-scan/dist/auto.global.js"
 				/>
-			</head>
+				<meta
+					name="viewport"
+					content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+				/>
+			</Head>
 			<body className={cn(GeistSans.className)}>
 				<NextSSRPlugin
 					/**

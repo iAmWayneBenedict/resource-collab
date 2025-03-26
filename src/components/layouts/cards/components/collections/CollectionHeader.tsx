@@ -1,5 +1,5 @@
 import { useDeleteCollectionFoldersMutation } from "@/lib/mutations/collections";
-import { useAlertDialog } from "@/store";
+import { useAlertDialog, useModal } from "@/store";
 import {
 	addToast,
 	Button,
@@ -13,7 +13,14 @@ import { useQueryClient } from "@tanstack/react-query";
 import { EllipsisVertical, Pencil, Share2, Trash2 } from "lucide-react";
 import React from "react";
 
-const CollectionHeader = ({ data }: { data: any }) => {
+const CollectionHeader = ({
+	data,
+	setEnableClickHandler,
+}: {
+	data: any;
+	setEnableClickHandler: (d: any) => void;
+}) => {
+	const onOpenModal = useModal((state) => state.onOpen);
 	const setAlertDialogDetails = useAlertDialog(
 		(state) => state.setAlertDialogDetails,
 	);
@@ -34,7 +41,6 @@ const CollectionHeader = ({ data }: { data: any }) => {
 				title: "Error",
 				description: error.message,
 			});
-			// TODO: handle error
 		},
 	});
 
@@ -56,7 +62,12 @@ const CollectionHeader = ({ data }: { data: any }) => {
 	return (
 		<div className="absolute left-0 top-0 z-[2] flex w-full">
 			<div className="flex flex-1 items-center justify-end gap-2 px-3 pt-2">
-				<Dropdown placement="bottom-end">
+				<Dropdown
+					placement="bottom-end"
+					onOpenChange={(state: boolean) =>
+						setEnableClickHandler(!state)
+					}
+				>
 					<DropdownTrigger>
 						<Button
 							isIconOnly
@@ -75,6 +86,13 @@ const CollectionHeader = ({ data }: { data: any }) => {
 								key="edit"
 								description="Edit collection"
 								startContent={<Pencil size={20} />}
+								onPress={() =>
+									onOpenModal(
+										"create-collection",
+										{ name: data.name, id: data.id },
+										"edit",
+									)
+								}
 							>
 								Edit
 							</DropdownItem>

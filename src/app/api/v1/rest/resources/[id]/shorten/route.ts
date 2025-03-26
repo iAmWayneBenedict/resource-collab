@@ -6,6 +6,55 @@ import { resourceAccess, resourceShortUrlAccess } from "@/data/schema";
 import config from "@/config";
 import { and, eq, isNull } from "drizzle-orm";
 
+export const GET = async (
+	req: NextRequest,
+	{ params }: { params: Promise<{ id: number }> },
+) => {
+	const session = await getSession(req.headers);
+	const user = session?.user;
+
+	if (!user) {
+		return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+	}
+	const { id } = await params;
+	if (!id) {
+		return NextResponse.json({ message: "Bad Request" }, { status: 400 });
+	}
+
+	try {
+		const [shortUrl] = await db.transaction(async (tx) => {
+			const exist = await tx
+				.select()
+				.from(resourceShortUrlAccess)
+				.where(
+					and(
+						eq(resourceShortUrlAccess.resource_id, id as number),
+						eq(resourceShortUrlAccess.user_id, user.id),
+					),
+				);
+
+			if (!exist.length) throw new Error("Short url does not exist");
+
+			return exist;
+		});
+
+		return NextResponse.json(
+			{ message: "Successfully retrieved short url!", data: shortUrl },
+			{ status: 200 },
+		);
+	} catch (err) {
+		console.log(err);
+
+		if (err instanceof Error)
+			return NextResponse.json(
+				{ message: err.message, data: null },
+				{ status: 404 },
+			);
+
+		return NextResponse.json({ message: "Server error" }, { status: 500 });
+	}
+};
+
 // Define types for request body
 interface ShortenResourceRequest {
 	full_path: string;
@@ -15,16 +64,23 @@ interface ShortenResourceRequest {
 	id?: string;
 }
 
-export const POST = async (req: NextRequest) => {
+export const POST = async (
+	req: NextRequest,
+	{ params }: { params: Promise<{ id: number }> },
+) => {
 	const session = await getSession(req.headers);
 	const user = session?.user;
+
+	const { id } = await params;
+	if (!id) {
+		return NextResponse.json({ message: "Bad Request" }, { status: 400 });
+	}
 
 	try {
 		const body = (await req.json()) as ShortenResourceRequest;
 
 		const validationError = validateRequestBody(body, [
 			"full_path",
-			"resource_id",
 			"emails",
 			"access_level",
 		]);
@@ -32,7 +88,7 @@ export const POST = async (req: NextRequest) => {
 		if (validationError) return validationError;
 
 		const [accessId, shortCode] = await createOrUpdateShortUrl(
-			body,
+			{ ...body, resource_id: id },
 			user?.id,
 		);
 
@@ -89,8 +145,8 @@ const createOrUpdateShortUrl = async (
 			eq(resourceShortUrlAccess.resource_id, requestData.resource_id),
 		];
 
-		if (!userId) filter.push(isNull(resourceShortUrlAccess.user_id));
-		else filter.push(eq(resourceShortUrlAccess.user_id, userId));
+		if (userId) filter.push(eq(resourceShortUrlAccess.user_id, userId));
+		else filter.push(isNull(resourceShortUrlAccess.user_id));
 
 		// Check if short URL already exists for this resource and user
 		const existingShortUrls = await tx
@@ -106,12 +162,16 @@ const createOrUpdateShortUrl = async (
 				existingShortUrls[0].id) as number;
 
 			const [{ short_code, id }] = await tx
-				.select({
+				.update(resourceShortUrlAccess)
+				.set({
+					user_id: userId,
+					emails: requestData.emails,
+				})
+				.where(eq(resourceShortUrlAccess.id, shortUrlId))
+				.returning({
 					short_code: resourceShortUrlAccess.short_code,
 					id: resourceShortUrlAccess.id,
-				})
-				.from(resourceShortUrlAccess)
-				.where(eq(resourceShortUrlAccess.id, shortUrlId));
+				});
 
 			return [id, short_code];
 		}
@@ -124,7 +184,7 @@ const createOrUpdateShortUrl = async (
 			.values({
 				full_path: requestData.full_path,
 				resource_id: requestData.resource_id,
-				user_id: userId,
+				user_id: requestData.access_level === "public" ? null : userId,
 				short_code: shortCode,
 				emails: requestData.emails,
 			})

@@ -8,6 +8,7 @@ import { Button, Skeleton } from "@heroui/react";
 import { Plus } from "lucide-react";
 import { useEffect } from "react";
 import CreateCollectionButton from "./CreateCollectionButton";
+import { AnimatePresence } from "motion/react";
 
 type Props = {
 	type:
@@ -63,9 +64,11 @@ const ResourceCollectionTab = ({ type }: Props) => {
 					<CreateCollectionButton />
 				</div>
 			</div>
-			{data?.data.rows.map((collection: CollectionResponse) => (
-				<CollectionCard key={collection.name} data={collection} />
-			))}
+			<AnimatePresence mode="popLayout">
+				{data?.data.rows.map((collection: CollectionResponse) => (
+					<CollectionCard key={collection.name} data={collection} />
+				))}
+			</AnimatePresence>
 		</div>
 	);
 };
