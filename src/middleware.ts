@@ -88,5 +88,5 @@ export const config = {
 	// ! IMPORTANT: This is required for the middleware to run node runtime. PLEASE UPDATE WHEN THE STABLE RELEASE IS OUT.
 	// ! currently on canary version
 	runtime: "nodejs",
-	matcher: [...protectedRoutes, ...authRoutes],
+	// matcher: protectedRoutes.concat(authRoutes),
 };
