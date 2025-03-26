@@ -85,6 +85,20 @@ export const createCollectionWithResource = async (
 	resourceId: number,
 ): Promise<CollectionResponse> => {
 	return db.transaction(async (tx) => {
+		const exist = await tx
+			.select()
+			.from(collectionFolders)
+			.where(
+				and(
+					eq(collectionFolders.user_id, userId),
+					eq(collectionFolders.name, name),
+				),
+			);
+
+		if (exist.length) {
+			throw new Error("Collection already exists");
+		}
+
 		const [newCollectionFolder] = await tx
 			.insert(collectionFolders)
 			.values({ name, user_id: userId })
@@ -111,6 +125,19 @@ export const createEmptyCollection = async (
 	name: string,
 ): Promise<CollectionResponse> => {
 	return db.transaction(async (tx) => {
+		const exist = await tx
+			.select()
+			.from(collectionFolders)
+			.where(
+				and(
+					eq(collectionFolders.user_id, userId),
+					eq(collectionFolders.name, name),
+				),
+			);
+
+		if (exist.length) {
+			throw new Error("Collection already exists");
+		}
 		const [newCollectionFolder] = await tx
 			.insert(collectionFolders)
 			.values({ name, user_id: userId })

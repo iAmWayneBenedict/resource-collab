@@ -34,6 +34,12 @@ export const POST = async (req: NextRequest) => {
 			data: result,
 		});
 	} catch (error) {
+		if (error instanceof Error)
+			return NextResponse.json(
+				{ message: error.message, data: { path: ["name"] } },
+				{ status: 400 },
+			);
+
 		return NextResponse.json(
 			{ message: "Failed to create collection" },
 			{ status: 500 },

@@ -7,17 +7,23 @@ type Props = {
 	descriptionClasses?: string;
 };
 
-const BannerContent: React.FC<Props> = ({ title, description, descriptionClasses = "" }) => {
+const BannerContent: React.FC<Props> = ({
+	title,
+	description,
+	descriptionClasses = "",
+}) => {
 	return (
 		<>
-			<div className="flex items-center justify-between w-full">
+			<div className="flex w-full items-center justify-between">
 				<div className="flex flex-col gap-4">
-					<h1 className="text-5xl font-medium leading-snug whitespace-pre-line xl:text-6xl font-PlayFairDisplay">
+					<h1 className="whitespace-pre-line font-PlayFairDisplay text-5xl font-medium leading-snug xl:text-6xl">
 						{title}
 					</h1>
 				</div>
 			</div>
-			<p className={cn("mt-10 whitespace-pre-line", descriptionClasses)}>{description}</p>
+			<p className={cn("mt-10 whitespace-pre-line", descriptionClasses)}>
+				{description}
+			</p>
 		</>
 	);
 };

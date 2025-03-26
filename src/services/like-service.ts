@@ -56,7 +56,7 @@ export const findUserLikedResources = async (body: FindResourcesParams) => {
 			.from(likeResources)
 			.where(eq(likeResources.user_id, userId as string));
 
-		const filters: SQL[] = [eq(resources.owner_id, userId as string)];
+		const filters: SQL[] = [];
 
 		if (search) {
 			filters.push(

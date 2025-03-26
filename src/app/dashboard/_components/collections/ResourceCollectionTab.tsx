@@ -4,11 +4,18 @@ import { useGetUserResourcesQuery } from "@/lib/queries/user";
 import { useAuthUser } from "@/store";
 import useResourcePaginatedSearchParams from "@/store/context/useResourcePaginatedSearchParams";
 import { useCollections } from "@/store/useCollections";
-import { Skeleton } from "@heroui/react";
+import { Button, Skeleton } from "@heroui/react";
+import { Plus } from "lucide-react";
 import { useEffect } from "react";
+import CreateCollectionButton from "./CreateCollectionButton";
 
 type Props = {
-	type: "resources" | "liked" | "collections" | "shared";
+	type:
+		| "resources"
+		| "liked"
+		| "collections"
+		| "shared"
+		| "collection-resources";
 };
 const ResourceCollectionTab = ({ type }: Props) => {
 	const { authUser } = useAuthUser();
@@ -50,7 +57,12 @@ const ResourceCollectionTab = ({ type }: Props) => {
 	}
 
 	return (
-		<div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+		<div className="relative grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+			<div className="absolute -top-[3.25rem] right-0 hidden sm:flex">
+				<div className="flex flex-row gap-4">
+					<CreateCollectionButton />
+				</div>
+			</div>
 			{data?.data.rows.map((collection: CollectionResponse) => (
 				<CollectionCard key={collection.name} data={collection} />
 			))}

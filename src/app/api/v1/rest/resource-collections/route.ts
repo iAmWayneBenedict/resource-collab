@@ -69,3 +69,33 @@ export const GET = async (req: NextRequest) => {
 		);
 	}
 };
+
+export const DELETE = async (req: NextRequest) => {
+	const session = await getSession(req.headers);
+	const user = session?.user;
+
+	if (!user)
+		return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+
+	const body = await req.json();
+
+	if (!body?.ids || !body?.ids.length) {
+		return NextResponse.json({ message: "Bad Request" }, { status: 400 });
+	}
+
+	try {
+		await db
+			.delete(collectionFolders)
+			.where(inArray(collectionFolders.id, body.ids));
+		return NextResponse.json(
+			{ message: "Successfully deleted collections" },
+			{ status: 200 },
+		);
+	} catch (error) {
+		console.log(error);
+		return NextResponse.json(
+			{ message: "Something went wrong" },
+			{ status: 500 },
+		);
+	}
+};

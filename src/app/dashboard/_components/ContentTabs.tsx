@@ -3,18 +3,19 @@
 import { Tab, Tabs } from "@heroui/react";
 import {
 	Archive,
+	Bookmark,
 	GalleryVerticalEnd,
 	Heart,
 	Layers2,
 	Repeat,
 } from "lucide-react";
 import Link from "next/link";
-import TabBody from "./TabBody";
-import { useMediaQuery } from "react-responsive";
-import InternalTabs from "./InternalTabs";
 import ResourceTab from "./ResourceTab";
 import LikedTab from "./liked/LikedTab";
 import CollectionTab from "./collections/CollectionTab";
+import { useLayoutEffect } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useMobileScreen } from "@/hooks/useMediaQueries";
 
 let TABS = [
 	{
@@ -35,7 +36,7 @@ let TABS = [
 	{
 		id: "collections",
 		label: "Collections",
-		icon: <Layers2 size={16} />,
+		icon: <Bookmark size={16} />,
 	},
 	{
 		id: "shared",
@@ -44,8 +45,17 @@ let TABS = [
 	},
 ];
 
-const ContentTabs = ({ type }: { type: string }) => {
-	const mobileDevices = useMediaQuery({ query: "(max-width: 40rem)" });
+const ContentTabs = ({ type, id }: { type: string; id?: number | string }) => {
+	const mobileDevices = useMobileScreen();
+	const pathname = usePathname();
+	const router = useRouter();
+	const searchParams = useSearchParams();
+
+	// ensure that there is always a tab selected
+	useLayoutEffect(() => {
+		const tab = searchParams.get("tab") ?? "";
+		if (!tab && !id) router.push(`${pathname}?tab=resources`);
+	}, []);
 
 	return (
 		<div className="mt-24 flex w-full flex-col">
@@ -62,11 +72,12 @@ const ContentTabs = ({ type }: { type: string }) => {
 				}}
 				variant={mobileDevices ? "underlined" : "solid"}
 				fullWidth={mobileDevices}
+				suppressHydrationWarning
 			>
 				{TABS.map((item) => (
 					<Tab
 						as={Link}
-						href={"/dashboard/" + item.id}
+						href={`/dashboard/${item.id}?tab=${["resources", "liked", "collections"].includes(item.id) ? "resources" : ""}`}
 						key={item.id}
 						title={
 							<div className="flex items-center gap-2">
@@ -82,7 +93,7 @@ const ContentTabs = ({ type }: { type: string }) => {
 						)}
 						{type === "liked" && <LikedTab />}
 						{type === "collections" && (
-							<CollectionTab type={type as any} />
+							<CollectionTab type={type as any} id={id} />
 						)}
 					</Tab>
 				))}

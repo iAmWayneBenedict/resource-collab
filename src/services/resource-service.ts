@@ -8,6 +8,7 @@ import {
 	resourceTags,
 	tags,
 	userResources,
+	users,
 } from "@/data/schema";
 import { getSession } from "@/lib/auth";
 import { logMemoryUsage } from "@/lib/logger/memory";
@@ -22,6 +23,7 @@ import {
 	inArray,
 	InferInsertModel,
 	InferSelectModel,
+	isNull,
 	or,
 	sql,
 	SQL,
@@ -629,7 +631,6 @@ export const findUserResources = async (body: FindResourcesParams) => {
 		userId,
 		resourceIds = [],
 	} = body;
-
 	return await db.transaction(
 		async (
 			tx,
@@ -641,7 +642,28 @@ export const findUserResources = async (body: FindResourcesParams) => {
 				.select({ totalCount: count() })
 				.from(resources);
 
-			const filters: SQL[] = [eq(resources.owner_id, userId as string)];
+			const filters = [
+				or(
+					eq(resources.owner_id, userId as string),
+					exists(
+						tx
+							.select()
+							.from(resourceCollections)
+							.where(
+								and(
+									eq(
+										resourceCollections.user_id,
+										userId as string,
+									),
+									eq(
+										resourceCollections.resource_id,
+										resources.id,
+									),
+								),
+							),
+					),
+				),
+			];
 
 			if (search) {
 				filters.push(

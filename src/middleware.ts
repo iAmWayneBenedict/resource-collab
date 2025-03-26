@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { authRoutes, protectedRoutes } from "./routes";
-import { getSessionCookie } from "better-auth";
-import { cookies } from "next/headers";
-import { jwtDecode } from "jwt-decode";
+import { headers } from "next/headers";
+import { auth } from "./lib/auth";
 
 // Define allowed hosts
 const allowedHosts = [
@@ -11,34 +10,31 @@ const allowedHosts = [
 	"localhost:3000", // For local development
 ];
 
-const decode = (token: string | undefined) => {
-	if (!token) return null;
-	return JSON.parse(Buffer.from(token ?? "{}", "base64").toString());
-};
-
 export async function middleware(request: NextRequest): Promise<NextResponse> {
-	const sessionCookie = getSessionCookie(request);
+	const session = await auth.api.getSession({ headers: await headers() });
 	const targetPath = request.nextUrl.pathname;
-	// const cookie = (await cookies())?.get("better-auth.session_data")?.value;
-	// console.log("middleware", decode(cookie));
+	const user = session?.user;
 
-	// Check if the request is for an auth route, if so redirect to home
+	// Check if the request is for an auth route, if so redirect to home if user is logged in
 	const hasMatchAuthRoute = authRoutes.some((route) =>
 		targetPath.startsWith(route),
 	);
-	// if (sessionCookie && hasMatchAuthRoute) {
-	// 	return NextResponse.redirect(new URL("/", request.url), {
-	// 		status: 307,
-	// 	});
-	// }
+	if (user?.emailVerified && hasMatchAuthRoute) {
+		return NextResponse.redirect(new URL("/", request.url), {
+			status: 307,
+		});
+	}
 
-	// Check if the request is for a protected route, if so check for session, if no session return 403
+	// Check if the request is for a protected route, if so check for session, if no session redirect to login
 	const hasMatchProtectedRoute = protectedRoutes.some((route) =>
 		targetPath.startsWith(route),
 	);
-	// if (!sessionCookie && hasMatchProtectedRoute) {
-	// 	return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-	// }
+	if (!user && hasMatchProtectedRoute) {
+		return NextResponse.redirect(new URL("/auth/login", request.url), {
+			status: 307,
+		});
+	}
+
 	// Allow requests from localhost in development
 	if (process.env.NODE_ENVIRONMENT === "development") {
 		return NextResponse.next();
@@ -88,6 +84,9 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
 // apply middleware to protected and auth routes
 // Protected routes are routes that are only accessible to authenticated users.
 // Auth routes are routes that are only accessible to unauthenticated users.
-// export const config = {
-// 	matcher: [...protectedRoutes, ...authRoutes],
-// };
+export const config = {
+	// ! IMPORTANT: This is required for the middleware to run node runtime. PLEASE UPDATE WHEN THE STABLE RELEASE IS OUT.
+	// ! currently on canary version
+	runtime: "nodejs",
+	matcher: [...protectedRoutes, ...authRoutes],
+};

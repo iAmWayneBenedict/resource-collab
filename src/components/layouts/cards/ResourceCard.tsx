@@ -6,8 +6,8 @@ import SaveResourcePopOver from "./components/resources/SaveResourcePopOver";
 import { usePutViewResourceMutation } from "@/lib/mutations/resources";
 import { SaveResourceDrawer } from "./components/resources/SaveResourceDrawer";
 import { useState } from "react";
-import { useMediaQuery } from "react-responsive";
 import { Image } from "@heroui/react";
+import { useTabletOrSmallerScreen } from "@/hooks/useMediaQueries";
 
 type ResourceCardProps = {
 	data: any;
@@ -16,9 +16,7 @@ type ResourceCardProps = {
 const ResourceCard = ({ data }: ResourceCardProps) => {
 	const [isOpenDrawer, setIsOpenDrawer] = useState<boolean>(false);
 	const [icon, setIcon] = useState(data?.icon);
-	const isSmallDevices = useMediaQuery({
-		query: "(max-width: 64rem)",
-	});
+	const isSmallDevices = useTabletOrSmallerScreen();
 	const mutation = usePutViewResourceMutation({
 		params: data.id,
 		onSuccess: () => {
@@ -85,6 +83,7 @@ const ResourceCard = ({ data }: ResourceCardProps) => {
 						<Image
 							src={icon}
 							alt="image"
+							className="z-1"
 							width={45}
 							height={45}
 							onError={() =>
