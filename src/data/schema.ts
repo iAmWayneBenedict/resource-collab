@@ -41,7 +41,7 @@ import {
 import { accountRelations, accounts } from "./models/accounts";
 import { verifications } from "./models/verifications";
 import { userMessages } from "./models/user-message";
-import { accessLevel, permissionLevel } from "./models/collection-folders";
+import { accessLevel } from "./models/collection-folders";
 import {
 	resourceAccess,
 	resourceAccessRelations,
@@ -100,7 +100,6 @@ export {
 	collectionFolders,
 	collectionFoldersRelations,
 	accessLevel,
-	permissionLevel,
 	portfolioCollections,
 	portfolioCollectionsRelations,
 	resourceCollections,

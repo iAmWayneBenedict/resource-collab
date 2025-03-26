@@ -1,7 +1,8 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import { motion } from "motion/react";
 import { Image } from "@heroui/react";
-import { Layers2 } from "lucide-react";
 import { metadataThumbnail } from "../../../../public/assets/img";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import CollectionHeader from "./components/collections/CollectionHeader";
@@ -12,6 +13,8 @@ const CollectionCard = ({ data }: { data: CollectionResponse }) => {
 	const pathname = usePathname();
 	const searchParams = useSearchParams();
 	const tab = searchParams.get("tab");
+	const [enableClickHandler, setEnableClickHandler] =
+		useState<boolean>(false);
 
 	const onClickCardHandler = () => {
 		router.push(`${pathname}/${data.id}?tab=${tab}`);
@@ -19,7 +22,8 @@ const CollectionCard = ({ data }: { data: CollectionResponse }) => {
 
 	return (
 		<motion.div
-			// key={data.id}
+			key={data.id}
+			layout
 			initial={{ opacity: 0, y: 10 }}
 			animate={{ opacity: 1, y: 0 }}
 			exit={{ opacity: 0, y: 10 }}
@@ -35,7 +39,10 @@ const CollectionCard = ({ data }: { data: CollectionResponse }) => {
 			/>
 
 			{/* header */}
-			<CollectionHeader data={data} />
+			<CollectionHeader
+				data={data}
+				setEnableClickHandler={setEnableClickHandler}
+			/>
 
 			{/* footer */}
 			<CollectionFooter
@@ -44,10 +51,10 @@ const CollectionCard = ({ data }: { data: CollectionResponse }) => {
 			/>
 
 			{/* backdrop-top */}
-			<div className="z-1 pointer-events-none absolute inset-0 bg-gradient-to-b from-black/80 via-black/40 to-transparent" />
+			<div className="z-1 pointer-events-none absolute inset-0 bg-gradient-to-b from-black/70 via-black/30 to-transparent" />
 
 			{/* backdrop-bottom */}
-			<div className="z-1 pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
+			<div className="z-1 pointer-events-none absolute inset-0 bg-gradient-to-t from-black/50 via-black/30 to-transparent" />
 		</motion.div>
 	);
 };

@@ -11,6 +11,7 @@ import { useCollections } from "@/store/useCollections";
 import { useRequestStatus } from "@/store/useRequestStatus";
 import { Button, Skeleton } from "@heroui/react";
 import { useEffect } from "react";
+import { AnimatePresence } from "motion/react";
 
 type Props = {
 	type:
@@ -146,9 +147,11 @@ const ResourceWrapper = ({ type, id }: Props) => {
 
 	return (
 		<div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-			{data?.data.rows.map((resource: any) => (
-				<ResourceCard key={resource.name} data={resource} />
-			))}
+			<AnimatePresence mode={"popLayout"}>
+				{data?.data.rows.map((resource: any) => (
+					<ResourceCard key={resource.name} data={resource} />
+				))}
+			</AnimatePresence>
 		</div>
 	);
 };

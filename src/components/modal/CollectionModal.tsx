@@ -16,7 +16,10 @@ import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useModal } from "@/store";
-import { usePostCreateCollectionsMutation } from "@/lib/mutations/collections";
+import {
+	usePostCreateCollectionsMutation,
+	usePutCollectionFoldersMutation,
+} from "@/lib/mutations/collections";
 import { bindReactHookFormError } from "@/lib/utils";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -51,36 +54,45 @@ const CollectionModal = () => {
 		}
 	}, [name]);
 
-	const onCloseModal = () => {
-		if (isLoading) return;
+	const onCloseModal = (forceClose = false) => {
+		if (isLoading && !forceClose) return;
 		onClose();
 		onCloseToggle();
 	};
 
+	const onSuccess = (data: any) => {
+		onCloseModal(true);
+		addToast({
+			title: "Success",
+			description: `Collection ${type === "create" ? "created" : "updated"} successfully.`,
+			color: "success",
+		});
+		setIsLoading(false);
+		queryClient.invalidateQueries({
+			queryKey: ["user-collections"],
+		});
+	};
+
+	const onError = (error: any) => {
+		setIsLoading(false);
+		bindReactHookFormError(error.response.data, setError);
+		console.log(error);
+	};
+
 	const createMutation = usePostCreateCollectionsMutation({
-		onSuccess: (data) => {
-			addToast({
-				title: "Success",
-				description: "Collection created successfully.",
-				color: "success",
-			});
-			onCloseModal();
-			setIsLoading(false);
-			queryClient.invalidateQueries({
-				queryKey: ["user-collections"],
-			});
-			console.log(data);
-		},
-		onError: (error) => {
-			setIsLoading(false);
-			bindReactHookFormError(error.response.data, setError);
-			console.log(error);
-		},
+		onSuccess,
+		onError,
+	});
+	const updateMutation = usePutCollectionFoldersMutation({
+		params: data?.id,
+		onSuccess,
+		onError,
 	});
 
 	const onSubmit = (data: { name: string }) => {
 		setIsLoading(true);
-		createMutation.mutate(data);
+		if (type === "create") createMutation.mutate(data);
+		else updateMutation.mutate(data);
 	};
 
 	return (

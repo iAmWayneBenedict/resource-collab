@@ -2,6 +2,7 @@ import Container from "@/components/layouts/Container";
 import React, { ReactNode, Suspense } from "react";
 import UserProfile from "./UserProfile";
 import Layout from "@/components/layouts/users/Layout";
+import ShareModal from "@/components/modal/ShareModal";
 
 const DashboardWrapper = ({ children }: { children: ReactNode }) => {
 	return (
@@ -15,8 +16,8 @@ const DashboardWrapper = ({ children }: { children: ReactNode }) => {
 				</Container>
 				{/* <FilterFormModal /> */}
 				{/* <SearchFormModal /> */}
-				{/* <AISearchModal />
-				<ShareModal /> */}
+				{/* <AISearchModal /> */}
+				<ShareModal />
 			</Layout>
 		</Suspense>
 	);

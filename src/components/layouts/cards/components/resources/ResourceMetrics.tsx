@@ -6,8 +6,10 @@ import { addToast, Spinner } from "@heroui/react";
 import { useQueryClient } from "@tanstack/react-query";
 import { ChartNoAxesColumn, Heart, Share2 } from "lucide-react";
 import { usePostResourceShortUrlMutation } from "../../../../../lib/mutations/short_urls";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
+import { useGetResourceShortUrl } from "@/lib/queries/short-urls";
+import config from "@/config";
 
 type ResourceMetricsProps = {
 	id: number;
@@ -54,19 +56,26 @@ export const ResourceMetrics = ({
 	const searchParams = useResourcePaginatedSearchParams(
 		(state: ResourcePaginatedSearchParamsState) => state.searchParams,
 	) as ResourcePaginatedSearchParamsState["searchParams"];
+	const pathname = usePathname();
 	const onOpenModal = useModal((state) => state.onOpen);
 	const setSubmitCallback = useModal((state) => state.setSubmitCallback);
 	const [shareData, setShareData] = useState<Record<string, any> | null>(
 		null,
 	);
+	const [enabledInitShortUrl, setEnableInitShortUrl] =
+		useState<boolean>(false);
 	const { authUser } = useAuthUser();
+
+	const restrictedTo = pathname === "/resources" ? "public" : null;
+
 	const resourceShortUrlMutation = usePostResourceShortUrlMutation({
+		params: id,
 		onSuccess: (data) => {
 			// console.log(data);
 			setShareData({
 				id: data.data.id,
 				url: data.data.short_url,
-				restrictedTo: "public",
+				restrictedTo,
 				type: "Resource",
 			});
 			onOpenModal(
@@ -74,7 +83,7 @@ export const ResourceMetrics = ({
 				{
 					id: data.data.id,
 					url: data.data.short_url,
-					restrictedTo: "public",
+					restrictedTo,
 					type: "Resource",
 				},
 				undefined,
@@ -88,7 +97,6 @@ export const ResourceMetrics = ({
 		const req = {
 			...data,
 			full_path: url,
-			resource_id: id,
 		};
 		resourceShortUrlMutation.mutate(req);
 	};
@@ -96,12 +104,39 @@ export const ResourceMetrics = ({
 	const onClickShareHandler = () => {
 		const data = shareData ?? {
 			url: null,
-			restrictedTo: "public",
+			restrictedTo,
 			type: "Resource",
 		};
+		setEnableInitShortUrl(true);
 		onOpenModal("share-resource", data, undefined, name);
 		setSubmitCallback(onSubmitShare);
 	};
+
+	const shortUrlResponse = useGetResourceShortUrl({
+		enabled: enabledInitShortUrl,
+		resourceId: id,
+	});
+
+	useEffect(() => {
+		if (shortUrlResponse.isSuccess) {
+			onOpenModal(
+				"share-resource",
+				{
+					...shortUrlResponse.data.data,
+					emails: shortUrlResponse.data.data.emails.length
+						? shortUrlResponse.data.data.emails.join(",")
+						: "",
+					type: "Resource",
+					url:
+						config.BASE_URL +
+						"/r/" +
+						shortUrlResponse.data.data.short_code,
+				},
+				undefined,
+				name,
+			);
+		}
+	}, [shortUrlResponse.data, shortUrlResponse.isSuccess]);
 
 	// Create query key array for better reusability
 	const getQueryKey = () => searchParams.queryKey;

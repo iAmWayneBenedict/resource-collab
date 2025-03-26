@@ -25,3 +25,12 @@ export const useDeleteCollectionFoldersMutation = ({
 		endpoint: "/resource-collections",
 		...options,
 	});
+export const usePutCollectionFoldersMutation = ({
+	params,
+	...options
+}: TMutationOptions) =>
+	useHookMutation({
+		method: "put",
+		endpoint: "/resource-collections/" + params,
+		...options,
+	});

@@ -11,7 +11,7 @@ export const accessLevel = pgEnum("access_level", [
 	"shared",
 ]);
 
-export const permissionLevel = pgEnum("permission_level", ["view", "edit"]);
+// export const permissionLevel = pgEnum("permission_level", ["view", "edit"]);
 
 export const collectionFolders = pgTable("collection_folders", {
 	id: serial("id").primaryKey(),
@@ -23,9 +23,9 @@ export const collectionFolders = pgTable("collection_folders", {
 		.notNull(),
 	name: varchar("name").notNull(),
 	access_level: accessLevel("access_level").notNull().default("private"),
-	permission_level: permissionLevel("permission_level")
-		.notNull()
-		.default("view"),
+	// permission_level: permissionLevel("permission_level")
+	// 	.notNull()
+	// 	.default("view"),
 }).enableRLS();
 
 export const collectionFoldersRelations = relations(

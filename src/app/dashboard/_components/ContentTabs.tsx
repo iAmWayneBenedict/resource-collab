@@ -16,6 +16,7 @@ import CollectionTab from "./collections/CollectionTab";
 import { useLayoutEffect } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useMobileScreen } from "@/hooks/useMediaQueries";
+import NoScrollLink from "@/components/custom/NoScrollLink";
 
 let TABS = [
 	{
@@ -54,7 +55,8 @@ const ContentTabs = ({ type, id }: { type: string; id?: number | string }) => {
 	// ensure that there is always a tab selected
 	useLayoutEffect(() => {
 		const tab = searchParams.get("tab") ?? "";
-		if (!tab && !id) router.push(`${pathname}?tab=resources`);
+		if (!tab && !id)
+			router.push(`${pathname}?tab=resources`, { scroll: false });
 	}, []);
 
 	return (
@@ -66,7 +68,7 @@ const ContentTabs = ({ type, id }: { type: string; id?: number | string }) => {
 				classNames={{
 					base: "sticky sm:relative top-0 z-10",
 					tabList:
-						"bg-[#f9f8f6] sm:bg-default-200 sm:rounded-full overflow-x-visible sm:overflow-x-scroll pb-3 sm:pb-1",
+						"bg-[#f9f8f6] dark:bg-[#191919] dark:sm:bg-default-200 sm:bg-default-200 w-full sm:w-fit sm:rounded-full overflow-x-visible sm:overflow-x-scroll pb-3 sm:pb-1",
 					cursor: "dark:bg-white bg-violet sm:bg-default-100 dark:sm:bg-zinc-900 -bottom-2 sm:bottom-0",
 					panel: "border-t-1 pt-5 mt-5 border-zinc-300",
 				}}
@@ -77,7 +79,7 @@ const ContentTabs = ({ type, id }: { type: string; id?: number | string }) => {
 			>
 				{TABS.map((item) => (
 					<Tab
-						as={Link}
+						as={NoScrollLink}
 						href={`/dashboard/${item.id}?tab=${["resources", "liked", "collections"].includes(item.id) ? "resources" : ""}`}
 						key={item.id}
 						title={

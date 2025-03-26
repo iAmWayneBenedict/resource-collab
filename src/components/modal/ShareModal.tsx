@@ -2,7 +2,7 @@
 
 import { useModal } from "@/store";
 import { Button, Modal, ModalBody, ModalContent } from "@heroui/react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import AccessLevel from "./components/ShareModal/access-level";
 import PermissionLevel from "./components/ShareModal/permission-level";
 import SharedEmails from "./components/ShareModal/shared-emails";
@@ -20,9 +20,9 @@ const ShareModal = () => {
 	useEffect(() => {
 		if (name === "share-resource") {
 			setIsOpen(true);
-			setShareType(data?.restrictedTo);
+			setShareType(data?.restrictedTo ?? "private");
+			setIsLoadingShortUrl(true);
 			if (data?.restrictedTo && !data?.id) {
-				setIsLoadingShortUrl(true);
 				onSubmitCallback({
 					id: data?.id ?? null,
 					access_level: data?.restrictedTo,
@@ -33,10 +33,21 @@ const ShareModal = () => {
 	}, [name]);
 
 	useEffect(() => {
-		if (data?.id && data?.restrictedTo) {
+		if (data?.id) {
 			setIsLoadingShortUrl(false);
 		}
+		if (data?.id && data?.emails && name === "share-resource") {
+			setEmails(data?.emails);
+		}
 	}, [data]);
+
+	// Add a new useEffect to trigger handleChange when shareType, emails, or role changes
+	useEffect(() => {
+		// Only trigger if the modal is open to avoid unnecessary API calls
+		if (isOpen && name === "share-resource") {
+			handleChange();
+		}
+	}, [shareType, emails, role]);
 
 	const onCloseModal = (state: boolean) => {
 		setIsOpen(state);
@@ -50,6 +61,22 @@ const ShareModal = () => {
 			setTimeout(() => setCopied(false), 2000);
 		}
 	};
+
+	const handleChange = useCallback(() => {
+		setIsLoadingShortUrl(true);
+		onSubmitCallback({
+			id: data?.id,
+			access_level: shareType,
+			permission_level: role,
+			emails:
+				shareType === "public"
+					? []
+					: emails
+							.split(",")
+							.map((email) => email.trim())
+							.filter((e) => e),
+		});
+	}, [data?.id, shareType, role, emails, onSubmitCallback]);
 
 	const handleSendInvite = () => {
 		// Logic to send invites to the emails with selected role
@@ -88,7 +115,7 @@ const ShareModal = () => {
 									</div>
 								)}
 
-								{!data?.restrictedTo && (
+								{data?.type !== "Resource" && (
 									<div className="mb-6">
 										<PermissionLevel
 											role={role}
