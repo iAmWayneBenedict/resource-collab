@@ -22,18 +22,20 @@ const CollectionFooter = ({
 		>
 			<div className="flex flex-1 items-end justify-between gap-2 px-5 pb-4">
 				{/* title */}
-				<div className="flex items-center gap-2">
-					<span className="text-default-200 dark:text-default-700">
-						<Layers2 size={16} />
-					</span>
-					<h3 className="line-clamp-1 text-default-200 ~text-sm/xs dark:text-default-700 lg:~text-base/sm">
-						{data.name}
-					</h3>
-				</div>
-				<div className="flex flex-col items-center gap-2">
-					<span className="text-default-200 ~text-sm/xs dark:text-default-700">
+				<div className="flex flex-col gap-2">
+					<span className="ml-1 text-default-200 ~text-sm/xs dark:text-default-700">
 						{data.resourceCount}
 					</span>
+					<div className="flex items-center gap-2">
+						<span className="text-default-200 dark:text-default-700">
+							<Layers2 size={16} />
+						</span>
+						<h3 className="line-clamp-1 text-default-200 ~text-sm/xs dark:text-default-700 lg:~text-base/sm">
+							{data.name}
+						</h3>
+					</div>
+				</div>
+				<div className="flex flex-col items-center gap-2">
 					<span className="mb-1 text-default-200 dark:text-default-700">
 						{accessLevelIcon}
 					</span>

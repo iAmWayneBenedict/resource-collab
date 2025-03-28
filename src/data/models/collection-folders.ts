@@ -1,7 +1,6 @@
-import { relations } from "drizzle-orm";
-import { pgEnum, pgTable, serial, varchar } from "drizzle-orm/pg-core";
+import { relations, sql } from "drizzle-orm";
+import { jsonb, pgEnum, pgTable, serial, varchar } from "drizzle-orm/pg-core";
 import { users } from "./users";
-import { folderAccess } from "./folder-access";
 import { resourceCollections } from "./resource-collections";
 import { portfolioCollections } from "./portfolio-collections";
 
@@ -23,6 +22,9 @@ export const collectionFolders = pgTable("collection_folders", {
 		.notNull(),
 	name: varchar("name").notNull(),
 	access_level: accessLevel("access_level").notNull().default("private"),
+	shared_to: jsonb("shared_to")
+		.default(sql`'[]'::jsonb`)
+		.notNull(),
 	// permission_level: permissionLevel("permission_level")
 	// 	.notNull()
 	// 	.default("view"),
@@ -37,6 +39,5 @@ export const collectionFoldersRelations = relations(
 		}),
 		resourceCollections: many(resourceCollections),
 		portfolioCollections: many(portfolioCollections),
-		folderAccess: many(folderAccess),
 	}),
 );

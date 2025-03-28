@@ -1,11 +1,12 @@
 "use client";
 
-import { useGetResourceShortUrlRedirect } from "@/lib/queries/short-urls";
+import { useGetCollectionShortUrlRedirect } from "@/lib/queries/short-urls";
 import { useParams, useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import { Spinner, Button, Spacer } from "@heroui/react";
 import Image from "next/image";
 import { bgGradient4 } from "../../../../../public/assets/img";
+import { cn } from "@/lib/utils";
 
 const RedirectShortUrl = () => {
 	const params = useParams();
@@ -19,7 +20,7 @@ const RedirectShortUrl = () => {
 		isSuccess,
 		isError,
 		error: queryError,
-	} = useGetResourceShortUrlRedirect({
+	} = useGetCollectionShortUrlRedirect({
 		short_code: (params?.short_code || "") as string,
 	});
 
@@ -35,9 +36,9 @@ const RedirectShortUrl = () => {
 			setErrorStatus(axiosError?.response?.status);
 			// Handle different error scenarios
 			if (axiosError?.response?.status === 401) {
-				setError("Authentication required to access this resource");
+				setError("Authentication required to access this collection");
 			} else if (axiosError?.response?.status === 403) {
-				setError("You don't have permission to access this resource");
+				setError("You don't have permission to access this collection");
 			} else {
 				setError("This short URL is invalid or has expired");
 			}
@@ -58,7 +59,7 @@ const RedirectShortUrl = () => {
 				<div className="flex flex-col items-center justify-center">
 					<Spinner size="lg" className="text-violet" />
 					<p className="mt-4 text-lg font-medium text-gray-700">
-						Redirecting you to the resource...
+						Redirecting you to the collection...
 					</p>
 					<p className="mt-2 text-sm text-gray-500">
 						This may take a moment
@@ -80,7 +81,7 @@ const RedirectShortUrl = () => {
 						/>
 					</div>
 					<h1 className="mt-6 text-center font-PlayFairDisplay text-4xl font-semibold">
-						Resource Access
+						Collection Access
 					</h1>
 				</div>
 
@@ -109,7 +110,12 @@ const RedirectShortUrl = () => {
 					<Button
 						onPress={() => router.push("/")}
 						radius="full"
-						className="w-full bg-violet text-white"
+						variant={errorStatus === 401 ? "light" : "solid"}
+						className={cn(
+							errorStatus === 401
+								? "w-full"
+								: "w-full bg-violet text-white",
+						)}
 					>
 						Return to Home
 					</Button>

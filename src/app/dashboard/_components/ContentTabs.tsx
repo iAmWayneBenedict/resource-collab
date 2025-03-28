@@ -6,17 +6,15 @@ import {
 	Bookmark,
 	GalleryVerticalEnd,
 	Heart,
-	Layers2,
 	Repeat,
 } from "lucide-react";
-import Link from "next/link";
 import ResourceTab from "./ResourceTab";
 import LikedTab from "./liked/LikedTab";
 import CollectionTab from "./collections/CollectionTab";
 import { useLayoutEffect } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useMobileScreen } from "@/hooks/useMediaQueries";
 import NoScrollLink from "@/components/custom/NoScrollLink";
+import { useMediaQuery } from "react-responsive";
 
 let TABS = [
 	{
@@ -41,13 +39,13 @@ let TABS = [
 	},
 	{
 		id: "shared",
-		label: "Shared",
+		label: "Shared with me",
 		icon: <Repeat size={16} />,
 	},
 ];
 
 const ContentTabs = ({ type, id }: { type: string; id?: number | string }) => {
-	const mobileDevices = useMobileScreen();
+	const mobileDevices = useMediaQuery({ query: "(max-width: 40rem)" });
 	const pathname = usePathname();
 	const router = useRouter();
 	const searchParams = useSearchParams();

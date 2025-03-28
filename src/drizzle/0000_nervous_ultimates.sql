@@ -1,5 +1,4 @@
 CREATE TYPE "public"."access_level" AS ENUM('public', 'private', 'shared');--> statement-breakpoint
-CREATE TYPE "public"."permission_level" AS ENUM('view', 'edit');--> statement-breakpoint
 CREATE TYPE "public"."subscription_enum" AS ENUM('early access', 'free', 'premium', 'enterprise');--> statement-breakpoint
 CREATE TYPE "public"."users_enum" AS ENUM('user', 'admin', 'guest');--> statement-breakpoint
 CREATE TYPE "public"."users_status_enum" AS ENUM('active', 'inactive', 'archived');--> statement-breakpoint
@@ -41,10 +40,20 @@ CREATE TABLE "collection_folders" (
 	"user_id" varchar NOT NULL,
 	"name" varchar NOT NULL,
 	"access_level" "access_level" DEFAULT 'private' NOT NULL,
-	"permission_level" "permission_level" DEFAULT 'view' NOT NULL
+	"shared_to" jsonb DEFAULT '[]'::jsonb NOT NULL
 );
 --> statement-breakpoint
 ALTER TABLE "collection_folders" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
+CREATE TABLE "collection_short_urls" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"short_code" varchar(10) NOT NULL,
+	"collection_folder_id" serial NOT NULL,
+	"user_id" text,
+	"expired_at" timestamp with time zone DEFAULT now(),
+	CONSTRAINT "collection_short_urls_short_code_unique" UNIQUE("short_code")
+);
+--> statement-breakpoint
+ALTER TABLE "collection_short_urls" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "email_verification_codes" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"user_id" text NOT NULL,
@@ -66,13 +75,6 @@ CREATE TABLE "external_messages" (
 );
 --> statement-breakpoint
 ALTER TABLE "external_messages" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
-CREATE TABLE "folder_access" (
-	"id" serial PRIMARY KEY NOT NULL,
-	"collection_folder_id" serial NOT NULL,
-	"emails" jsonb DEFAULT '[]'::jsonb NOT NULL
-);
---> statement-breakpoint
-ALTER TABLE "folder_access" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "like_resources" (
 	"user_id" varchar NOT NULL,
 	"resource_id" integer NOT NULL,
@@ -261,8 +263,9 @@ ALTER TABLE "verifications" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 ALTER TABLE "accounts" ADD CONSTRAINT "accounts_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
 ALTER TABLE "admins" ADD CONSTRAINT "admins_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
 ALTER TABLE "collection_folders" ADD CONSTRAINT "collection_folders_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
+ALTER TABLE "collection_short_urls" ADD CONSTRAINT "collection_short_urls_collection_folder_id_collection_folders_id_fk" FOREIGN KEY ("collection_folder_id") REFERENCES "public"."collection_folders"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
+ALTER TABLE "collection_short_urls" ADD CONSTRAINT "collection_short_urls_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
 ALTER TABLE "email_verification_codes" ADD CONSTRAINT "email_verification_codes_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
-ALTER TABLE "folder_access" ADD CONSTRAINT "folder_access_collection_folder_id_collection_folders_id_fk" FOREIGN KEY ("collection_folder_id") REFERENCES "public"."collection_folders"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
 ALTER TABLE "like_resources" ADD CONSTRAINT "like_resources_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
 ALTER TABLE "like_resources" ADD CONSTRAINT "like_resources_resource_id_resources_id_fk" FOREIGN KEY ("resource_id") REFERENCES "public"."resources"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
 ALTER TABLE "oauth_account" ADD CONSTRAINT "oauth_account_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint

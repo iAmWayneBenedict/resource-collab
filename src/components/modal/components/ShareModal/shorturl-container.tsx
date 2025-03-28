@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import { Button, Spinner, Tooltip } from "@heroui/react";
 import { CheckCheck, Copy, Link } from "lucide-react";
 import React from "react";
@@ -28,7 +29,14 @@ const ShortUrlContainer = ({
 			</p>
 			<div className="flex items-center gap-2 rounded-full bg-default-100 p-2">
 				<Link size={16} className="ml-2 text-default-500" />
-				<span className="flex-1 truncate text-sm">{data?.url}</span>
+				<span
+					className={cn(
+						"flex-1 truncate text-sm",
+						isLoadingShortUrl && "select-none opacity-50",
+					)}
+				>
+					{data?.url}
+				</span>
 				<Tooltip
 					content={"Resource link copied!"}
 					placement="top"
@@ -41,7 +49,7 @@ const ShortUrlContainer = ({
 						radius="full"
 						onPress={handleCopyUrl}
 						isIconOnly={isLoadingShortUrl}
-						isDisabled={isLoadingShortUrl}
+						isDisabled={isLoadingShortUrl || !data?.url}
 					>
 						{isLoadingShortUrl ? (
 							<Spinner size="sm" />

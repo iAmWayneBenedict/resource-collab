@@ -24,7 +24,6 @@ import {
 	collectionFolders,
 	collectionFoldersRelations,
 } from "./models/collection-folders";
-import { folderAccess, folderAccessRelations } from "./models/folder-access";
 import { likeResourcesRelations, likeResources } from "./models/like-resources";
 import { tags, tagsRelations } from "./models/tags";
 import { resourceTags, resourceTagsRelations } from "./models/resource-tags";
@@ -42,6 +41,10 @@ import { accountRelations, accounts } from "./models/accounts";
 import { verifications } from "./models/verifications";
 import { userMessages } from "./models/user-message";
 import { accessLevel } from "./models/collection-folders";
+import {
+	collectionShortUrls,
+	collectionShortUrlRelations,
+} from "./models/collection-short-urls";
 import {
 	resourceAccess,
 	resourceAccessRelations,
@@ -104,13 +107,13 @@ export {
 	portfolioCollectionsRelations,
 	resourceCollections,
 	resourceCollectionsRelations,
-	folderAccess,
-	folderAccessRelations,
 	resourceAccess,
 	resourceAccessRelations,
 	// short urls
 	resourceShortUrlAccess,
 	resourceShortUrlAccessRelations,
+	collectionShortUrls,
+	collectionShortUrlRelations,
 
 	// relationships and tags
 	userResources,

@@ -28,9 +28,11 @@ export function SaveResourceDrawer({
 	const onCompleteHandler = () => {
 		onOpenChangeHandler(false);
 	};
+	console.log(1234);
 
 	const onOpenChangeHandler = (isOpen: boolean) => {
-		console.log(isOpen);
+		console.log(123);
+		console.log(isOpen, "test");
 		if (!authUser) {
 			onOpenModal("auth-modal", {});
 			return;

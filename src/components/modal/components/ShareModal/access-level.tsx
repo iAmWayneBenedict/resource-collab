@@ -1,8 +1,8 @@
-import { useTabletOrSmallerScreen } from "@/hooks/useMediaQueries";
 import { cn } from "@/lib/utils";
 import { Radio, RadioGroup } from "@heroui/react";
 import { Globe, Lock } from "lucide-react";
 import React from "react";
+import { useMediaQuery } from "react-responsive";
 
 const ACCESS_LEVELS = [
 	{
@@ -23,14 +23,25 @@ type Props = {
 	shareType: "private" | "public";
 	data: any;
 	setShareType: (shareType: "private" | "public") => void;
+	handleChange: (e: any) => void;
 };
 
-const AccessLevel = ({ shareType, data, setShareType }: Props) => {
-	const isSmallDevices = useTabletOrSmallerScreen();
+const AccessLevel = ({
+	shareType,
+	data,
+	setShareType,
+	handleChange,
+}: Props) => {
+	const isSmallDevices = useMediaQuery({
+		query: "(max-width: 64rem)",
+	});
 	return (
 		<RadioGroup
 			value={shareType}
-			onValueChange={setShareType as any}
+			onValueChange={(e) => {
+				setShareType(e as "private" | "public");
+				handleChange({ access_level: e });
+			}}
 			orientation={isSmallDevices ? "vertical" : "horizontal"}
 			classNames={{
 				wrapper: "flex gap-3",

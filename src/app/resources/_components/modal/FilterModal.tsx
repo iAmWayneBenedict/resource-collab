@@ -20,7 +20,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import { useGetCategoriesQuery } from "../../../../lib/queries/categories";
-import { useTabletOrSmallerScreen } from "@/hooks/useMediaQueries";
+import { useMediaQuery } from "react-responsive";
 
 const SORT_LIST = ["Newest", "Oldest", "Alphabetical", "Reverse Alphabetical"];
 const FilterFormSchema = z.object({
@@ -32,7 +32,9 @@ const FilterFormSchema = z.object({
 const FilterFormModal = () => {
 	const { isOpen, onOpen, onOpenChange } = useDisclosure();
 	const [isSubmitting, setIsSubmitting] = useState(false);
-	const isSmallDevices = useTabletOrSmallerScreen();
+	const isSmallDevices = useMediaQuery({
+		query: "(max-width: 64rem)",
+	});
 
 	const router = useRouter();
 	const searchParams = useSearchParams();

@@ -28,7 +28,7 @@ import { useAuthUser, useModal } from "@/store";
 import { collectionItemIcons } from "../../utils";
 import useResourcePaginatedSearchParams from "@/store/context/useResourcePaginatedSearchParams";
 import { ResourcePaginatedSearchParamsState } from "@/store/context/providers/ResourcePaginatedSearchParams";
-import { useTabletOrSmallerScreen } from "@/hooks/useMediaQueries";
+import { useMediaQuery } from "react-responsive";
 
 // Collection item type
 // Update the Collection type to include additional information
@@ -65,7 +65,9 @@ export const CollectionsList = ({
 	collectionList,
 	resourceId,
 }: CollectionsListProps) => {
-	const isSmallDevices = useTabletOrSmallerScreen();
+	const isSmallDevices = useMediaQuery({
+		query: "(max-width: 64rem)",
+	});
 	const searchParams = useResourcePaginatedSearchParams(
 		(state: ResourcePaginatedSearchParamsState) => state.searchParams,
 	) as ResourcePaginatedSearchParamsState["searchParams"];
@@ -248,7 +250,9 @@ export const CreateCollectionForm = ({
 	onBack,
 	onComplete,
 }: CreateCollectionFormProps) => {
-	const isSmallDevices = useTabletOrSmallerScreen();
+	const isSmallDevices = useMediaQuery({
+		query: "(max-width: 64rem)",
+	});
 	const searchParams = useResourcePaginatedSearchParams(
 		(state: ResourcePaginatedSearchParamsState) => state.searchParams,
 	) as ResourcePaginatedSearchParamsState["searchParams"];

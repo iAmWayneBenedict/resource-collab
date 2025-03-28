@@ -1,11 +1,10 @@
-import config from "@/config";
 import pinecone from "./pinecone";
 
 const createPineconeIndex = async () => {
 	try {
 		console.log("Creating Pinecone index...");
 		await pinecone.createIndex({
-			name: config.PINECONE_INDEX_NAME!,
+			name: process.env.PINECONE_INDEX_NAME!,
 			dimension: 1024, // Replace with your model dimensions
 			metric: "cosine", // Replace with your model metric
 			spec: {
