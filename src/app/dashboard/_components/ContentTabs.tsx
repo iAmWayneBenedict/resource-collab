@@ -1,6 +1,6 @@
 "use client";
 
-import { Tab, Tabs } from "@heroui/react";
+import { Tab, Tabs, Skeleton } from "@heroui/react";
 import {
 	Archive,
 	Bookmark,
@@ -11,7 +11,7 @@ import {
 import ResourceTab from "./ResourceTab";
 import LikedTab from "./liked/LikedTab";
 import CollectionTab from "./collections/CollectionTab";
-import { useEffect, useLayoutEffect, useState } from "react";
+import { Fragment, useEffect, useLayoutEffect, useState } from "react";
 import {
 	useParams,
 	usePathname,
@@ -21,6 +21,7 @@ import {
 import NoScrollLink from "@/components/custom/NoScrollLink";
 import { useMediaQuery } from "react-responsive";
 import { useClientRouter } from "@/hooks/useClientRouter";
+import { useLoading } from "@/store/useLoading";
 
 let TABS = [
 	{
@@ -58,19 +59,17 @@ const ContentTabs = () => {
 	const { type, id } = useParams();
 	// const [type, id] = useClientRouter([1, 2]);
 	const [currentTab, setCurrentTab] = useState<string>(type as string);
+	const setLoading = useLoading((state) => state.setLoading);
 
 	useEffect(() => {
-		if (currentTab !== type) setCurrentTab(type as string);
-	}, [type]);
+		// if (currentTab !== type) setCurrentTab(type as string);
+		setLoading(false);
+	}, []);
 	// ensure that there is always a tab selected
 	useLayoutEffect(() => {
 		const tab = searchParams.get("tab") ?? "";
 		if (!tab && !id)
 			router.push(`${pathname}?tab=resources`, { scroll: false });
-		// router.prefetch("/dashboard/resources");
-		// router.prefetch("/dashboard/portfolios");
-		// router.prefetch("/dashboard/liked");
-		// router.prefetch("/dashboard/collections");
 	}, []);
 
 	return (
@@ -79,15 +78,11 @@ const ContentTabs = () => {
 				selectedKey={currentTab}
 				onSelectionChange={(key) => {
 					setCurrentTab(key as string);
+					setLoading(true);
 					router.push(
 						`/dashboard/${key}?tab=${["resources", "liked", "collections"].includes(key as string) ? "resources" : ""}`,
 						{ scroll: false },
 					);
-					// history.pushState(
-					// 	{ keyId: key },
-					// 	"",
-					// 	`/dashboard/${key}?tab=${["resources", "liked", "collections"].includes(key as string) ? "resources" : ""}`,
-					// );
 				}}
 				aria-label="Dynamic tabs"
 				radius="full"
