@@ -23,11 +23,11 @@ const CollectionCard = ({ data }: { data: CollectionResponse }) => {
 	return (
 		<motion.div
 			key={data.id}
-			layout
-			initial={{ opacity: 0, y: 10 }}
-			animate={{ opacity: 1, y: 0 }}
-			exit={{ opacity: 0, y: 10 }}
-			transition={{ ease: "easeInOut", duration: 0.2 }}
+			// layout
+			// initial={{ opacity: 0, y: 10 }}
+			// animate={{ opacity: 1, y: 0 }}
+			// exit={{ opacity: 0, y: 10 }}
+			// transition={{ ease: "easeInOut", duration: 0.2 }}
 			className="group relative flex min-w-[17rem] flex-1 cursor-pointer flex-col overflow-hidden rounded-2xl bg-content1 shadow-md dark:border-small dark:border-default-200 xl:min-w-[20%]"
 		>
 			<Image

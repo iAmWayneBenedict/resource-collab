@@ -13,6 +13,7 @@ import { Button, Skeleton } from "@heroui/react";
 import { useEffect } from "react";
 import { AnimatePresence } from "motion/react";
 import { useRouter } from "next/navigation";
+import { useLoading } from "@/store/useLoading";
 
 type Props = {
 	type:
@@ -36,6 +37,7 @@ const ResourceWrapper = ({ type, id }: Props) => {
 	const setRequestStatus = useRequestStatus(
 		(state) => state.setRequestStatus,
 	);
+	const { isLoading: isLoadingParent } = useLoading();
 
 	const { data, isSuccess, isLoading, isFetching, error, isError } =
 		useGetUserResourcesQuery({}, { user_id: authUser?.id, type, id });
@@ -80,17 +82,19 @@ const ResourceWrapper = ({ type, id }: Props) => {
 		isLoadingOrFetching = isLoading;
 	}
 
-	if (isLoadingOrFetching) {
+	if (isLoadingOrFetching || isLoadingParent) {
 		return (
 			<div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
 				{/* <h3 className="text-xl">Loading...</h3> */}
 				{Array.from({ length: 6 }).map((_, index) => (
-					<Skeleton
+					<div
 						key={index}
-						className="m-0 flex h-72 min-w-[19rem] flex-1 flex-col rounded-2xl p-0 md:min-w-[22rem]"
+						className="m-0 flex h-72 min-w-[19rem] flex-1 flex-col gap-3 rounded-2xl p-0 md:min-w-[22rem]"
 					>
-						<div className="relative" />
-					</Skeleton>
+						<Skeleton className="h-48 w-full rounded-xl" />
+						<Skeleton className="h-4 w-3/4 rounded-xl" />
+						<Skeleton className="h-4 w-1/2 rounded-xl" />
+					</div>
 				))}
 			</div>
 		);
