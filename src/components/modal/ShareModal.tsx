@@ -45,7 +45,6 @@ const ShareModal = () => {
 			}
 		}
 	}, [name]);
-	console.log(title);
 	// Update state based on data changes
 	useEffect(() => {
 		if (data?.loaded) {
