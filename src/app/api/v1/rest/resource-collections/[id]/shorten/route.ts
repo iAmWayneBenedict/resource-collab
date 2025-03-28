@@ -2,9 +2,9 @@ import { getSession } from "@/lib/auth";
 import { NextRequest, NextResponse } from "next/server";
 import { nanoid } from "nanoid";
 import { db } from "@/data/connection";
-import { resourceAccess, resourceShortUrlAccess } from "@/data/schema";
+import { collectionFolders, collectionShortUrls } from "@/data/schema";
 import config from "@/config";
-import { and, eq, isNull } from "drizzle-orm";
+import { and, eq, InferSelectModel, isNull } from "drizzle-orm";
 
 export const GET = async (
 	req: NextRequest,
@@ -24,12 +24,29 @@ export const GET = async (
 	try {
 		const [shortUrl] = await db.transaction(async (tx) => {
 			const exist = await tx
-				.select()
-				.from(resourceShortUrlAccess)
+				.select({
+					collection_short_urls: collectionShortUrls,
+					collection_folders: {
+						name: collectionFolders.name,
+						access_level: collectionFolders.access_level,
+						shared_to: collectionFolders.shared_to,
+					},
+				})
+				.from(collectionShortUrls)
 				.where(
 					and(
-						eq(resourceShortUrlAccess.resource_id, id as number),
-						eq(resourceShortUrlAccess.user_id, user.id),
+						eq(
+							collectionShortUrls.collection_folder_id,
+							id as number,
+						),
+						eq(collectionShortUrls.user_id, user.id),
+					),
+				)
+				.leftJoin(
+					collectionFolders,
+					eq(
+						collectionFolders.id,
+						collectionShortUrls.collection_folder_id,
 					),
 				);
 
@@ -57,10 +74,9 @@ export const GET = async (
 
 // Define types for request body
 interface ShortenResourceRequest {
-	full_path: string;
-	resource_id: number;
-	emails: string[];
-	access_level: string;
+	shared_to: Record<string, string>[];
+	access_level: "public" | "private" | "shared";
+	collection_folder_id?: number;
 	id?: string;
 }
 
@@ -71,6 +87,10 @@ export const POST = async (
 	const session = await getSession(req.headers);
 	const user = session?.user;
 
+	if (!user) {
+		return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+	}
+
 	const { id } = await params;
 	if (!id) {
 		return NextResponse.json({ message: "Bad Request" }, { status: 400 });
@@ -80,16 +100,15 @@ export const POST = async (
 		const body = (await req.json()) as ShortenResourceRequest;
 
 		const validationError = validateRequestBody(body, [
-			"full_path",
-			"emails",
+			"shared_to",
 			"access_level",
 		]);
 
 		if (validationError) return validationError;
 
 		const shortUrl = await createOrUpdateShortUrl(
-			{ ...body, resource_id: id },
-			user?.id,
+			{ ...body, collection_folder_id: id },
+			user.id,
 		);
 
 		return NextResponse.json(
@@ -97,7 +116,7 @@ export const POST = async (
 				message: "Success",
 				data: {
 					...shortUrl,
-					short_url: `${config.BASE_URL}/r/${shortUrl.short_code}`,
+					short_url: `${config.BASE_URL}/c/${shortUrl.short_code}`,
 				},
 			},
 			{ status: 200 },
@@ -137,56 +156,75 @@ const validateRequestBody = (body: any, requiredFields: string[]) => {
  */
 const createOrUpdateShortUrl = async (
 	requestData: ShortenResourceRequest,
-	userId: string | undefined,
-) => {
+	userId: string,
+): Promise<InferSelectModel<typeof collectionShortUrls>> => {
 	// this will create separate shorturls for public access and for users
 	return db.transaction(async (tx) => {
 		const filter = [
-			eq(resourceShortUrlAccess.resource_id, requestData.resource_id),
+			eq(
+				collectionShortUrls.collection_folder_id,
+				requestData.collection_folder_id as number,
+			),
+			eq(collectionShortUrls.user_id, userId),
 		];
-
-		if (userId) filter.push(eq(resourceShortUrlAccess.user_id, userId));
-		else filter.push(isNull(resourceShortUrlAccess.user_id));
 
 		// Check if short URL already exists for this resource and user
 		const existingShortUrls = await tx
 			.select()
-			.from(resourceShortUrlAccess)
+			.from(collectionShortUrls)
 			.where(and(...filter));
 
 		const shortUrlExists = requestData?.id || existingShortUrls.length > 0;
 
 		// Update existing short URL
 		if (shortUrlExists) {
-			const shortUrlId = (requestData.id ??
-				existingShortUrls[0].id) as number;
-
-			const [shortUrl] = await tx
-				.update(resourceShortUrlAccess)
+			const [{ name }] = await tx
+				.update(collectionFolders)
 				.set({
-					user_id: userId,
-					emails: requestData.emails,
+					shared_to: requestData.shared_to,
+					access_level: requestData.access_level,
 				})
-				.where(eq(resourceShortUrlAccess.id, shortUrlId))
-				.returning();
+				.where(
+					eq(
+						collectionFolders.id,
+						requestData.collection_folder_id as number,
+					),
+				)
+				.returning({ name: collectionFolders.name });
+			const resultShortUrl = {
+				...existingShortUrls[0],
+				name,
+				access_level: requestData.access_level,
+				shared_to: requestData.shared_to,
+			};
 
-			return shortUrl;
+			return resultShortUrl;
 		}
 
 		// Create new short URL
 		const shortCode = nanoid(6);
 
+		await tx.update(collectionFolders).set({
+			access_level: requestData.access_level,
+			shared_to: requestData.shared_to,
+		});
+
 		const [shortUrl] = await tx
-			.insert(resourceShortUrlAccess)
+			.insert(collectionShortUrls)
 			.values({
-				full_path: requestData.full_path,
-				resource_id: requestData.resource_id,
-				user_id: requestData.access_level === "public" ? null : userId,
+				user_id: userId,
+				collection_folder_id:
+					requestData.collection_folder_id as number,
 				short_code: shortCode,
-				emails: requestData.emails,
 			})
 			.returning();
 
-		return shortUrl;
+		const resultShortUrl = {
+			...shortUrl,
+			access_level: requestData.access_level,
+			shared_to: requestData.shared_to,
+		};
+
+		return resultShortUrl;
 	});
 };

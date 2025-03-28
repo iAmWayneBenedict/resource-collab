@@ -5,12 +5,14 @@ import { Button, Kbd, Tooltip } from "@heroui/react";
 import { Search, Sparkles } from "lucide-react";
 import React from "react";
 import "./styles.css";
-import { useTabletOrSmallerScreen } from "@/hooks/useMediaQueries";
+import { useMediaQuery } from "react-responsive";
 
 const SearchModalTrigger = () => {
 	const { onOpen: onOpenModal } = useModal();
 	const { authUser } = useAuthUser();
-	const isSmallDevices = useTabletOrSmallerScreen();
+	const isSmallDevices = useMediaQuery({
+		query: "(max-width: 64rem)",
+	});
 
 	const clickSearchHandler = () => {
 		onOpenModal("Search Filter", null);

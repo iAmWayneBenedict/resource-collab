@@ -7,7 +7,7 @@ import { usePutViewResourceMutation } from "@/lib/mutations/resources";
 import { SaveResourceDrawer } from "./components/resources/SaveResourceDrawer";
 import { useState } from "react";
 import { Image } from "@heroui/react";
-import { useTabletOrSmallerScreen } from "@/hooks/useMediaQueries";
+import { useMediaQuery } from "react-responsive";
 
 type ResourceCardProps = {
 	data: any;
@@ -16,7 +16,9 @@ type ResourceCardProps = {
 const ResourceCard = ({ data }: ResourceCardProps) => {
 	const [isOpenDrawer, setIsOpenDrawer] = useState<boolean>(false);
 	const [icon, setIcon] = useState(data?.icon);
-	const isSmallDevices = useTabletOrSmallerScreen();
+	const isSmallDevices = useMediaQuery({
+		query: "(max-width: 64rem)",
+	});
 	const mutation = usePutViewResourceMutation({
 		params: data.id,
 		onSuccess: () => {
@@ -48,6 +50,7 @@ const ResourceCard = ({ data }: ResourceCardProps) => {
 	const collectionList = data?.resourceCollections.map(
 		(id: number) => id + "",
 	);
+	console.log(isSmallDevices);
 	return (
 		<motion.div
 			key={data.id}

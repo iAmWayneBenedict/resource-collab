@@ -21,9 +21,10 @@ type Props = {
 	role: "view" | "edit";
 	setRole: (role: "view" | "edit") => void;
 	data: any;
+	handleChange: (e: any) => void;
 };
 
-const PermissionLevel = ({ role, setRole, data }: Props) => {
+const PermissionLevel = ({ role, setRole, data, handleChange }: Props) => {
 	return (
 		<Fragment>
 			<Spacer />
@@ -31,7 +32,10 @@ const PermissionLevel = ({ role, setRole, data }: Props) => {
 				label="Select permission level"
 				labelPlacement="outside"
 				value={role}
-				onChange={(e) => setRole(e.target.value as "view" | "edit")}
+				onChange={(e) => {
+					setRole(e.target.value as "view" | "edit");
+					handleChange({ permission_level: e.target.value });
+				}}
 				className="w-full"
 				defaultSelectedKeys={["view"]}
 				aria-label="Select permission level"

@@ -12,6 +12,7 @@ import { useRequestStatus } from "@/store/useRequestStatus";
 import { Button, Skeleton } from "@heroui/react";
 import { useEffect } from "react";
 import { AnimatePresence } from "motion/react";
+import { useRouter } from "next/navigation";
 
 type Props = {
 	type:
@@ -25,6 +26,7 @@ type Props = {
 	id?: number | string;
 };
 const ResourceWrapper = ({ type, id }: Props) => {
+	const router = useRouter();
 	const { authUser } = useAuthUser();
 	const setSearchParams = useResourcePaginatedSearchParams(
 		(state: ResourcePaginatedSearchParamsState) =>
@@ -136,7 +138,7 @@ const ResourceWrapper = ({ type, id }: Props) => {
 					<Button
 						radius="full"
 						className="bg-violet text-white"
-						onPress={() => window.location.reload()}
+						onPress={() => router.push("/resources")}
 					>
 						Start adding now
 					</Button>

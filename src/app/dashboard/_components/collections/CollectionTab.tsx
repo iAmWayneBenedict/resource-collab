@@ -1,9 +1,9 @@
 import { Tab, Tabs } from "@heroui/react";
-import React from "react";
+import React, { useState } from "react";
 import ResourceCollectionTab from "./ResourceCollectionTab";
 import ResourceTab from "../ResourceTab";
 import OptionsHeader from "../OptionsHeader";
-import { useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import CollectionModal from "@/components/modal/CollectionModal";
 
 type Props = {
@@ -17,7 +17,10 @@ type Props = {
 };
 const CollectionTab = ({ type, id }: Props) => {
 	const searchParams = useSearchParams();
+	const pathname = usePathname();
+	const router = useRouter();
 	const tab = searchParams.get("tab");
+	const [currentTab, setCurrentTab] = useState<string>(tab as string);
 
 	if (type === "collections" && tab === "resources" && id) {
 		return (
@@ -31,6 +34,12 @@ const CollectionTab = ({ type, id }: Props) => {
 	return (
 		<div>
 			<Tabs
+				selectedKey={currentTab}
+				onSelectionChange={(key) => {
+					setCurrentTab(key as string);
+
+					router.push(`${pathname}?tab=${key}`);
+				}}
 				aria-label="Tabs variants"
 				variant={"light"}
 				radius="full"

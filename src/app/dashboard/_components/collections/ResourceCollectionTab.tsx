@@ -1,14 +1,9 @@
 import CollectionCard from "@/components/layouts/cards/CollectionCard";
-import { useGetCollectionsQuery } from "@/lib/queries/collections";
 import { useGetUserResourcesQuery } from "@/lib/queries/user";
 import { useAuthUser } from "@/store";
-import useResourcePaginatedSearchParams from "@/store/context/useResourcePaginatedSearchParams";
-import { useCollections } from "@/store/useCollections";
-import { Button, Skeleton } from "@heroui/react";
-import { Plus } from "lucide-react";
-import { useEffect } from "react";
+import { Skeleton } from "@heroui/react";
 import CreateCollectionButton from "./CreateCollectionButton";
-import { AnimatePresence } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 
 type Props = {
 	type:
@@ -20,26 +15,11 @@ type Props = {
 };
 const ResourceCollectionTab = ({ type }: Props) => {
 	const { authUser } = useAuthUser();
-	const setCollections = useCollections((state) => state.setCollections);
 
 	const { data, isSuccess, isLoading, isFetching } = useGetUserResourcesQuery(
 		{},
 		{ user_id: authUser?.id, type },
 	);
-
-	// useEffect(() => {
-	// 	setSearchParams({ queryKey: [`user-${type}`] });
-	// }, []);
-
-	const collections = useGetCollectionsQuery({
-		enabled: !!authUser,
-	});
-
-	useEffect(() => {
-		if (!collections.isSuccess) return;
-
-		setCollections(collections.data?.data);
-	}, [collections.isSuccess, collections.data]);
 
 	if (isLoading) {
 		return (
@@ -59,11 +39,16 @@ const ResourceCollectionTab = ({ type }: Props) => {
 
 	return (
 		<div className="relative grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
-			<div className="absolute -top-[3.25rem] right-0 hidden sm:flex">
+			<motion.div
+				initial={{ opacity: 0 }}
+				animate={{ opacity: 1 }}
+				transition={{ duration: 0.25 }}
+				className="fixed bottom-10 right-5 z-[999] flex sm:absolute sm:-top-[3.25rem]"
+			>
 				<div className="flex flex-row gap-4">
 					<CreateCollectionButton />
 				</div>
-			</div>
+			</motion.div>
 			<AnimatePresence mode="popLayout">
 				{data?.data.rows.map((collection: CollectionResponse) => (
 					<CollectionCard key={collection.name} data={collection} />

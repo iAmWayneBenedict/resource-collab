@@ -23,11 +23,8 @@ export const GET = async (
 	try {
 		const response = await db.transaction(async (tx) => {
 			const [result] = await tx.query.resourceShortUrlAccess.findMany({
-				columns: {
-					full_path: true,
-					resource_id: true,
-					emails: true,
-				},
+				columns: { full_path: true, resource_id: true, emails: true },
+				with: { user: { columns: { email: true } } },
 				where: eq(resourceShortUrlAccess.short_code, p.short_code),
 				limit: 1,
 			});
@@ -37,8 +34,10 @@ export const GET = async (
 					// User not logged in but email access is required
 					return { message: "Authentication required", status: 401 };
 				}
-
-				if (!result.emails.includes(user?.email!)) {
+				if (
+					!result.emails.includes(user?.email!) &&
+					result.user?.email !== user?.email
+				) {
 					// User is logged in but doesn't have access
 					return { message: "Access denied", status: 403 };
 				}
@@ -57,7 +56,7 @@ export const GET = async (
 		if (response.status !== 200)
 			return NextResponse.json(
 				{ message: response.message },
-				{ status: 401 },
+				{ status: response.status },
 			);
 
 		return NextResponse.json(

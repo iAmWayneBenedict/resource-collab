@@ -239,6 +239,9 @@ const LargeNav = () => {
 									className="transition-transform"
 									isBordered
 									size="sm"
+									imgProps={{
+										loading: "eager",
+									}}
 								/>
 							</DropdownTrigger>
 							<DropdownMenu

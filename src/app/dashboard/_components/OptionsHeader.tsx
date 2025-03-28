@@ -1,13 +1,13 @@
-import { useMobileScreen } from "@/hooks/useMediaQueries";
 import { useRequestStatus } from "@/store/useRequestStatus";
 import { Button } from "@heroui/react";
 import { MoveLeft, Plus, Settings2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React from "react";
+import { useMediaQuery } from "react-responsive";
 
 const OptionsHeader = () => {
 	const router = useRouter();
-	const isMobileScreen = useMobileScreen();
+	const isMobileScreen = useMediaQuery({ query: "(max-width: 40rem)" });
 	const { requestStatus } = useRequestStatus();
 
 	const onClickReturnHandler = () => router.back();

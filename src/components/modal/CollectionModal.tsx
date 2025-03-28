@@ -98,6 +98,7 @@ const CollectionModal = () => {
 	return (
 		<Fragment>
 			<Modal
+				placement="center"
 				isOpen={isOpen}
 				onOpenChange={onCloseModal}
 				isDismissable={!isLoading}

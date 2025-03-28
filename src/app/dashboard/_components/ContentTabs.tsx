@@ -6,17 +6,21 @@ import {
 	Bookmark,
 	GalleryVerticalEnd,
 	Heart,
-	Layers2,
 	Repeat,
 } from "lucide-react";
-import Link from "next/link";
 import ResourceTab from "./ResourceTab";
 import LikedTab from "./liked/LikedTab";
 import CollectionTab from "./collections/CollectionTab";
-import { useLayoutEffect } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useMobileScreen } from "@/hooks/useMediaQueries";
+import { useEffect, useLayoutEffect, useState } from "react";
+import {
+	useParams,
+	usePathname,
+	useRouter,
+	useSearchParams,
+} from "next/navigation";
 import NoScrollLink from "@/components/custom/NoScrollLink";
+import { useMediaQuery } from "react-responsive";
+import { useClientRouter } from "@/hooks/useClientRouter";
 
 let TABS = [
 	{
@@ -41,46 +45,66 @@ let TABS = [
 	},
 	{
 		id: "shared",
-		label: "Shared",
+		label: "Shared with me",
 		icon: <Repeat size={16} />,
 	},
 ];
 
-const ContentTabs = ({ type, id }: { type: string; id?: number | string }) => {
-	const mobileDevices = useMobileScreen();
+const ContentTabs = () => {
+	const mobileDevices = useMediaQuery({ query: "(max-width: 40rem)" });
 	const pathname = usePathname();
 	const router = useRouter();
 	const searchParams = useSearchParams();
+	const { type, id } = useParams();
+	// const [type, id] = useClientRouter([1, 2]);
+	const [currentTab, setCurrentTab] = useState<string>(type as string);
 
+	useEffect(() => {
+		if (currentTab !== type) setCurrentTab(type as string);
+	}, [type]);
 	// ensure that there is always a tab selected
 	useLayoutEffect(() => {
 		const tab = searchParams.get("tab") ?? "";
 		if (!tab && !id)
 			router.push(`${pathname}?tab=resources`, { scroll: false });
+		// router.prefetch("/dashboard/resources");
+		// router.prefetch("/dashboard/portfolios");
+		// router.prefetch("/dashboard/liked");
+		// router.prefetch("/dashboard/collections");
 	}, []);
 
 	return (
 		<div className="mt-24 flex w-full flex-col">
 			<Tabs
-				selectedKey={type}
+				selectedKey={currentTab}
+				onSelectionChange={(key) => {
+					setCurrentTab(key as string);
+					router.push(
+						`/dashboard/${key}?tab=${["resources", "liked", "collections"].includes(key as string) ? "resources" : ""}`,
+						{ scroll: false },
+					);
+					// history.pushState(
+					// 	{ keyId: key },
+					// 	"",
+					// 	`/dashboard/${key}?tab=${["resources", "liked", "collections"].includes(key as string) ? "resources" : ""}`,
+					// );
+				}}
 				aria-label="Dynamic tabs"
 				radius="full"
 				classNames={{
-					base: "sticky sm:relative top-0 z-10",
+					base: "sticky w-full sm:w-fit sm:relative top-0 z-10",
 					tabList:
 						"bg-[#f9f8f6] dark:bg-[#191919] dark:sm:bg-default-200 sm:bg-default-200 w-full sm:w-fit sm:rounded-full overflow-x-visible sm:overflow-x-scroll pb-3 sm:pb-1",
 					cursor: "dark:bg-white bg-violet sm:bg-default-100 dark:sm:bg-zinc-900 -bottom-2 sm:bottom-0",
 					panel: "border-t-1 pt-5 mt-5 border-zinc-300",
 				}}
 				variant={mobileDevices ? "underlined" : "solid"}
-				fullWidth={mobileDevices}
+				// fullWidth={mobileDevices}
 				suppressHydrationWarning
 				shouldSelectOnPressUp={false}
 			>
 				{TABS.map((item) => (
 					<Tab
-						as={NoScrollLink}
-						href={`/dashboard/${item.id}?tab=${["resources", "liked", "collections"].includes(item.id) ? "resources" : ""}`}
 						key={item.id}
 						title={
 							<div className="flex items-center gap-2">
@@ -91,12 +115,15 @@ const ContentTabs = ({ type, id }: { type: string; id?: number | string }) => {
 							</div>
 						}
 					>
-						{type === "resources" && (
-							<ResourceTab type={type as any} />
+						{currentTab === "resources" && (
+							<ResourceTab type={currentTab as any} />
 						)}
-						{type === "liked" && <LikedTab />}
-						{type === "collections" && (
-							<CollectionTab type={type as any} id={id} />
+						{currentTab === "liked" && <LikedTab />}
+						{currentTab === "collections" && (
+							<CollectionTab
+								type={currentTab as any}
+								id={id as string}
+							/>
 						)}
 					</Tab>
 				))}

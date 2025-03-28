@@ -2,7 +2,7 @@
 
 import { useAuthUser } from "@/store";
 import { Avatar, Button } from "@heroui/react";
-import { Cog, Settings } from "lucide-react";
+import { Settings } from "lucide-react";
 import React from "react";
 
 const UserProfile = () => {

@@ -28,10 +28,10 @@ const CollectionCard = ({ data }: { data: CollectionResponse }) => {
 			animate={{ opacity: 1, y: 0 }}
 			exit={{ opacity: 0, y: 10 }}
 			transition={{ ease: "easeInOut", duration: 0.2 }}
-			className="relative flex min-w-[17rem] flex-1 cursor-pointer flex-col overflow-hidden rounded-2xl bg-content1 shadow-md dark:border-small dark:border-default-200 xl:min-w-[20%]"
+			className="group relative flex min-w-[17rem] flex-1 cursor-pointer flex-col overflow-hidden rounded-2xl bg-content1 shadow-md dark:border-small dark:border-default-200 xl:min-w-[20%]"
 		>
 			<Image
-				className="z-1 h-full w-full object-cover"
+				className="z-1 h-full w-full object-cover group-hover:scale-105"
 				classNames={{ wrapper: "w-full h-full !max-w-full" }}
 				alt="heroui"
 				src={data.thumbnail || metadataThumbnail.src}

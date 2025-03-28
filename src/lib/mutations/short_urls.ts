@@ -7,3 +7,13 @@ export const usePostResourceShortUrlMutation = ({
 }: TMutationOptions): UseMutationResult<
 	TSuccessAPIResponse<any> | TErrorAPIResponse
 > => useHookMutation({ endpoint: `/resources/${params}/shorten`, ...options });
+export const usePostCollectionsShortUrlMutation = ({
+	params,
+	...options
+}: TMutationOptions): UseMutationResult<
+	TSuccessAPIResponse<any> | TErrorAPIResponse
+> =>
+	useHookMutation({
+		endpoint: `/resource-collections/${params}/shorten`,
+		...options,
+	});

@@ -7,82 +7,139 @@ import AccessLevel from "./components/ShareModal/access-level";
 import PermissionLevel from "./components/ShareModal/permission-level";
 import SharedEmails from "./components/ShareModal/shared-emails";
 import ShortUrlContainer from "./components/ShareModal/shorturl-container";
+import { toggleScrollBody } from "@/lib/utils";
+
+interface ShareValues {
+	access_level?: "private" | "public";
+	permission_level?: "view" | "edit";
+	emails?: string;
+	sharedTo?: Record<string, string>[];
+	id?: number | null;
+}
 
 const ShareModal = () => {
 	const [isOpen, setIsOpen] = useState<boolean>(false);
 	const [copied, setCopied] = useState<boolean>(false);
-	const [emails, setEmails] = useState<string>("");
+	// const [emails, setEmails] = useState<string>("");
+	const [sharedTo, setSharedTo] = useState<Record<string, string>[]>([]);
 	const [shareType, setShareType] = useState<"private" | "public">("private");
 	const [role, setRole] = useState<"view" | "edit">("view");
-	const { name, data, title, onClose, onSubmitCallback } = useModal();
 	const [isLoadingShortUrl, setIsLoadingShortUrl] = useState<boolean>(false);
+	const { name, data, title, onClose, onSubmitCallback } = useModal();
 
+	// Initialize modal state when opened
 	useEffect(() => {
-		if (name === "share-resource") {
+		if (name === "share-modal") {
 			setIsOpen(true);
 			setShareType(data?.restrictedTo ?? "private");
 			setIsLoadingShortUrl(true);
+			toggleScrollBody(true);
+
+			// Only submit if we have restrictedTo but no ID
 			if (data?.restrictedTo && !data?.id) {
 				onSubmitCallback({
-					id: data?.id ?? null,
-					access_level: data?.restrictedTo,
-					emails: [],
+					id: null,
+					access_level: data.restrictedTo,
+					sharedTo: [],
 				});
 			}
 		}
 	}, [name]);
-
+	// Update state based on data changes
 	useEffect(() => {
-		if (data?.id) {
+		if (data?.loaded) {
+			console.log("should be false");
 			setIsLoadingShortUrl(false);
 		}
-		if (data?.id && data?.emails && name === "share-resource") {
-			setEmails(data?.emails);
+		if (name === "share-modal") {
+			if (data?.id && data?.shared_to) {
+				// setEmails(data.emails);
+				const hasSharedTo = data.shared_to?.length > 0;
+				setSharedTo(data.shared_to);
+				setShareType(
+					data?.access_level === "shared" && !hasSharedTo
+						? "private"
+						: data?.access_level,
+				);
+			} else {
+				// setEmails("");
+				setSharedTo([]);
+			}
 		}
 	}, [data]);
 
-	// Add a new useEffect to trigger handleChange when shareType, emails, or role changes
-	useEffect(() => {
-		// Only trigger if the modal is open to avoid unnecessary API calls
-		if (isOpen && name === "share-resource") {
-			handleChange();
-		}
-	}, [shareType, emails, role]);
-
-	const onCloseModal = (state: boolean) => {
-		setIsOpen(state);
+	const onCloseModal = useCallback(() => {
+		setIsOpen(false);
 		onClose();
-	};
+		toggleScrollBody(false);
+	}, [onClose]);
 
-	const handleCopyUrl = () => {
+	const handleCopyUrl = useCallback(() => {
 		if (data?.url) {
 			navigator.clipboard.writeText(data.url);
 			setCopied(true);
 			setTimeout(() => setCopied(false), 2000);
 		}
+	}, [data?.url]);
+
+	const handleChange = useCallback(
+		(values: ShareValues) => {
+			const access_level = values?.access_level || shareType;
+			const permission_level = values?.permission_level || role;
+			const shared_to =
+				values?.sharedTo === undefined ? sharedTo : values?.sharedTo;
+			let sharedToType = {};
+			if (data?.type === "Resource") {
+				sharedToType = {
+					emails:
+						access_level === "public"
+							? []
+							: shared_to.map(({ email }) => email),
+				};
+			} else if (data?.type === "Collection") {
+				sharedToType = {
+					shared_to: access_level === "public" ? [] : shared_to,
+				};
+			}
+			setIsLoadingShortUrl(true);
+			onSubmitCallback({
+				id: data?.id,
+				access_level: shared_to.length ? "shared" : access_level,
+				permission_level,
+				...sharedToType,
+			});
+		},
+		[data?.id, data?.type, shareType, role, sharedTo, data?.type],
+	);
+
+	const renderAccessLevel = () => {
+		if (data?.restrictedTo) return null;
+
+		return (
+			<div className="mb-6">
+				<AccessLevel
+					shareType={shareType}
+					setShareType={setShareType}
+					handleChange={handleChange}
+					data={data}
+				/>
+			</div>
+		);
 	};
 
-	const handleChange = useCallback(() => {
-		setIsLoadingShortUrl(true);
-		onSubmitCallback({
-			id: data?.id,
-			access_level: shareType,
-			permission_level: role,
-			emails:
-				shareType === "public"
-					? []
-					: emails
-							.split(",")
-							.map((email) => email.trim())
-							.filter((e) => e),
-		});
-	}, [data?.id, shareType, role, emails, onSubmitCallback]);
+	const renderPermissionLevel = () => {
+		if (data?.type === "Resource" || shareType === "private") return null;
 
-	const handleSendInvite = () => {
-		// Logic to send invites to the emails with selected role
-		console.log("Sending invites to:", emails, "with role:", role);
-		// Reset the input field after sending
-		setEmails("");
+		return (
+			<div className="mb-6">
+				<PermissionLevel
+					handleChange={handleChange}
+					role={role}
+					setRole={setRole}
+					data={data}
+				/>
+			</div>
+		);
 	};
 
 	return (
@@ -105,31 +162,15 @@ const ShareModal = () => {
 									Give your audience access to "{title}".
 								</p>
 
-								{!data?.restrictedTo && (
-									<div className="mb-6">
-										<AccessLevel
-											shareType={shareType}
-											setShareType={setShareType}
-											data={data}
-										/>
-									</div>
-								)}
-
-								{data?.type !== "Resource" && (
-									<div className="mb-6">
-										<PermissionLevel
-											role={role}
-											setRole={setRole}
-											data={data}
-										/>
-									</div>
-								)}
+								{renderAccessLevel()}
+								{renderPermissionLevel()}
 
 								{shareType === "private" && (
 									<SharedEmails
-										emails={emails}
-										setEmails={setEmails}
-										handleSendInvite={handleSendInvite}
+										handleChange={handleChange}
+										sharedTo={sharedTo}
+										setSharedTo={setSharedTo}
+										type={data?.type}
 									/>
 								)}
 								<ShortUrlContainer
@@ -145,13 +186,13 @@ const ShareModal = () => {
 									<div className="flex gap-2">
 										<Button
 											variant="light"
-											onPress={() => onCloseModal(false)}
+											onPress={onCloseModal}
 											radius="full"
 										>
 											Cancel
 										</Button>
 										<Button
-											onPress={() => onCloseModal(false)}
+											onPress={onCloseModal}
 											className="bg-violet text-white"
 											radius="full"
 										>
@@ -167,4 +208,5 @@ const ShareModal = () => {
 		</Modal>
 	);
 };
+
 export default ShareModal;

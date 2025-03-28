@@ -1,26 +1,27 @@
 import {
 	Button,
 	Input,
-	Chip,
 	Avatar,
 	Dropdown,
 	DropdownTrigger,
 	DropdownMenu,
 	DropdownItem,
+	User,
 } from "@heroui/react";
-import { Mail, Eye, ChevronDown, Pencil } from "lucide-react";
-import React, { Fragment, useMemo, useState, KeyboardEvent } from "react";
+import { Mail, Eye, ChevronDown, Pencil, X } from "lucide-react";
+import React, { Fragment, useMemo, useState, KeyboardEvent, Key } from "react";
 
 type Props = {
-	emails: string;
-	setEmails: (value: string) => void;
-	handleSendInvite: () => void;
+	sharedTo: Record<string, string>[];
+	setSharedTo: (value: Record<string, string>[]) => void;
+	type: "Resource" | "Collection";
+	handleChange: (e: any) => void;
 };
 
-const SharedEmails = ({ emails, setEmails, handleSendInvite }: Props) => {
+const SharedEmails = ({ sharedTo, setSharedTo, type, handleChange }: Props) => {
 	const [inputValue, setInputValue] = useState("");
 	const [error, setError] = useState("");
-	const [users, setUsers] = useState<any>([]);
+	const [recentAddedEmails, setRecentAddedEmails] = useState<string[]>([]);
 
 	// Email validation regex
 	const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -28,29 +29,44 @@ const SharedEmails = ({ emails, setEmails, handleSendInvite }: Props) => {
 	const validateEmail = (email: string): boolean => {
 		return emailRegex.test(email);
 	};
-
 	const emailList = useMemo(() => {
-		return emails
-			.split(",")
-			.map((email) => email.trim())
-			.filter((email) => email !== "");
-	}, [emails]);
+		return sharedTo.map((user) => ({ ...user, email: user.email.trim() }));
+	}, [sharedTo]);
 
 	const removeEmail = (emailToRemove: string) => {
-		const newEmails = emailList
-			.filter((email) => email !== emailToRemove)
-			.join(", ");
-		setEmails(newEmails);
+		const newSharedTo = sharedTo.filter(
+			(user) => user.email !== emailToRemove,
+		);
+		setSharedTo(newSharedTo);
+		setRecentAddedEmails((prev) =>
+			prev.filter((email) => email !== emailToRemove),
+		);
+		handleChange({
+			sharedTo: newSharedTo,
+		});
 	};
 
 	const addEmail = (newEmail: string) => {
 		if (!newEmail) return;
+		const isEmailExist = emailList.find((user) => user.email === newEmail);
+		// Check if email already exists in the list
+		if (isEmailExist) {
+			setError(`"${newEmail}" has already been added`);
+			return;
+		}
 
 		if (validateEmail(newEmail)) {
-			const updatedEmails = emails ? `${emails}, ${newEmail}` : newEmail;
-			setEmails(updatedEmails);
+			const updatedSharedTo = [
+				...sharedTo,
+				{ email: newEmail, permission: "view" },
+			];
+			setSharedTo(updatedSharedTo);
+			setRecentAddedEmails((prev) => [...prev, newEmail]);
 			setInputValue("");
 			setError("");
+			handleChange({
+				sharedTo: updatedSharedTo,
+			});
 		} else {
 			setError(`"${newEmail}" is not a valid email address`);
 		}
@@ -75,12 +91,19 @@ const SharedEmails = ({ emails, setEmails, handleSendInvite }: Props) => {
 	};
 
 	// New function to handle permission changes
-	const handlePermissionChange = (userId: number, permission: string) => {
-		// setUsers(
-		// 	users.map((user) =>
-		// 		user.id === userId ? { ...user, permission } : user,
-		// 	),
-		// );
+	const handlePermissionChange = (email: string, permission: string) => {
+		const updatedSharedTo = sharedTo.map((user) => {
+			if (user.email === email) {
+				return { ...user, permission };
+			}
+			return user;
+		});
+		setSharedTo(updatedSharedTo);
+		handleChange({ sharedTo: updatedSharedTo });
+	};
+
+	const handleSendInvite = () => {
+		console.log(recentAddedEmails);
 	};
 
 	return (
@@ -123,108 +146,105 @@ const SharedEmails = ({ emails, setEmails, handleSendInvite }: Props) => {
 						Send Invite
 					</Button>
 				</div>
-
-				{emailList.length > 0 && (
-					<div className="mt-2 flex flex-wrap gap-2">
-						{emailList.map((email, index) => (
-							<Chip
-								key={index}
-								onClose={() => removeEmail(email)}
-								variant="flat"
-								radius="full"
-							>
-								{email}
-							</Chip>
-						))}
-					</div>
-				)}
 			</div>
 
 			<div className="mb-6">
 				<h3 className="mb-2 text-sm font-medium">Audience</h3>
-				{users.length > 0 ? (
-					<div className="space-y-3">
-						{users.map((user: any) => (
-							<div
-								key={user.id}
-								className="flex items-center justify-between rounded-xl border border-default-200 p-2"
-							>
-								<div className="flex items-center gap-3">
-									<Avatar
-										name={user.name}
-										size="sm"
-										radius="full"
-										color="primary"
-										fallback={user.name.charAt(0)}
-									/>
-									<div>
-										<p className="text-sm font-medium">
-											{user.name}
-										</p>
-										<p className="text-xs text-default-500">
-											{user.email}
-										</p>
+				{emailList.length > 0 ? (
+					<div className="custom-scrollbar max-h-[10rem] space-y-1.5 overflow-y-auto">
+						{emailList.map((currentUser, index) => {
+							const sharedUser = sharedTo?.find(
+								(user) => user.email === currentUser.email,
+							);
+							return (
+								<div
+									key={index}
+									className="flex items-center justify-between rounded-xl border border-default-200 p-2"
+								>
+									<div className="flex items-center gap-3">
+										<User
+											avatarProps={{
+												size: "sm",
+												fallback: currentUser.email
+													.charAt(0)
+													.toUpperCase(),
+											}}
+											name={currentUser.email}
+										/>
+									</div>
+									<div className="flex items-center">
+										<Dropdown placement="bottom-end">
+											<DropdownTrigger>
+												<Button
+													variant="light"
+													size="sm"
+													radius="full"
+													className="flex min-w-[70px] items-center justify-between px-3"
+													endContent={
+														<ChevronDown
+															size={16}
+														/>
+													}
+												>
+													<div className="flex items-center gap-1.5">
+														<span className="font-medium capitalize text-default-500 dark:text-default-700">
+															{sharedUser?.permission ||
+																sharedUser?.permission ||
+																"View"}
+														</span>
+													</div>
+												</Button>
+											</DropdownTrigger>
+											<DropdownMenu aria-label="Permission options">
+												<DropdownItem
+													key="view"
+													className="text-primary"
+													startContent={
+														<Eye size={20} />
+													}
+													description="Can only view the resource"
+													onPress={() =>
+														handlePermissionChange(
+															currentUser.email,
+															"view",
+														)
+													}
+												>
+													View
+												</DropdownItem>
+												<DropdownItem
+													key="edit"
+													startContent={
+														<Pencil size={20} />
+													}
+													description="Can view and edit the resource"
+													onPress={() =>
+														handlePermissionChange(
+															currentUser.email,
+															"edit",
+														)
+													}
+												>
+													Edit
+												</DropdownItem>
+											</DropdownMenu>
+										</Dropdown>
+										<Button
+											isIconOnly
+											size="sm"
+											variant="light"
+											radius="full"
+											onPress={() =>
+												removeEmail(currentUser.email)
+											}
+											className="text-default-500"
+										>
+											<X size={16} />
+										</Button>
 									</div>
 								</div>
-								<Dropdown placement="bottom-end" isDisabled>
-									<DropdownTrigger>
-										<Button
-											variant="light"
-											size="sm"
-											radius="full"
-											className="flex min-w-[70px] items-center justify-between px-3"
-											endContent={
-												<ChevronDown size={16} />
-											}
-										>
-											<div className="flex items-center gap-1.5">
-												<span className="font-medium capitalize text-default-500 dark:text-default-200">
-													{user.permission}
-												</span>
-											</div>
-										</Button>
-									</DropdownTrigger>
-									<DropdownMenu aria-label="Permission options">
-										<DropdownItem
-											key="view"
-											className={
-												user.permission === "view"
-													? "text-primary"
-													: ""
-											}
-											onPress={() =>
-												handlePermissionChange(
-													user.id,
-													"view",
-												)
-											}
-											startContent={<Eye size={20} />}
-											description="Can only view the resource"
-										>
-											View
-										</DropdownItem>
-										<DropdownItem
-											key="edit"
-											className={
-												user.permission === "edit"
-													? "text-primary"
-													: ""
-											}
-											onPress={() =>
-												handlePermissionChange(
-													user.id,
-													"edit",
-												)
-											}
-											startContent={<Pencil size={20} />}
-											description="Can view and edit the resource"
-										>
-											Edit
-										</DropdownItem>
-									</DropdownMenu>
-								</Dropdown>
-							</div>
-						))}
+							);
+						})}
 					</div>
 				) : (
 					<div className="text-sm text-default-500">
