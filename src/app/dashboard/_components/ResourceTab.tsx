@@ -61,15 +61,10 @@ const ResourceWrapper = ({ type, id }: Props) => {
 	useEffect(() => {
 		let currentStatus = "idle";
 		if (isCollectionResources) {
-			if (isLoading) {
-				currentStatus = "loading";
-			} else if (isFetching) {
-				currentStatus = "fetching";
-			} else if (isSuccess) {
-				currentStatus = "success";
-			} else if (isError) {
-				currentStatus = "error";
-			}
+			if (isLoading) currentStatus = "loading";
+			else if (isFetching) currentStatus = "fetching";
+			else if (isSuccess) currentStatus = "success";
+			else if (isError) currentStatus = "error";
 		}
 		setRequestStatus(currentStatus);
 	}, [isLoading, isFetching, isSuccess, isError, isCollectionResources]);
@@ -85,7 +80,6 @@ const ResourceWrapper = ({ type, id }: Props) => {
 	if (isLoadingOrFetching || isLoadingParent) {
 		return (
 			<div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-				{/* <h3 className="text-xl">Loading...</h3> */}
 				{Array.from({ length: 6 }).map((_, index) => (
 					<div
 						key={index}

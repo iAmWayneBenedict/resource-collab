@@ -31,7 +31,7 @@ const ShareButton = ({
 		onSuccess: (data) => {
 			const formattedData = {
 				...data.data,
-				emails: data.data.emails.map((email: string) => ({
+				shared_to: data.data.emails.map((email: string) => ({
 					email,
 					permission: "view",
 				})),
@@ -61,11 +61,19 @@ const ShareButton = ({
 	const onClickShareHandler = () => {
 		const data = shareData ?? {
 			url: null,
-			restrictedTo,
 			type: "Resource",
 		};
-		onOpenModal("share-modal", { ...data, loaded: false }, undefined, name);
-		setEnableInitShortUrl(true);
+		onOpenModal(
+			"share-modal",
+			{
+				...data,
+				restrictedTo,
+				loaded: false,
+			},
+			undefined,
+			name,
+		);
+		if (!data?.restrictedTo) setEnableInitShortUrl(true);
 		setSubmitCallback(onSubmitShare);
 	};
 
@@ -79,13 +87,15 @@ const ShareButton = ({
 			const shortUrlData = shortUrlResponse.data.data;
 			const formattedData = {
 				...shortUrlData,
-				emails: shortUrlData.emails.map((email: string) => ({
+				shared_to: shortUrlData.emails.map((email: string) => ({
 					email,
 					permission: "view",
 				})),
 				type: "Resource",
 				url: `${config.BASE_URL}/r/${shortUrlData.short_code}`,
 				loaded: true,
+				restrictedTo,
+				access_level: shortUrlData.emails.length ? "private" : "public",
 			};
 
 			onOpenModal("share-modal", formattedData, undefined, name);

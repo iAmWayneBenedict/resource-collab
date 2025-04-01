@@ -2,7 +2,7 @@ import { relations, sql } from "drizzle-orm";
 import { pgTable, serial, text, timestamp, varchar } from "drizzle-orm/pg-core";
 import { resources } from "./resources";
 import { users } from "./users";
-import { resourceAccess } from "./resource-access";
+import { accessLevel } from "./collection-folders";
 
 export const resourceShortUrlAccess = pgTable("resource_short_urls", {
 	id: serial("id").primaryKey(),
@@ -19,6 +19,7 @@ export const resourceShortUrlAccess = pgTable("resource_short_urls", {
 	emails: text("emails")
 		.array()
 		.default(sql`ARRAY[]::text[]`),
+	access_level: accessLevel("access_level").notNull().default("private"),
 	expired_at: timestamp("expired_at", {
 		mode: "date",
 		withTimezone: true,
@@ -35,10 +36,6 @@ export const resourceShortUrlAccessRelations = relations(
 		user: one(users, {
 			fields: [resourceShortUrlAccess.user_id],
 			references: [users.id],
-		}),
-		resourceAccess: one(resourceAccess, {
-			fields: [resourceShortUrlAccess.id],
-			references: [resourceAccess.resource_short_url_id],
 		}),
 	}),
 );

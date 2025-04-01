@@ -22,6 +22,7 @@ import NoScrollLink from "@/components/custom/NoScrollLink";
 import { useMediaQuery } from "react-responsive";
 import { useClientRouter } from "@/hooks/useClientRouter";
 import { useLoading } from "@/store/useLoading";
+import PortfolioTabs from "./PortfolioTabs";
 
 let TABS = [
 	{
@@ -110,6 +111,9 @@ const ContentTabs = () => {
 							</div>
 						}
 					>
+						{currentTab === "portfolios" && (
+							<PortfolioTabs type={currentTab} />
+						)}
 						{currentTab === "resources" && (
 							<ResourceTab type={currentTab as any} />
 						)}

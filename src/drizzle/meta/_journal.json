@@ -8,6 +8,13 @@
       "when": 1743137274629,
       "tag": "0000_nervous_ultimates",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1743464792146,
+      "tag": "0001_talented_shinobi_shaw",
+      "breakpoints": true
     }
   ]
 }
