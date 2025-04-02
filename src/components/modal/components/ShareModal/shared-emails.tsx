@@ -173,7 +173,10 @@ const SharedEmails = ({ sharedTo, setSharedTo, type, handleChange }: Props) => {
 										/>
 									</div>
 									<div className="flex items-center">
-										<Dropdown placement="bottom-end">
+										<Dropdown
+											placement="bottom-end"
+											isDisabled={type === "Resource"}
+										>
 											<DropdownTrigger>
 												<Button
 													variant="light"

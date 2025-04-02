@@ -40,7 +40,7 @@ const ShareModal = () => {
 				onSubmitCallback({
 					id: null,
 					access_level: data.restrictedTo,
-					sharedTo: [],
+					emails: [],
 				});
 			}
 		}
@@ -48,21 +48,17 @@ const ShareModal = () => {
 	// Update state based on data changes
 	useEffect(() => {
 		if (data?.loaded) {
-			console.log("should be false");
 			setIsLoadingShortUrl(false);
 		}
 		if (name === "share-modal") {
 			if (data?.id && data?.shared_to) {
-				// setEmails(data.emails);
-				const hasSharedTo = data.shared_to?.length > 0;
 				setSharedTo(data.shared_to);
 				setShareType(
-					data?.access_level === "shared" && !hasSharedTo
+					data?.access_level === "shared"
 						? "private"
 						: data?.access_level,
 				);
 			} else {
-				// setEmails("");
 				setSharedTo([]);
 			}
 		}
@@ -88,23 +84,26 @@ const ShareModal = () => {
 			const permission_level = values?.permission_level || role;
 			const shared_to =
 				values?.sharedTo === undefined ? sharedTo : values?.sharedTo;
-			let sharedToType = {};
+			let sharedToType: Record<string, any[]> = {
+				emails: [],
+				shared_to: [],
+			};
 			if (data?.type === "Resource") {
-				sharedToType = {
-					emails:
-						access_level === "public"
-							? []
-							: shared_to.map(({ email }) => email),
-				};
+				sharedToType.emails =
+					access_level === "public"
+						? []
+						: shared_to.map(({ email }) => email);
 			} else if (data?.type === "Collection") {
-				sharedToType = {
-					shared_to: access_level === "public" ? [] : shared_to,
-				};
+				sharedToType.shared_to =
+					access_level === "public" ? [] : shared_to;
 			}
 			setIsLoadingShortUrl(true);
 			onSubmitCallback({
 				id: data?.id,
-				access_level: shared_to.length ? "shared" : access_level,
+				access_level: (sharedToType?.shared_to || sharedToType.emails)
+					.length
+					? "shared"
+					: access_level,
 				permission_level,
 				...sharedToType,
 			});
@@ -113,6 +112,7 @@ const ShareModal = () => {
 	);
 
 	const renderAccessLevel = () => {
+		console.log(data?.restrictedTo);
 		if (data?.restrictedTo) return null;
 
 		return (
@@ -126,7 +126,6 @@ const ShareModal = () => {
 			</div>
 		);
 	};
-
 	const renderPermissionLevel = () => {
 		if (data?.type === "Resource" || shareType === "private") return null;
 
@@ -151,59 +150,48 @@ const ShareModal = () => {
 			size="xl"
 		>
 			<ModalContent>
-				{() => (
-					<>
-						<ModalBody className="gap-1 rounded-2xl border border-default-200 p-0">
-							<div className="px-6 pt-4 text-base font-semibold">
-								Share {data?.type}
+				<ModalBody className="gap-1 rounded-2xl border border-default-200 p-0">
+					<div className="px-6 pt-4 text-base font-semibold">
+						Share {data?.type}
+					</div>
+					<div className="p-6">
+						<p className="mb-4 line-clamp-2 text-sm text-default-600">
+							Give your audience access to "{title}".
+						</p>
+
+						{renderAccessLevel()}
+						{renderPermissionLevel()}
+
+						{shareType === "private" && (
+							<SharedEmails
+								handleChange={handleChange}
+								sharedTo={sharedTo}
+								setSharedTo={setSharedTo}
+								type={data?.type}
+							/>
+						)}
+						<ShortUrlContainer
+							data={data}
+							copied={copied}
+							role={role}
+							shareType={shareType}
+							isLoadingShortUrl={isLoadingShortUrl}
+							handleCopyUrl={handleCopyUrl}
+						/>
+
+						<div className="mt-6 flex w-full justify-end">
+							<div className="flex gap-2">
+								<Button
+									variant="light"
+									onPress={onCloseModal}
+									radius="full"
+								>
+									Close
+								</Button>
 							</div>
-							<div className="p-6">
-								<p className="mb-4 line-clamp-2 text-sm text-default-600">
-									Give your audience access to "{title}".
-								</p>
-
-								{renderAccessLevel()}
-								{renderPermissionLevel()}
-
-								{shareType === "private" && (
-									<SharedEmails
-										handleChange={handleChange}
-										sharedTo={sharedTo}
-										setSharedTo={setSharedTo}
-										type={data?.type}
-									/>
-								)}
-								<ShortUrlContainer
-									data={data}
-									copied={copied}
-									role={role}
-									shareType={shareType}
-									isLoadingShortUrl={isLoadingShortUrl}
-									handleCopyUrl={handleCopyUrl}
-								/>
-
-								<div className="mt-6 flex w-full justify-end">
-									<div className="flex gap-2">
-										<Button
-											variant="light"
-											onPress={onCloseModal}
-											radius="full"
-										>
-											Cancel
-										</Button>
-										<Button
-											onPress={onCloseModal}
-											className="bg-violet text-white"
-											radius="full"
-										>
-											Done
-										</Button>
-									</div>
-								</div>
-							</div>
-						</ModalBody>
-					</>
-				)}
+						</div>
+					</div>
+				</ModalBody>
 			</ModalContent>
 		</Modal>
 	);

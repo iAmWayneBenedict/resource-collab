@@ -1,6 +1,6 @@
 import React from "react";
-import ContentTabs from "../_components/ContentTabs";
-import DashboardWrapper from "../_components/DashboardWrapper";
+import DashboardWrapper from "./_components/DashboardWrapper";
+import ContentTabs from "./_components/ContentTabs";
 
 const Page = async () => {
 	return (

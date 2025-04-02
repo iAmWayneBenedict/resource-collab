@@ -46,10 +46,6 @@ import {
 	collectionShortUrlRelations,
 } from "./models/collection-short-urls";
 import {
-	resourceAccess,
-	resourceAccessRelations,
-} from "./models/resource-access";
-import {
 	resourceShortUrlAccess,
 	resourceShortUrlAccessRelations,
 } from "./models/resource-short-url";
@@ -107,8 +103,6 @@ export {
 	portfolioCollectionsRelations,
 	resourceCollections,
 	resourceCollectionsRelations,
-	resourceAccess,
-	resourceAccessRelations,
 	// short urls
 	resourceShortUrlAccess,
 	resourceShortUrlAccessRelations,

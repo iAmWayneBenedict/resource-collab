@@ -80,7 +80,7 @@ const FormFields = ({ email }: { email: string | undefined }) => {
 		toast.success("Successfully verified account!");
 
 		setTimeout(() => {
-			location.href = "/dashboard/resources";
+			location.href = "/dashboard?page=resources";
 		}, 2000);
 	};
 	return (

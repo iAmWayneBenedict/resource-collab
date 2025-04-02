@@ -13,7 +13,6 @@ import { Button, Skeleton } from "@heroui/react";
 import { useEffect } from "react";
 import { AnimatePresence } from "motion/react";
 import { useRouter } from "next/navigation";
-import { useLoading } from "@/store/useLoading";
 
 type Props = {
 	type:
@@ -37,9 +36,8 @@ const ResourceWrapper = ({ type, id }: Props) => {
 	const setRequestStatus = useRequestStatus(
 		(state) => state.setRequestStatus,
 	);
-	const { isLoading: isLoadingParent } = useLoading();
 
-	const { data, isSuccess, isLoading, isFetching, error, isError } =
+	const { data, isSuccess, isLoading, isFetching, isError } =
 		useGetUserResourcesQuery({}, { user_id: authUser?.id, type, id });
 
 	useEffect(() => {
@@ -61,31 +59,22 @@ const ResourceWrapper = ({ type, id }: Props) => {
 	useEffect(() => {
 		let currentStatus = "idle";
 		if (isCollectionResources) {
-			if (isLoading) {
-				currentStatus = "loading";
-			} else if (isFetching) {
-				currentStatus = "fetching";
-			} else if (isSuccess) {
-				currentStatus = "success";
-			} else if (isError) {
-				currentStatus = "error";
-			}
+			if (isLoading) currentStatus = "loading";
+			else if (isFetching) currentStatus = "fetching";
+			else if (isSuccess) currentStatus = "success";
+			else if (isError) currentStatus = "error";
 		}
 		setRequestStatus(currentStatus);
 	}, [isLoading, isFetching, isSuccess, isError, isCollectionResources]);
 
 	let isLoadingOrFetching = false;
 
-	if (isCollectionResources) {
-		isLoadingOrFetching = isLoading || isFetching;
-	} else {
-		isLoadingOrFetching = isLoading;
-	}
+	if (isCollectionResources) isLoadingOrFetching = isLoading || isFetching;
+	else isLoadingOrFetching = isLoading;
 
-	if (isLoadingOrFetching || isLoadingParent) {
+	if (isLoading) {
 		return (
 			<div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-				{/* <h3 className="text-xl">Loading...</h3> */}
 				{Array.from({ length: 6 }).map((_, index) => (
 					<div
 						key={index}

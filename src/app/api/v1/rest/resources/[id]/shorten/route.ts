@@ -2,7 +2,7 @@ import { getSession } from "@/lib/auth";
 import { NextRequest, NextResponse } from "next/server";
 import { nanoid } from "nanoid";
 import { db } from "@/data/connection";
-import { resourceAccess, resourceShortUrlAccess } from "@/data/schema";
+import { resourceShortUrlAccess } from "@/data/schema";
 import config from "@/config";
 import { and, eq, isNull } from "drizzle-orm";
 
@@ -60,7 +60,7 @@ interface ShortenResourceRequest {
 	full_path: string;
 	resource_id: number;
 	emails: string[];
-	access_level: string;
+	access_level: "public" | "private" | "shared";
 	id?: string;
 }
 
@@ -81,7 +81,6 @@ export const POST = async (
 
 		const validationError = validateRequestBody(body, [
 			"full_path",
-			"emails",
 			"access_level",
 		]);
 
@@ -166,6 +165,7 @@ const createOrUpdateShortUrl = async (
 				.set({
 					user_id: userId,
 					emails: requestData.emails,
+					access_level: requestData.access_level,
 				})
 				.where(eq(resourceShortUrlAccess.id, shortUrlId))
 				.returning();
@@ -184,6 +184,7 @@ const createOrUpdateShortUrl = async (
 				user_id: requestData.access_level === "public" ? null : userId,
 				short_code: shortCode,
 				emails: requestData.emails,
+				access_level: requestData.access_level,
 			})
 			.returning();
 

@@ -277,7 +277,7 @@ const LargeNav = () => {
 										startContent={
 											<GalleryVerticalEnd size={16} />
 										}
-										href="/dashboard/resources"
+										href="/dashboard?page=resources"
 									>
 										My Resources
 									</DropdownItem>

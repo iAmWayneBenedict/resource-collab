@@ -8,7 +8,13 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import CollectionHeader from "./components/collections/CollectionHeader";
 import CollectionFooter from "./components/collections/CollectionFooter";
 
-const CollectionCard = ({ data }: { data: CollectionResponse }) => {
+const CollectionCard = ({
+	data,
+	type,
+}: {
+	data: CollectionResponse;
+	type: string;
+}) => {
 	const router = useRouter();
 	const pathname = usePathname();
 	const searchParams = useSearchParams();
@@ -17,17 +23,17 @@ const CollectionCard = ({ data }: { data: CollectionResponse }) => {
 		useState<boolean>(false);
 
 	const onClickCardHandler = () => {
-		router.push(`${pathname}/${data.id}?tab=${tab}`);
+		router.push(`${pathname}?page=${type}&tab=${tab}&item=${data.id}`);
 	};
 
 	return (
 		<motion.div
 			key={data.id}
-			// layout
-			// initial={{ opacity: 0, y: 10 }}
-			// animate={{ opacity: 1, y: 0 }}
-			// exit={{ opacity: 0, y: 10 }}
-			// transition={{ ease: "easeInOut", duration: 0.2 }}
+			layout
+			initial={{ opacity: 0, y: 10 }}
+			animate={{ opacity: 1, y: 0 }}
+			exit={{ opacity: 0, y: 10 }}
+			transition={{ ease: "easeInOut", duration: 0.2 }}
 			className="group relative flex min-w-[17rem] flex-1 cursor-pointer flex-col overflow-hidden rounded-2xl bg-content1 shadow-md dark:border-small dark:border-default-200 xl:min-w-[20%]"
 		>
 			<Image

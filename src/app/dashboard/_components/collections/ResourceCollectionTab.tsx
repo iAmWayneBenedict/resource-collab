@@ -4,7 +4,6 @@ import { useAuthUser } from "@/store";
 import { Skeleton } from "@heroui/react";
 import CreateCollectionButton from "./CreateCollectionButton";
 import { AnimatePresence, motion } from "motion/react";
-import { useLoading } from "@/store/useLoading";
 
 type Props = {
 	type:
@@ -16,17 +15,14 @@ type Props = {
 };
 const ResourceCollectionTab = ({ type }: Props) => {
 	const { authUser } = useAuthUser();
-	const { isLoading: isLoadingParent } = useLoading();
 
-	const { data, isSuccess, isLoading, isFetching } = useGetUserResourcesQuery(
+	const { data, isLoading } = useGetUserResourcesQuery(
 		{},
 		{ user_id: authUser?.id, type },
 	);
-
-	if (isLoading || isLoadingParent) {
+	if (isLoading) {
 		return (
 			<div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
-				{/* <h3 className="text-xl">Loading...</h3> */}
 				{Array.from({ length: 8 }).map((_, index) => (
 					<div
 						key={index}
@@ -55,7 +51,11 @@ const ResourceCollectionTab = ({ type }: Props) => {
 			</motion.div>
 			<AnimatePresence mode="popLayout">
 				{data?.data.rows.map((collection: CollectionResponse) => (
-					<CollectionCard key={collection.name} data={collection} />
+					<CollectionCard
+						key={collection.name}
+						data={collection}
+						type={type}
+					/>
 				))}
 			</AnimatePresence>
 		</div>

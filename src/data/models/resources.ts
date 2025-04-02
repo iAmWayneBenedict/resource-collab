@@ -7,7 +7,6 @@ import { resourceTags } from "./resource-tags";
 import { users } from "./users";
 import { likeResources } from "./like-resources";
 import { resourceShortUrlAccess } from "./resource-short-url";
-import { resourceAccess } from "./resource-access";
 
 export const resources = pgTable("resources", {
 	id: serial("id").primaryKey(),
@@ -43,7 +42,6 @@ export const resourceRelations = relations(resources, ({ many, one }) => ({
 	resourceTags: many(resourceTags),
 	likes: many(likeResources),
 	resourceShortUrlAccess: many(resourceShortUrlAccess),
-	resourceAccess: many(resourceAccess),
 }));
 
 export type ResourcesSelectType = typeof resources.$inferSelect;

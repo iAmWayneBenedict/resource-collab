@@ -1,6 +1,5 @@
 import { db } from "@/data/connection";
 import {
-	resourceAccess,
 	resources,
 	resourceShortUrlAccess,
 } from "@/data/schema";
