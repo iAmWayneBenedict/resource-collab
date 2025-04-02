@@ -50,7 +50,7 @@ const LoginForm = () => {
 					setError,
 				);
 		} else {
-			location.href = "/dashboard/resources";
+			location.href = "/dashboard?page=resources";
 		}
 	};
 	return (

@@ -60,7 +60,7 @@ interface ShortenResourceRequest {
 	full_path: string;
 	resource_id: number;
 	emails: string[];
-	access_level: string;
+	access_level: "public" | "private" | "shared";
 	id?: string;
 }
 
