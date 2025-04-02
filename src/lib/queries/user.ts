@@ -17,7 +17,7 @@ export const useGetUserResourcesQuery = (
 
 	return useQuery({
 		enabled: !!options?.user_id,
-		queryKey: [`user-${options.type}`],
+		queryKey: [`user-${options.type}${options.id ? `-${options.id}` : ""}`],
 		queryFn: () =>
 			request({
 				url: `/users/${options.user_id}/${options.type}${options.id ? "/" + options.id : ""}?${searchParams.toString()}`,

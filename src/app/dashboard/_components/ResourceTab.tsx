@@ -41,7 +41,7 @@ const ResourceWrapper = ({ type, id }: Props) => {
 		useGetUserResourcesQuery({}, { user_id: authUser?.id, type, id });
 
 	useEffect(() => {
-		setSearchParams({ queryKey: [`user-${type}`] });
+		setSearchParams({ queryKey: [`user-${type}${id ? `-${id}` : ""}`] });
 	}, []);
 
 	const collections = useGetCollectionsQuery({
