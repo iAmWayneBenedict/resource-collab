@@ -210,7 +210,6 @@ const ListboxContainer = memo(
 				option.toLowerCase().includes(searchValue.toLowerCase()),
 			);
 		}, [options, searchValue]);
-		console.log(filteredOptions);
 		return (
 			<Listbox
 				selectedKeys={selectedKeys}

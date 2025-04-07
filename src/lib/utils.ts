@@ -1,3 +1,4 @@
+import config from "@/config";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -209,4 +210,15 @@ export const getApiPaginatedSearchParams = (searchParams: URLSearchParams) => {
 	const filterValue = searchParams.get("filter_value") ?? undefined;
 
 	return { page, limit, search, sortBy, sortType, filterBy, filterValue };
+};
+
+export const getApiHeaders = (methods: string[]) => {
+	return {
+		"Access-Control-Allow-Origin": "http://localhost:5173",
+		"Access-control-Allow-Credentials": "true",
+		"Access-Control-Allow-Methods": methods.join(", "),
+		"Access-Control-Allow-Headers":
+			"Origin, Content-Type, Authorization, X-Access-Token",
+		"Access-Control-Max-Age": "86400",
+	};
 };

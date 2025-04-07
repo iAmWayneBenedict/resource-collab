@@ -1,3 +1,4 @@
+import { getApiHeaders } from "@/lib/utils";
 import { findAllCategory } from "@/services/category-service";
 import { NextResponse } from "next/server";
 
@@ -12,12 +13,7 @@ export const GET = async () => {
 			{ message: "Success", data: categories },
 			{
 				status: 200,
-				headers: {
-					"Access-Control-Allow-Origin": "http://localhost:3001",
-					"Access-Control-Allow-Methods": "GET",
-					"Access-Control-Allow-Headers":
-						"Content-Type, Authorization",
-				},
+				headers: getApiHeaders(["GET"]),
 			},
 		);
 	} catch (error) {
@@ -26,12 +22,7 @@ export const GET = async () => {
 			{ message: "Error", data: null },
 			{
 				status: 500,
-				headers: {
-					"Access-Control-Allow-Origin": "*",
-					"Access-Control-Allow-Methods": "GET",
-					"Access-Control-Allow-Headers":
-						"Content-Type, Authorization",
-				},
+				headers: getApiHeaders(["GET"]),
 			},
 		);
 	}

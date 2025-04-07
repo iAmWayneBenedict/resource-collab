@@ -3,6 +3,7 @@ import type { NextRequest } from "next/server";
 import { authRoutes, protectedRoutes } from "./routes";
 import { headers } from "next/headers";
 import { auth } from "./lib/auth";
+import { getApiHeaders } from "./lib/utils";
 
 // Define allowed hosts
 const allowedHosts = [
@@ -11,10 +12,10 @@ const allowedHosts = [
 ];
 
 export async function middleware(request: NextRequest): Promise<NextResponse> {
-	const session = await auth.api.getSession({ headers: await headers() });
+	const session = await auth.api.getSession({ headers: request.headers });
 	const targetPath = request.nextUrl.pathname;
 	const user = session?.user;
-	console.log(session);
+
 	// validate request from allowed origin and referer
 	const refererHeader = request.headers.get("referer");
 	const extensionOriginHeader =
@@ -25,7 +26,20 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
 		refererUrl = refererHeader ? new URL(refererHeader).hostname : null;
 	} catch (error) {
 		console.error("Invalid Referer URL", error);
-		return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+		return NextResponse.json(
+			{ error: "Unauthorized" },
+			{
+				status: 401,
+				headers: getApiHeaders([
+					"OPTIONS",
+					"POST",
+					"GET",
+					"PUT",
+					"DELETE",
+					"PATCH",
+				]),
+			},
+		);
 	}
 	const allowedReferer =
 		refererUrl &&
@@ -54,7 +68,29 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
 	const hasMatchProtectedRoute = protectedRoutes.some((route) =>
 		targetPath.startsWith(route),
 	);
+
 	if (!user && hasMatchProtectedRoute) {
+		if (
+			["chrome-extension", "localhost:5173"].some((host) =>
+				refererUrl?.includes(host),
+			)
+		) {
+			return NextResponse.json(
+				{},
+				{
+					status: 200,
+					headers: getApiHeaders([
+						"OPTIONS",
+						"POST",
+						"GET",
+						"PUT",
+						"DELETE",
+						"PATCH",
+					]),
+				},
+			);
+		}
+
 		return NextResponse.redirect(new URL("/auth/login", request.url), {
 			status: 307,
 		});
@@ -67,7 +103,7 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
 			"Access-Control-Allow-Origin",
 			// process.env.EXTENSION_ORIGIN!,
 			"http://localhost:5173",
-		); // Or specify domains instead of '*'
+		);
 		response.headers.set("Access-Control-Allow-Credentials", "true");
 		response.headers.set("Access-Control-Allow-Methods", "GET, POST");
 		response.headers.set(
@@ -85,7 +121,6 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
 
 		return response;
 	}
-
 	return NextResponse.next();
 }
 

@@ -5,6 +5,7 @@ import {
 	resources,
 } from "@/data/schema";
 import { getSession } from "@/lib/auth";
+import { getApiHeaders } from "@/lib/utils";
 import { asc, count, desc, eq, inArray, sql } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -13,8 +14,11 @@ export const GET = async (req: NextRequest) => {
 	const user = session?.user;
 	if (!user) {
 		return NextResponse.json(
-			{ message: "Unauthorized", data: null },
-			{ status: 401 },
+			{
+				message: "Unauthorized",
+				data: null,
+			},
+			{ status: 401, headers: getApiHeaders(["GET"]) },
 		);
 	}
 
@@ -59,14 +63,18 @@ export const GET = async (req: NextRequest) => {
 				message: "Successfully retrieved collections",
 				data: collectionsData,
 			},
-			{ status: 200 },
+			{ status: 200, headers: getApiHeaders(["GET"]) },
 		);
 	} catch (error) {
 		console.log(error);
 
 		return NextResponse.json(
-			{ message: "Something went wrong", data: null },
-			{ status: 500 },
+			{
+				message: "Something went wrong",
+
+				data: null,
+			},
+			{ status: 500, headers: getApiHeaders(["GET"]) },
 		);
 	}
 };
@@ -76,12 +84,24 @@ export const DELETE = async (req: NextRequest) => {
 	const user = session?.user;
 
 	if (!user)
-		return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+		return NextResponse.json(
+			{
+				message: "Unauthorized",
+				headers: getApiHeaders(["DELETE"]),
+			},
+			{ status: 401 },
+		);
 
 	const body = await req.json();
 
 	if (!body?.ids || !body?.ids.length) {
-		return NextResponse.json({ message: "Bad Request" }, { status: 400 });
+		return NextResponse.json(
+			{
+				message: "Bad Request",
+				headers: getApiHeaders(["DELETE"]),
+			},
+			{ status: 400 },
+		);
 	}
 
 	try {
@@ -89,13 +109,19 @@ export const DELETE = async (req: NextRequest) => {
 			.delete(collectionFolders)
 			.where(inArray(collectionFolders.id, body.ids));
 		return NextResponse.json(
-			{ message: "Successfully deleted collections" },
+			{
+				message: "Successfully deleted collections",
+				headers: getApiHeaders(["DELETE"]),
+			},
 			{ status: 200 },
 		);
 	} catch (error) {
 		console.log(error);
 		return NextResponse.json(
-			{ message: "Something went wrong" },
+			{
+				message: "Something went wrong",
+				headers: getApiHeaders(["DELETE"]),
+			},
 			{ status: 500 },
 		);
 	}
