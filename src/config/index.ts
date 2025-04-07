@@ -23,6 +23,9 @@ const config = {
 
 	// score system
 	SCORE_CUTOFF: 0.78,
+
+	// extension
+	EXTENSION_ORIGIN: process.env.EXTENSION_ORIGIN,
 };
 
 export default config;

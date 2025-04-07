@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { bindReactHookFormError, cn, reInitQueryParams, toJson, toStr } from "@/lib/utils";
+import { cn, reInitQueryParams, toJson, toStr } from "@/lib/utils";
 
 describe("Utility functions", () => {
 	it("cn should combine class names correctly", () => {
@@ -39,26 +39,14 @@ describe("Utility functions", () => {
 		expect(result).toBe("null");
 	});
 
-	it("bindReactHookFormError should bind errors correctly", () => {
-		const mockSetError = vi.fn();
-		const errors = {
-			data: {
-				path: ["error1", "error2"],
-			},
-			message: "Validation error",
-		};
-		bindReactHookFormError(errors, mockSetError);
-		// Iterate over each path and check if mockSetError was called with the correct parameters
-		errors.data.path.forEach((errorPath) => {
-			expect(mockSetError).toHaveBeenCalledWith(errorPath, { message: "Validation error" });
-		});
-	});
-
 	it("should reinitialize query params", () => {
 		const BASE_URL = "http://localhost:8080";
 
 		const url = BASE_URL + "?test=123&test2=456";
-		const searchParams = reInitQueryParams(url, { test3: "789", test: "012" });
+		const searchParams = reInitQueryParams(url, {
+			test3: "789",
+			test: "012",
+		});
 		const params = new URLSearchParams(searchParams);
 		console.log(params.toString());
 		// expect(new URLSearchParams(searchParams)?.get("test").toBe("123"));

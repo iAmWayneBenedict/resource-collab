@@ -16,14 +16,14 @@ request.interceptors.request.use(
 
 		return config;
 	},
-	(error) => Promise.reject(error)
+	(error) => Promise.reject(error),
 );
 
 request.interceptors.response.use(
 	(response) => {
 		return response.data;
 	},
-	(error) => Promise.reject(error)
+	(error) => Promise.reject(error),
 );
 
 export default request;

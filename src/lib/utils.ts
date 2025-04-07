@@ -32,40 +32,6 @@ export function toJson<T>(data: T): number | string | boolean | object {
 export function toStr<T>(data: T): string {
 	return JSON.stringify(data);
 }
-
-/**
- * Binds the error message to the react-hook-form
- *
- * @export
- * @param {Error} errors - error object
- * @param {(name: any, error: { message: string }) => void} setError - react-hook-form setError function
- * @returns {void}
- *
- * @example
- * ```typescript
- * const { setError } = useForm();
- * const mutation = useMutation({
- *   mutationFn: (data: TRegisterForm) => AuthApiManager.register(data),
- *   onError: (err) => {
- *    bindReactHookFormError(errors, setError);
- *  },
- * });
- * ```
- */
-export function bindReactHookFormError(
-	errors: { data: { [key: string]: string[] } } | Error,
-	setError: (name: any, error: { message: string }) => void,
-): void {
-	//  Cast the errors to TErrorAPIResponse - since the response is originally TErrorAPIResponse
-	const errorTemp = errors as unknown as TErrorAPIResponse;
-	if (Object.hasOwnProperty.call(errorTemp, "path")) return;
-	Object.entries(errorTemp.data!).forEach(([, paths]) => {
-		paths.forEach((path: string) => {
-			setError(path, { message: errorTemp.message });
-		});
-	});
-}
-
 /**
  * Checks if a given string is a valid URL or not.
  * @param {string} url - The URL to check.

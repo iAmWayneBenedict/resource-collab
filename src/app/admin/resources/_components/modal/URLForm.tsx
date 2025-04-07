@@ -1,5 +1,4 @@
 import { usePostResourceMutation } from "@/lib/mutations/resources";
-import { bindReactHookFormError } from "@/lib/utils";
 import { addToast, Alert, Button, Input } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useState } from "react";
@@ -56,7 +55,9 @@ const URLForm = ({
 			console.log(error.response.data);
 			onSubmittingCallback(false);
 			setIsSubmitting(false);
-			bindReactHookFormError(error.response.data, setError);
+			setError(error.response.data.path[0], {
+				message: error.response.message,
+			});
 		},
 	});
 

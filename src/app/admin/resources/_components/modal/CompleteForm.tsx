@@ -17,7 +17,6 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import { usePostDeleteUploadThingFileMutation } from "../../../../../lib/mutations/storage/uploadthing";
-import { bindReactHookFormError } from "@/lib/utils";
 import { UploadImageResource } from "./UploadImage";
 import { useGetCategoriesQuery } from "@/lib/queries/categories";
 
@@ -158,7 +157,9 @@ const CompleteForm = ({
 			onSubmittingCallback(false);
 			setIsDisableForm(false);
 			setIsSubmitting(false);
-			bindReactHookFormError(error.response.data, setError);
+			setError(error.response.data.path[0], {
+				message: error.response.message,
+			});
 		},
 	});
 
@@ -180,7 +181,9 @@ const CompleteForm = ({
 			onSubmittingCallback(false);
 			setIsDisableForm(false);
 			setIsSubmitting(false);
-			bindReactHookFormError(error.response.data, setError);
+			setError(error.response.data.path[0], {
+				message: error.response.message,
+			});
 		},
 	});
 
