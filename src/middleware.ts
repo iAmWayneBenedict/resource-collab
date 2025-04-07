@@ -3,6 +3,7 @@ import type { NextRequest } from "next/server";
 import { authRoutes, protectedRoutes } from "./routes";
 import { headers } from "next/headers";
 import { auth } from "./lib/auth";
+import { getApiHeaders } from "./lib/utils";
 
 // Define allowed hosts
 const allowedHosts = [
@@ -11,9 +12,47 @@ const allowedHosts = [
 ];
 
 export async function middleware(request: NextRequest): Promise<NextResponse> {
-	const session = await auth.api.getSession({ headers: await headers() });
+	const session = await auth.api.getSession({ headers: request.headers });
 	const targetPath = request.nextUrl.pathname;
 	const user = session?.user;
+
+	// validate request from allowed origin and referer
+	const refererHeader = request.headers.get("referer");
+	const extensionOriginHeader =
+		request.headers.get("Extension-Origin") ||
+		request.headers.get("Origin");
+	let refererUrl;
+	try {
+		refererUrl = refererHeader ? new URL(refererHeader).hostname : null;
+	} catch (error) {
+		console.error("Invalid Referer URL", error);
+		return NextResponse.json(
+			{ error: "Unauthorized" },
+			{
+				status: 401,
+				headers: getApiHeaders([
+					"OPTIONS",
+					"POST",
+					"GET",
+					"PUT",
+					"DELETE",
+					"PATCH",
+				]),
+			},
+		);
+	}
+	const allowedReferer =
+		refererUrl &&
+		allowedHosts.some(
+			(host) => refererUrl === host || refererUrl === `www.${host}`,
+		);
+
+	const allowedExtensionOrigin =
+		extensionOriginHeader === process.env.EXTENSION_ORIGIN;
+
+	// if (!allowedReferer && !allowedExtensionOrigin && !user?.emailVerified) {
+	// 	return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+	// }
 
 	// Check if the request is for an auth route, if so redirect to home if user is logged in
 	const hasMatchAuthRoute = authRoutes.some((route) =>
@@ -29,52 +68,59 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
 	const hasMatchProtectedRoute = protectedRoutes.some((route) =>
 		targetPath.startsWith(route),
 	);
+
 	if (!user && hasMatchProtectedRoute) {
+		if (
+			["chrome-extension", "localhost:5173"].some((host) =>
+				refererUrl?.includes(host),
+			)
+		) {
+			return NextResponse.json(
+				{},
+				{
+					status: 200,
+					headers: getApiHeaders([
+						"OPTIONS",
+						"POST",
+						"GET",
+						"PUT",
+						"DELETE",
+						"PATCH",
+					]),
+				},
+			);
+		}
+
 		return NextResponse.redirect(new URL("/auth/login", request.url), {
 			status: 307,
 		});
 	}
 
-	// Allow requests from localhost in development
-	if (process.env.NODE_ENVIRONMENT === "development") {
-		return NextResponse.next();
-	}
-
-	const originHeader = request.headers.get("Origin");
-	const hostHeader =
-		request.headers.get("X-Forwarded-Host") || request.headers.get("Host");
-
-	// Validate host header
-	if (!hostHeader) {
-		return NextResponse.json(
-			{ error: "Missing host header" },
-			{ status: 400 },
+	// Add CORS headers for all /v1/rest/auth paths to expose the auth api
+	if (targetPath.startsWith("/api/v1/rest/auth")) {
+		const response = NextResponse.next();
+		response.headers.set(
+			"Access-Control-Allow-Origin",
+			// process.env.EXTENSION_ORIGIN!,
+			"http://localhost:5173",
 		);
-	}
-
-	// Check if the host is in the allowed hosts list
-	const isAllowedHost = allowedHosts.some(
-		(host) => host && hostHeader.includes(host),
-	);
-	if (!isAllowedHost) {
-		return NextResponse.json({ error: "Invalid host" }, { status: 403 });
-	}
-
-	// Validate origin for CORS if present
-	if (originHeader) {
-		const origin = new URL(originHeader).host;
-		const isAllowedOrigin = allowedHosts.some(
-			(host) => host && origin.includes(host),
+		response.headers.set("Access-Control-Allow-Credentials", "true");
+		response.headers.set("Access-Control-Allow-Methods", "GET, POST");
+		response.headers.set(
+			"Access-Control-Allow-Headers",
+			"Content-Type, Authorization",
 		);
 
-		if (!isAllowedOrigin) {
-			return NextResponse.json(
-				{ error: "Invalid origin" },
-				{ status: 403 },
-			);
+		// Handle preflight requests
+		if (request.method === "OPTIONS") {
+			return new NextResponse(null, {
+				status: 204,
+				headers: response.headers,
+			});
 		}
-	}
 
+		return response;
+	}
 	return NextResponse.next();
 }
 

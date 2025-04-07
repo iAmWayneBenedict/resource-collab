@@ -9,7 +9,6 @@ import { Form } from "@/components/ui/form";
 import { Checkbox, Button } from "@heroui/react";
 import Socials from "../../_components/Socials";
 import { LoginFormSchema, TLoginForm } from "@/types/zod/forms";
-import { bindReactHookFormError } from "@/lib/utils";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { authClient } from "@/config/auth";
@@ -42,13 +41,7 @@ const LoginForm = () => {
 		setIsDisabledBtn(false);
 		if (signinResponse.error) {
 			if (signinResponse.error.code === "INVALID_EMAIL_OR_PASSWORD")
-				bindReactHookFormError(
-					{
-						data: { path: ["alert"] },
-						message: "Invalid email or password",
-					},
-					setError,
-				);
+				setError("alert", { message: "Invalid email or password" });
 		} else {
 			location.href = "/dashboard?page=resources";
 		}

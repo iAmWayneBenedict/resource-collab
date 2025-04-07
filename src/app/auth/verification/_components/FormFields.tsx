@@ -19,7 +19,6 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { toast } from "sonner";
-import { bindReactHookFormError } from "@/lib/utils";
 import { authClient } from "@/config/auth";
 
 const formSchema = z.object({
@@ -61,19 +60,11 @@ const FormFields = ({ email }: { email: string | undefined }) => {
 		setIsLoadingVerify(false);
 		if (verificationResponse.error) {
 			if (verificationResponse.error.code === "INVALID_OTP")
-				bindReactHookFormError(
-					{ data: { path: ["code"] }, message: "Invalid OTP" },
-					setError,
-				);
+				setError("code", { message: "Invalid OTP" });
 			if (verificationResponse.error.code === "OTP_EXPIRED")
-				bindReactHookFormError(
-					{
-						data: { path: ["code"] },
-						message:
-							"Expired OTP. Please click the resend OTP below.",
-					},
-					setError,
-				);
+				setError("code", {
+					message: "Expired OTP. Please click the resend OTP below.",
+				});
 			return;
 		}
 

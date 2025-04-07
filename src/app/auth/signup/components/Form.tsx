@@ -13,7 +13,6 @@ import { Button, Checkbox } from "@heroui/react";
 import { useRouter } from "next/navigation";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
-import { bindReactHookFormError } from "@/lib/utils";
 import { authClient } from "@/config/auth";
 
 const SignUpForm = () => {
@@ -49,13 +48,7 @@ const SignUpForm = () => {
 		});
 		if (signupResponse.error) {
 			if (signupResponse.error.code === "USER_ALREADY_EXISTS")
-				bindReactHookFormError(
-					{
-						data: { path: ["email"] },
-						message: "Email already exist",
-					},
-					setError,
-				);
+				setError("email", { message: "Email already exist" });
 		}
 
 		setDisabledBtn(false);

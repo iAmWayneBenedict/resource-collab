@@ -21,7 +21,7 @@ import {
 	usePostCreateCollectionsMutation,
 	usePostCreateResourceCollectionsMutation,
 } from "@/lib/mutations/collections";
-import { bindReactHookFormError, cn, toggleScrollBody } from "@/lib/utils";
+import { cn, toggleScrollBody } from "@/lib/utils";
 import { useCollections } from "@/store/useCollections";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAuthUser, useModal } from "@/store";
@@ -288,7 +288,9 @@ export const CreateCollectionForm = ({
 		},
 		onError: (error) => {
 			console.warn("Error creating collection:", error.response.data);
-			bindReactHookFormError(error.response.data, setError);
+			setError(error.response.data.path[0], {
+				message: error.response.message,
+			});
 			addToast({
 				title: "Error",
 				description: "Collection creation failed.",

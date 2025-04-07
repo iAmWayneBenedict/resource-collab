@@ -20,7 +20,6 @@ import {
 	usePostCreateCollectionsMutation,
 	usePutCollectionFoldersMutation,
 } from "@/lib/mutations/collections";
-import { bindReactHookFormError } from "@/lib/utils";
 import { useQueryClient } from "@tanstack/react-query";
 
 const FormSchema = z.object({
@@ -75,7 +74,9 @@ const CollectionModal = () => {
 
 	const onError = (error: any) => {
 		setIsLoading(false);
-		bindReactHookFormError(error.response.data, setError);
+		setError(error.response.data.path[0], {
+			message: error.response.message,
+		});
 		console.log(error);
 	};
 

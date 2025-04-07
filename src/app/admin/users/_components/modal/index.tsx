@@ -1,6 +1,6 @@
 "use client";
 
-import { bindReactHookFormError, cn } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import {
 	usePostRegisterMutation,
 	usePutUserMutation,
@@ -110,8 +110,10 @@ const UserFormModal = () => {
 			console.log("success");
 			queryClient.invalidateQueries(["users"] as InvalidateQueryFilters);
 		},
-		onError: (err) => {
-			bindReactHookFormError(err, setError);
+		onError: (error) => {
+			setError(error.response.data.path[0], {
+				message: error.response.message,
+			});
 			console.log("error");
 		},
 	});
@@ -122,8 +124,10 @@ const UserFormModal = () => {
 			console.log("success");
 			queryClient.invalidateQueries(["users"] as InvalidateQueryFilters);
 		},
-		onError: (err: any) => {
-			bindReactHookFormError(err, setError);
+		onError: (error: any) => {
+			setError(error.response.data.path[0], {
+				message: error.response.message,
+			});
 			console.log("error");
 		},
 	});
