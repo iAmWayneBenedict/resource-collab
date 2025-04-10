@@ -39,7 +39,7 @@ export const resourceRelations = relations(resources, ({ many, one }) => ({
 	}),
 	userResources: many(userResources),
 	resourceCollections: many(resourceCollections),
-	resourceTags: many(resourceTags),
+	tags: many(resourceTags),
 	likes: many(likeResources),
 	resourceShortUrlAccess: many(resourceShortUrlAccess),
 }));

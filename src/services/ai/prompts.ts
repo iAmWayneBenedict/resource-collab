@@ -16,4 +16,9 @@ export const ListOfPrompt = {
 	}: CategoryAndListOfTagsProps) =>
 		`Resource: "${resource}", 
 		 Categories with Tags: "${categoriesWithTags}"`,
+	SEARCH_RESOURCES: ({
+		query,
+		resources,
+	}: ListOfResourcesProps) => `List of resources: ${JSON.stringify(resources)}, 
+		 query: "${query}"`,
 };
