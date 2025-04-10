@@ -129,7 +129,7 @@ export const findUserLikedResources = async (body: FindResourcesParams) => {
 						},
 						where: eq(resourceCollections.user_id, userId),
 					},
-					resourceTags: {
+					tags: {
 						columns: { resource_id: false, tag_id: false },
 						with: { tag: { columns: { name: true } } },
 					},
@@ -173,8 +173,7 @@ export const findUserLikedResources = async (body: FindResourcesParams) => {
 					resource?.resourceCollections?.map(
 						(collection) => collection.collection_folder_id,
 					) ?? [],
-				resourceTags:
-					resource?.resourceTags?.map((tag) => tag.tag.name) ?? [],
+				resourceTags: resource?.tags?.map((tag) => tag.tag.name) ?? [],
 			}))
 			.filter((resource: any) => resource.likes.length)
 			// descending order
