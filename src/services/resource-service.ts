@@ -555,7 +555,7 @@ export const findResources = async (
 									with: { collectionFolder: true },
 								}
 							: undefined,
-						resourceTags: {
+						tags: {
 							columns: { resource_id: false, tag_id: false },
 							with: { tag: { columns: { name: true } } },
 						},
@@ -606,8 +606,7 @@ export const findResources = async (
 					resource?.resourceCollections?.map(
 						(collection) => collection.collection_folder_id,
 					) ?? [],
-				resourceTags:
-					resource?.resourceTags?.map((tag) => tag.tag.name) ?? [],
+				resourceTags: resource?.tags?.map((tag) => tag.tag.name) ?? [],
 			})) as Partial<InferSelectModel<ResourcesType>>[];
 
 			logMemoryUsage("Memory Usage");
@@ -747,7 +746,7 @@ export const findUserResources = async (body: FindResourcesParams) => {
 									with: { collectionFolder: true },
 								}
 							: undefined,
-						resourceTags: {
+						tags: {
 							columns: { resource_id: false, tag_id: false },
 							with: { tag: { columns: { name: true } } },
 						},
@@ -797,8 +796,7 @@ export const findUserResources = async (body: FindResourcesParams) => {
 					resource?.resourceCollections?.map(
 						(collection) => collection.collection_folder_id,
 					) ?? [],
-				resourceTags:
-					resource?.resourceTags?.map((tag) => tag.tag.name) ?? [],
+				resourceTags: resource?.tags?.map((tag) => tag.tag.name) ?? [],
 			})) as Partial<InferSelectModel<ResourcesType>>[];
 			return {
 				rows,
@@ -806,4 +804,74 @@ export const findUserResources = async (body: FindResourcesParams) => {
 			};
 		},
 	);
+};
+
+export const findAllUserResources = async (body: any) => {
+	const collections = await db.query.users.findFirst({
+		columns: {
+			id: true,
+			name: true,
+			email: true,
+		},
+		with: {
+			collectionFolders: {
+				with: {
+					resourceCollections: {
+						with: {
+							resource: {
+								columns: {
+									created_at: false,
+								},
+								with: {
+									category: { columns: { name: true } },
+									likes: { columns: { liked_at: true } },
+									tags: {
+										columns: {
+											resource_id: false,
+											tag_id: false,
+										},
+										with: {
+											tag: { columns: { name: true } },
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		where: eq(users.id, body.user_id),
+	});
+	const formattedCollections = collections?.collectionFolders
+		.map((collection: any) => {
+			collection.thumbnail =
+				collection.resourceCollections?.at(-1)?.resource.thumbnail ||
+				"";
+			collection.resourceCount = collection.resourceCollections?.length;
+
+			return collection;
+		})
+		.map((collection: any) => {
+			const { resource, resourceCollections, ...rest } = collection;
+			return {
+				...rest,
+				resources: collection.resourceCollections?.map(
+					(collection: any) => {
+						const { likes, ...rest } = collection.resource;
+						return {
+							...rest,
+							likesCount: collection.resource.likes.length,
+						};
+					},
+				),
+			};
+		})
+		.flat();
+
+	if (collections) {
+		collections["collectionFolders"] = formattedCollections || [];
+	}
+
+	return collections;
 };

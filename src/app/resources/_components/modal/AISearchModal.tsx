@@ -76,6 +76,7 @@ const AISearchModal = () => {
 	};
 
 	const onKeyDownHandler = (e: KeyboardEvent<HTMLInputElement>) => {
+		if (e.key === "Enter" && e.shiftKey) return;
 		if (e.key === "Escape") onCloseModal();
 		if (e.key === "Enter") {
 			e.preventDefault();

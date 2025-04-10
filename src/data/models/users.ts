@@ -17,6 +17,7 @@ import { sessions } from "./sessions";
 import { resources } from "./resources";
 import { resourceCollections } from "./resource-collections";
 import { portfolioCollections } from "./portfolio-collections";
+import { collectionFolders } from "./collection-folders";
 
 export const usersEnum = pgEnum("users_enum", ["user", "admin", "guest"]);
 export const usersStatusEnum = pgEnum("users_status_enum", [
@@ -69,6 +70,7 @@ export const userRelations = relations(users, ({ many, one }) => ({
 		references: [admins.user_id],
 	}),
 
+	collectionFolders: many(collectionFolders),
 	messages: many(userMessages),
 	resourceCollections: many(resourceCollections),
 	portfolioCollections: many(portfolioCollections),

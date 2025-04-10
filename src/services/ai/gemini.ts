@@ -201,4 +201,24 @@ export const ListOfSchema = {
 		},
 		required: ["category", "tags"],
 	} as GenerationConfig,
+
+	SEARCHED_LIST_OF_RESOURCES: {
+		description: "List of website resources",
+		type: SchemaType.OBJECT,
+		properties: {
+			resources: {
+				type: SchemaType.ARRAY,
+				description: "Ranking of resources based on metrics provided",
+				items: {
+					type: SchemaType.INTEGER,
+					description: "ID of the resources",
+				},
+			},
+			message: {
+				type: SchemaType.STRING,
+				description: "Short message about the resources",
+			},
+		},
+		required: ["resources"],
+	} as GenerationConfig,
 };
