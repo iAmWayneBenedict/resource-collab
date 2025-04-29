@@ -1,6 +1,7 @@
 import { relations } from "drizzle-orm";
 import {
 	boolean,
+	jsonb,
 	pgEnum,
 	pgTable,
 	text,
@@ -12,12 +13,13 @@ import { portfolios } from "./portfolios";
 import { userMessages } from "./user-message";
 import { userResources } from "./user-resources";
 import { admins } from "./admins";
-import { userSubscription } from "./user-subscriptions";
+import { userSubscriptions } from "./user-subscriptions";
 import { sessions } from "./sessions";
 import { resources } from "./resources";
 import { resourceCollections } from "./resource-collections";
 import { portfolioCollections } from "./portfolio-collections";
 import { collectionFolders } from "./collection-folders";
+import { pinned } from "@/data/models/pinned";
 
 export const usersEnum = pgEnum("users_enum", ["user", "admin", "guest"]);
 export const usersStatusEnum = pgEnum("users_status_enum", [
@@ -46,6 +48,10 @@ export const users = pgTable("users", {
 	email: text("email").unique().notNull(),
 	email_verified: boolean("email_verified").notNull().default(false),
 	role: usersEnum("role").notNull().default("user"),
+	profession: jsonb("profession").default([]),
+	custom_profession: text("custom_profession").default(""),
+	affiliation: text("affiliation").default(""),
+	news_letter: boolean("news_letter").notNull().default(false),
 	status: usersStatusEnum("status").notNull().default("active"),
 	password: text("password"),
 	created_at: timestamp("created_at", { mode: "date" }).defaultNow(),
@@ -69,11 +75,11 @@ export const userRelations = relations(users, ({ many, one }) => ({
 		fields: [users.id],
 		references: [admins.user_id],
 	}),
-
+	pinned: many(pinned),
 	collectionFolders: many(collectionFolders),
 	messages: many(userMessages),
 	resourceCollections: many(resourceCollections),
 	portfolioCollections: many(portfolioCollections),
-	userSubscriptions: many(userSubscription),
+	userSubscriptions: many(userSubscriptions),
 	ownedResources: many(resources),
 }));

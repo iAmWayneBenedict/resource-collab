@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { authRoutes, protectedRoutes } from "./routes";
-import { headers } from "next/headers";
 import { auth } from "./lib/auth";
 import { getApiHeaders } from "./lib/utils";
 
@@ -69,6 +68,23 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
 		targetPath.startsWith(route),
 	);
 
+	// if the user doesn't have any subscription and is logged, they should finish the onboard
+	if (
+		user &&
+		!user?.subscription &&
+		!targetPath.includes("/auth/onboard") &&
+		!targetPath.includes("/api/v1/rest")
+	)
+		return NextResponse.redirect(new URL("/auth/onboard", request.url), {
+			status: 307,
+		});
+	// if the user has subscription and is on onboard, redirect to dashboard with resources tab
+	if (user && user?.subscription && targetPath.includes("/auth/onboard"))
+		return NextResponse.redirect(
+			new URL("/dashboard?page=resources", request.url),
+			{ status: 307 },
+		);
+
 	if (!user && hasMatchProtectedRoute) {
 		if (
 			["chrome-extension", "localhost:5173"].some((host) =>
@@ -134,5 +150,11 @@ export const config = {
 	// ! IMPORTANT: This is required for the middleware to run node runtime. PLEASE UPDATE WHEN THE STABLE RELEASE IS OUT.
 	// ! currently on canary version
 	runtime: "nodejs",
-	// matcher: protectedRoutes.concat(authRoutes),
+	matcher: [
+		"/",
+		"/auth/:path*",
+		"/admin/:path*",
+		"/api/:path*",
+		"/dashboard",
+	], //! BUG on matcher if we put resource/file routes "/_next" and others
 };

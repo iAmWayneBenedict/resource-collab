@@ -26,7 +26,7 @@ export default function Socials({
 		// Sign in with the provider
 		await authClient.signIn.social({
 			provider,
-			callbackURL: "/dashboard?page=resources",
+			callbackURL: "/auth/onboard",
 		});
 	};
 	return (

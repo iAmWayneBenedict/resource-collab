@@ -1,10 +1,12 @@
 import config from "@/config";
+import { db } from "@/data/connection";
 import { getSession } from "@/lib/auth";
 import { AIService } from "@/services/ai";
 import { ListOfSchema } from "@/services/ai/gemini";
 import { ListOfPrompt } from "@/services/ai/prompts";
 import { ListOfSystemInstruction } from "@/services/ai/system-instructions";
 import { findResources } from "@/services/resource-service";
+import { updateSubscriptionCountLimit } from "@/services/subscription-service";
 import VectorService from "@/services/vector";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -59,6 +61,14 @@ export const GET = async (req: NextRequest) => {
 		});
 		console.log(usageMetaData);
 		console.log("done ai search");
+
+		await updateSubscriptionCountLimit({
+			userId: user.id,
+			limitCountName: "ai_searches_per_day",
+			count: 1,
+			mode: "increment",
+			tx: db,
+		});
 
 		// let resourcesData = null;
 		// if (resources.length) {

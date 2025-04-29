@@ -14,10 +14,11 @@ export const useGetUserResourcesQuery = (
 	options: Record<string, any>,
 ): any => {
 	const searchParams = new URLSearchParams(filters);
-
 	return useQuery({
 		enabled: !!options?.user_id,
-		queryKey: [`user-${options.type}${options.id ? `-${options.id}` : ""}`],
+		queryKey: [
+			`user-${options.type}${options.id ? `-${options.id}` : ""}${options.tab ? "-" + options.tab : ""}`,
+		],
 		queryFn: () =>
 			request({
 				url: `/users/${options.user_id}/${options.type}${options.id ? "/" + options.id : ""}?${searchParams.toString()}`,

@@ -5,6 +5,8 @@ import { db } from "@/data/connection";
 import { collectionFolders, collectionShortUrls } from "@/data/schema";
 import config from "@/config";
 import { and, eq, InferSelectModel, isNull } from "drizzle-orm";
+import { updateSubscriptionCountLimit } from "@/services/subscription-service";
+import { uniqueSharedEmails } from "@/services/short-url-service";
 
 export const GET = async (
 	req: NextRequest,
@@ -191,6 +193,16 @@ const createOrUpdateShortUrl = async (
 					),
 				)
 				.returning({ name: collectionFolders.name });
+
+			const uniqueSharedUsers = await uniqueSharedEmails(userId, tx);
+			await updateSubscriptionCountLimit({
+				userId: userId,
+				limitCountName: "shared_users",
+				mode: "increment",
+				tx,
+				count: uniqueSharedUsers.length,
+			});
+
 			const resultShortUrl = {
 				...existingShortUrls[0],
 				name,
@@ -218,6 +230,15 @@ const createOrUpdateShortUrl = async (
 				short_code: shortCode,
 			})
 			.returning();
+
+		const uniqueSharedUsers = await uniqueSharedEmails(userId, tx);
+		await updateSubscriptionCountLimit({
+			userId: userId,
+			limitCountName: "shared_users",
+			mode: "increment",
+			tx,
+			count: uniqueSharedUsers.length,
+		});
 
 		const resultShortUrl = {
 			...shortUrl,

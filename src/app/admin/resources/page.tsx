@@ -1,7 +1,7 @@
 import React from "react";
 import { Container } from "../_components";
 import ResourcesTable from "./_components/table";
-import ResourceFormModal from "./_components/modal";
+import ResourceFormModal from "../../../components/modal/ResourceFormModal";
 
 export default function Page() {
 	return (

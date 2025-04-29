@@ -79,7 +79,7 @@ const LoginForm = () => {
 						control={control}
 						error={errors.password}
 					/>
-					<div className="flex items-center space-x-2">
+					<div className="flex items-center justify-between space-x-2">
 						<Checkbox
 							isSelected={passwordType === "text"}
 							onValueChange={(checked: boolean) =>
@@ -88,6 +88,14 @@ const LoginForm = () => {
 						>
 							Show password
 						</Checkbox>
+						<div>
+							<Link
+								href="/auth/forgot-password"
+								className="text-sm hover:underline"
+							>
+								Forgot password?
+							</Link>
+						</div>
 					</div>
 					<br />
 					<br />

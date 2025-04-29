@@ -6,8 +6,9 @@ import SaveResourcePopOver from "./components/resources/SaveResourcePopOver";
 import { usePutViewResourceMutation } from "@/lib/mutations/resources";
 import { SaveResourceDrawer } from "./components/resources/SaveResourceDrawer";
 import { useState } from "react";
-import { Image } from "@heroui/react";
+import { Avatar, Image } from "@heroui/react";
 import { useMediaQuery } from "react-responsive";
+import { useSearchParams } from "next/navigation";
 
 type ResourceCardProps = {
 	data: any;
@@ -19,6 +20,9 @@ const ResourceCard = ({ data }: ResourceCardProps) => {
 	const isSmallDevices = useMediaQuery({
 		query: "(max-width: 64rem)",
 	});
+	const params = useSearchParams();
+	const dashboardPage = params.get("page");
+
 	const mutation = usePutViewResourceMutation({
 		params: data.id,
 		onSuccess: () => {
@@ -109,6 +113,19 @@ const ResourceCard = ({ data }: ResourceCardProps) => {
 					>
 						<ResourceTags tags={data.resourceTags} />
 						<div className="mt-4">
+							{dashboardPage === "shared" && data?.sharedBy && (
+								<div className="flex items-center gap-2">
+									<Avatar
+										name={data.sharedBy.email}
+										src={data.sharedBy.image}
+										className="h-5 w-5"
+										size="sm"
+									/>
+									<p className="text-xs text-zinc-600">
+										{data.sharedBy.email}
+									</p>
+								</div>
+							)}
 							<ResourceMetrics
 								name={data.name}
 								id={data.id}

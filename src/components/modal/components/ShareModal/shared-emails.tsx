@@ -7,6 +7,7 @@ import {
 	DropdownMenu,
 	DropdownItem,
 	User,
+	addToast,
 } from "@heroui/react";
 import { Mail, Eye, ChevronDown, Pencil, X } from "lucide-react";
 import React, { Fragment, useMemo, useState, KeyboardEvent, Key } from "react";
@@ -104,6 +105,12 @@ const SharedEmails = ({ sharedTo, setSharedTo, type, handleChange }: Props) => {
 
 	const handleSendInvite = () => {
 		console.log(recentAddedEmails);
+
+		addToast({
+			color: "success",
+			title: "Success",
+			description: "Invite sent",
+		});
 	};
 
 	return (

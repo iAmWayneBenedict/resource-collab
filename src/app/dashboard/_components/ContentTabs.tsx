@@ -20,6 +20,7 @@ import {
 } from "next/navigation";
 import { useMediaQuery } from "react-responsive";
 import PortfolioTabs from "./PortfolioTabs";
+import SharedTab from "./shared/SharedTab";
 
 let TABS = [
 	{
@@ -112,6 +113,12 @@ const ContentTabs = () => {
 						{currentTab === "liked" && <LikedTab />}
 						{currentTab === "collections" && (
 							<CollectionTab
+								type={currentTab as any}
+								id={id as string}
+							/>
+						)}
+						{currentTab === "shared" && (
+							<SharedTab
 								type={currentTab as any}
 								id={id as string}
 							/>

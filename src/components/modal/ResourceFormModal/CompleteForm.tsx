@@ -16,7 +16,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
-import { usePostDeleteUploadThingFileMutation } from "../../../../../lib/mutations/storage/uploadthing";
+import { usePostDeleteUploadThingFileMutation } from "../../../lib/mutations/storage/uploadthing";
 import { UploadImageResource } from "./UploadImage";
 import { useGetCategoriesQuery } from "@/lib/queries/categories";
 

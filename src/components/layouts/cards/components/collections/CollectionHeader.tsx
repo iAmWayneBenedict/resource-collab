@@ -1,7 +1,12 @@
-import { useDeleteCollectionFoldersMutation } from "@/lib/mutations/collections";
+import {
+	useDeleteCollectionFoldersMutation,
+	useDeletePinCollectionMutation,
+	usePostPinCollectionMutation,
+} from "@/lib/mutations/collections";
 import { useAlertDialog, useModal } from "@/store";
 import {
 	addToast,
+	Avatar,
 	Button,
 	Dropdown,
 	DropdownItem,
@@ -10,7 +15,14 @@ import {
 	DropdownTrigger,
 } from "@heroui/react";
 import { useQueryClient } from "@tanstack/react-query";
-import { EllipsisVertical, Pencil, Share2, Trash2 } from "lucide-react";
+import {
+	EllipsisVertical,
+	Pencil,
+	Pin,
+	PinOff,
+	Share2,
+	Trash2,
+} from "lucide-react";
 import React, { useEffect, useState } from "react";
 import config from "@/config";
 import { useGetCollectionShortUrl } from "@/lib/queries/short-urls";
@@ -29,6 +41,43 @@ const CollectionHeader = ({
 		(state) => state.setAlertDialogDetails,
 	);
 	const queryClient = useQueryClient();
+
+	// START -- pin
+	const pinOptions = (message: string) => ({
+		params: data?.id,
+		onSuccess: (data: any) => {
+			addToast({
+				color: "success",
+				title: "Success",
+				description: message,
+			});
+			queryClient.invalidateQueries({ queryKey: ["user-collections"] });
+		},
+		onError: (error: any) => {
+			console.log(error);
+			addToast({
+				color: "danger",
+				title: "Error",
+				description: error.message,
+			});
+		},
+	});
+	const addPinMutation = usePostPinCollectionMutation(
+		pinOptions("Collection pinned successfully!"),
+	);
+
+	const removePinMutation = useDeletePinCollectionMutation(
+		pinOptions("Collection unpinned successfully!"),
+	);
+
+	const togglePin = () => {
+		if (data.pinned) removePinMutation.mutate({});
+		else addPinMutation.mutate({});
+	};
+
+	// END -- pin
+
+	// START -- delete collections
 	const deleteMutation = useDeleteCollectionFoldersMutation({
 		onSuccess: (data) => {
 			addToast({
@@ -56,14 +105,13 @@ const CollectionHeader = ({
 			message:
 				"Are you sure you want to delete this collection? This will delete all the resources inside this collection",
 			dialogType: "confirm",
-			onConfirm: () =>
-				deleteMutation.mutate({
-					ids: [data.id],
-				}),
+			onConfirm: () => deleteMutation.mutate({ ids: [data.id] }),
 		});
 	};
 
-	// share
+	// END -- delete collection
+
+	// START - share
 	const pathname = usePathname();
 	const setSubmitCallback = useModal((state) => state.setSubmitCallback);
 	const [shareData, setShareData] = useState<Record<string, any> | null>(
@@ -76,7 +124,7 @@ const CollectionHeader = ({
 
 	const resourceShortUrlMutation = usePostCollectionsShortUrlMutation({
 		params: data.id,
-		onSuccess: (data) => {
+		onSuccess: async (data) => {
 			const formattedData = {
 				...data.data,
 				url: data.data.short_url,
@@ -87,6 +135,9 @@ const CollectionHeader = ({
 
 			setShareData(formattedData);
 			setEnableInitShortUrl(false);
+			await queryClient.invalidateQueries({
+				queryKey: ["collection-short-url"],
+			});
 			onOpenModal(
 				"share-modal",
 				formattedData,
@@ -99,12 +150,7 @@ const CollectionHeader = ({
 		},
 	});
 
-	const onSubmitShare = (data: any) => {
-		const req = {
-			...data,
-		};
-		resourceShortUrlMutation.mutate(req);
-	};
+	const onSubmitShare = (data: any) => resourceShortUrlMutation.mutate(data);
 
 	const onClickShareHandler = () => {
 		const data = shareData ?? {
@@ -139,7 +185,7 @@ const CollectionHeader = ({
 			};
 
 			onOpenModal("share-modal", formattedData, undefined, data.name);
-			setEnableInitShortUrl(false);
+			// setEnableInitShortUrl(false);
 		}
 		if (shortUrlResponse.isError) {
 			onOpenModal(
@@ -159,11 +205,30 @@ const CollectionHeader = ({
 		shortUrlResponse.data,
 		shortUrlResponse.isSuccess,
 		shortUrlResponse.isError,
+		shortUrlResponse.isFetching,
 	]);
+
+	// END -- share
 
 	return (
 		<div className="absolute left-0 top-0 z-[2] flex w-full">
-			<div className="flex flex-1 items-center justify-end gap-2 px-3 pt-2">
+			<div className="flex flex-1 items-center justify-between gap-2 px-3 pt-2">
+				<div>
+					{data.pinned && <Pin size={16} className="text-white" />}
+					{data.sharedBy && (
+						<div className="flex items-center gap-2">
+							<Avatar
+								name={data.sharedBy.email}
+								src={data.sharedBy.image}
+								className="h-5 w-5"
+								size="sm"
+							/>
+							<p className="text-xs text-zinc-200">
+								{data.sharedBy.email}
+							</p>
+						</div>
+					)}
+				</div>
 				<Dropdown
 					placement="bottom-end"
 					onOpenChange={(state: boolean) =>
@@ -185,8 +250,22 @@ const CollectionHeader = ({
 					<DropdownMenu variant="flat">
 						<DropdownSection title={"Action"}>
 							<DropdownItem
+								key="pin"
+								description="Pin on extension and mobile"
+								startContent={
+									data.pinned ? (
+										<PinOff size={20} />
+									) : (
+										<Pin size={20} />
+									)
+								}
+								onPress={togglePin}
+							>
+								{data.pinned ? "Unpin" : "Pin"}
+							</DropdownItem>
+							<DropdownItem
 								key="edit"
-								description="Edit collection"
+								description="Change collection name"
 								startContent={<Pencil size={20} />}
 								onPress={() =>
 									onOpenModal(
@@ -210,7 +289,7 @@ const CollectionHeader = ({
 							<DropdownItem
 								key="delete"
 								color="danger"
-								description="Delete collection"
+								description="Delete permanently"
 								onPress={onDeleteHandler}
 								startContent={<Trash2 size={20} />}
 								classNames={{

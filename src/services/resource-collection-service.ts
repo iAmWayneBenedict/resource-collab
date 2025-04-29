@@ -1,6 +1,7 @@
 import { db } from "@/data/connection";
-import { collectionFolders, resourceCollections } from "@/data/schema";
+import { collectionFolders, pinned, resourceCollections } from "@/data/schema";
 import { and, eq, inArray } from "drizzle-orm";
+import { updateSubscriptionCountLimit } from "./subscription-service";
 
 type CollectionResponse = {
 	collectionFolder: typeof collectionFolders.$inferSelect | null;
@@ -112,6 +113,12 @@ export const createCollectionWithResource = async (
 				resource_id: resourceId,
 			})
 			.returning();
+		await updateSubscriptionCountLimit({
+			userId: userId,
+			limitCountName: "collections",
+			mode: "increment",
+			tx,
+		});
 
 		return {
 			collectionFolder: newCollectionFolder,
@@ -143,6 +150,85 @@ export const createEmptyCollection = async (
 			.values({ name, user_id: userId })
 			.returning();
 
+		await updateSubscriptionCountLimit({
+			userId: userId,
+			limitCountName: "collections",
+			mode: "increment",
+			tx,
+		});
+
 		return { collectionFolder: newCollectionFolder, collection: null };
 	});
+};
+
+export const findAllPinnedCollections = async (body: Record<string, any>) => {
+	const collections = await db.query.pinned.findMany({
+		with: {
+			collectionFolders: {
+				with: {
+					resourceCollections: {
+						with: {
+							resource: {
+								columns: {
+									created_at: false,
+								},
+								with: {
+									category: { columns: { name: true } },
+									likes: { columns: { liked_at: true } },
+									tags: {
+										columns: {
+											resource_id: false,
+											tag_id: false,
+										},
+										with: {
+											tag: { columns: { name: true } },
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		where: eq(pinned.user_id, body.id),
+	});
+	return collections
+		?.map((collection: any) => {
+			collection.collectionFolders.thumbnail =
+				collection.collectionFolders.resourceCollections?.at(-1)
+					?.resource.thumbnail || "";
+			collection.collectionFolders.resourceCount =
+				collection.collectionFolders.resourceCollections?.length;
+
+			return collection;
+		})
+		.map((collection: any) => {
+			const { resourceCollections, ...rest } =
+				collection.collectionFolders;
+			return {
+				...rest,
+				resources:
+					collection.collectionFolders.resourceCollections?.map(
+						(collection: any) => {
+							const {
+								likes,
+								tags: defaultTags,
+								...rest
+							} = collection.resource;
+							const likesCount = collection.resource.likes.length;
+							const tags = defaultTags.map(
+								({ tag }: { tag: Record<string, string> }) =>
+									tag.name,
+							);
+							return {
+								...rest,
+								tags,
+								likesCount,
+							};
+						},
+					),
+			};
+		})
+		.flat();
 };

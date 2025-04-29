@@ -85,7 +85,7 @@ export const GET = async (req: NextRequest) => {
 		if (aiResources.length) {
 			resourcesData = await findResources({
 				page: 1,
-				limit: 10,
+				limit: aiResources.length || 10,
 				resourceIds: aiResources,
 				search: "",
 				sortBy: "",

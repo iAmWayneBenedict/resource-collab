@@ -5,7 +5,10 @@ import {
 } from "@/services/resource-collection-service";
 import { getSession } from "@/lib/auth";
 import { NextRequest, NextResponse } from "next/server";
-import { getApiHeaders } from "../../../../../../lib/utils";
+import {
+	exceededSubscriptionLimitCountHandler,
+	getApiHeaders,
+} from "../../../../../../lib/utils";
 
 export const POST = async (req: NextRequest) => {
 	const body = await req.json();
@@ -43,7 +46,12 @@ export const POST = async (req: NextRequest) => {
 	} catch (error) {
 		if (error instanceof Error)
 			return NextResponse.json(
-				{ message: error.message, data: { path: ["name"] } },
+				{
+					message: error.message,
+					data: exceededSubscriptionLimitCountHandler(error) || {
+						path: ["name"],
+					},
+				},
 				{ status: 400, headers: getApiHeaders(["POST"]) },
 			);
 

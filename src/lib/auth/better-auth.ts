@@ -4,9 +4,14 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";
 import { headers } from "next/headers";
-import { customSession, emailOTP, openAPI } from "better-auth/plugins";
+import {
+	createAuthMiddleware,
+	customSession,
+	emailOTP,
+	openAPI,
+} from "better-auth/plugins";
 import { EmailService } from "@/services/email";
-import { users } from "@/data/schema";
+import { users, userSubscriptions } from "@/data/schema";
 import { eq } from "drizzle-orm";
 
 export const auth = betterAuth({
@@ -41,16 +46,29 @@ export const auth = betterAuth({
 
 	plugins: [
 		customSession(async ({ user, session }) => {
-			const [userData] = await db
-				.select()
-				.from(users)
-				.where(eq(users.id, user.id));
+			const [userData, subscription] = await db.transaction(
+				async (tx) => {
+					const [userDetails] = await tx
+						.select()
+						.from(users)
+						.where(eq(users.id, user.id));
+
+					const [subscription] = await tx
+						.select()
+						.from(userSubscriptions)
+						.where(eq(userSubscriptions.user_id, user?.id));
+
+					return [userDetails, subscription];
+				},
+			);
+
 			return {
 				user: {
 					...user,
 					image: userData?.image,
 					role: userData?.role,
 					status: userData?.status,
+					subscription,
 				},
 				session,
 			};
@@ -70,6 +88,16 @@ export const auth = betterAuth({
 		openAPI(),
 		nextCookies(), // make sure that this will always be the last plugin
 	],
+
+	// hooks: {
+	// 	after: createAuthMiddleware(async (ctx) => {
+	// 		const isSocial = ctx.path.includes("/callback/:id");
+	// 		const isVerify = ctx.path.includes("/email-otp/verify-email");
+	// 		console.log(ctx.headers);
+	// 		if (isSocial || isVerify) {
+	// 		}
+	// 	}),
+	// },
 
 	// custom schema
 	user: {

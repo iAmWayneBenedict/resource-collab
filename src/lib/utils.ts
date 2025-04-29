@@ -1,4 +1,5 @@
 import config from "@/config";
+import { db } from "@/data/connection";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -221,4 +222,23 @@ export const getApiHeaders = (methods: string[]) => {
 			"Origin, Content-Type, Authorization, X-Access-Token",
 		"Access-Control-Max-Age": "86400",
 	};
+};
+
+export const defaultSubscriptionLimitCounter = {
+	collections: 0,
+	shared_users: 0,
+	ai_searches_per_day: 0,
+};
+
+export const exceededSubscriptionLimitCountHandler = (err: Error) => {
+	const limitExceededMessages = [
+		"AI_SEARCHES_PER_DAY_LIMIT_EXCEEDED",
+		"COLLECTIONS_LIMIT_EXCEEDED",
+		"SHARED_USERS_LIMIT_EXCEEDED",
+	];
+
+	if (limitExceededMessages.includes(err.name)) {
+		return { path: ["toast", "alert"] };
+	}
+	return null;
 };
