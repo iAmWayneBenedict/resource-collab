@@ -1,5 +1,5 @@
 {
-  "id": "73bc4d73-73fb-43b8-981b-69c05996f106",
+  "id": "248b4c45-6fe2-40cf-be6d-76a9b8e7bc76",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -583,6 +583,64 @@
       "checkConstraints": {},
       "isRLSEnabled": true
     },
+    "public.pinned": {
+      "name": "pinned",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "collection_id": {
+          "name": "collection_id",
+          "type": "serial",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "pinned_collection_id_collection_folders_id_fk": {
+          "name": "pinned_collection_id_collection_folders_id_fk",
+          "tableFrom": "pinned",
+          "tableTo": "collection_folders",
+          "columnsFrom": [
+            "collection_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "pinned_user_id_users_id_fk": {
+          "name": "pinned_user_id_users_id_fk",
+          "tableFrom": "pinned",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": true
+    },
     "public.portfolio_collections": {
       "name": "portfolio_collections",
       "schema": "",
@@ -896,45 +954,6 @@
       "checkConstraints": {},
       "isRLSEnabled": true
     },
-    "public.resource_access": {
-      "name": "resource_access",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "resource_short_url_id": {
-          "name": "resource_short_url_id",
-          "type": "serial",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "resource_access_resource_short_url_id_resource_short_urls_id_fk": {
-          "name": "resource_access_resource_short_url_id_resource_short_urls_id_fk",
-          "tableFrom": "resource_access",
-          "tableTo": "resource_short_urls",
-          "columnsFrom": [
-            "resource_short_url_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "cascade"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": true
-    },
     "public.resource_collections": {
       "name": "resource_collections",
       "schema": "",
@@ -1052,6 +1071,14 @@
           "primaryKey": false,
           "notNull": false,
           "default": "ARRAY[]::text[]"
+        },
+        "access_level": {
+          "name": "access_level",
+          "type": "access_level",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'private'"
         },
         "expired_at": {
           "name": "expired_at",
@@ -1405,6 +1432,51 @@
           "primaryKey": false,
           "notNull": true,
           "default": "'early access'"
+        },
+        "monthly_price": {
+          "name": "monthly_price",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "yearly_price": {
+          "name": "yearly_price",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "features": {
+          "name": "features",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "is_active": {
+          "name": "is_active",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        },
+        "tier": {
+          "name": "tier",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 1
+        },
+        "limits": {
+          "name": "limits",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'{}'::jsonb"
         }
       },
       "indexes": {},
@@ -1601,19 +1673,33 @@
           "primaryKey": false,
           "notNull": true
         },
-        "created_at": {
-          "name": "created_at",
+        "started_at": {
+          "name": "started_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false,
           "default": "now()"
         },
-        "updated_at": {
-          "name": "updated_at",
+        "expired_at": {
+          "name": "expired_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false,
           "default": "now()"
+        },
+        "is_trial": {
+          "name": "is_trial",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "is_lifetime": {
+          "name": "is_lifetime",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
         }
       },
       "indexes": {},
@@ -1808,7 +1894,7 @@
         "early access",
         "free",
         "premium",
-        "enterprise"
+        "ultimate"
       ]
     },
     "public.users_enum": {

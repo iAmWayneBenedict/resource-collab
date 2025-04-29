@@ -34,13 +34,15 @@ import {
 	subscriptionEnum,
 } from "./models/subscriptions";
 import {
-	userSubscription,
 	userSubscriptionRelations,
+	userSubscriptions,
 } from "./models/user-subscriptions";
+
 import { accountRelations, accounts } from "./models/accounts";
 import { verifications } from "./models/verifications";
 import { userMessages } from "./models/user-message";
 import { accessLevel } from "./models/collection-folders";
+import { pinned, pinnedRelations } from "./models/pinned";
 import {
 	collectionShortUrls,
 	collectionShortUrlRelations,
@@ -83,7 +85,7 @@ export {
 	subscriptions,
 	subscriptionsRelations,
 	subscriptionEnum,
-	userSubscription,
+	userSubscriptions,
 	userSubscriptionRelations,
 	// resources and portfolios
 	resources,
@@ -108,6 +110,10 @@ export {
 	resourceShortUrlAccessRelations,
 	collectionShortUrls,
 	collectionShortUrlRelations,
+
+	// pinned
+	pinned,
+	pinnedRelations,
 
 	// relationships and tags
 	userResources,

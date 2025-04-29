@@ -1,7 +1,7 @@
 import ResourceCard from "@/components/layouts/cards/ResourceCard";
 import { useGetCollectionsQuery } from "@/lib/queries/collections";
 import { useGetUserResourcesQuery } from "@/lib/queries/user";
-import { useAuthUser } from "@/store";
+import { useAuthUser, useModal } from "@/store";
 import {
 	ResourcePaginatedSearchParamsProvider,
 	ResourcePaginatedSearchParamsState,
@@ -12,7 +12,7 @@ import { useRequestStatus } from "@/store/useRequestStatus";
 import { Button, Skeleton } from "@heroui/react";
 import { useEffect } from "react";
 import { AnimatePresence } from "motion/react";
-import { useRouter } from "next/navigation";
+import { Plus } from "lucide-react";
 
 type Props = {
 	type:
@@ -26,7 +26,6 @@ type Props = {
 	id?: number | string;
 };
 const ResourceWrapper = ({ type, id }: Props) => {
-	const router = useRouter();
 	const { authUser } = useAuthUser();
 	const setSearchParams = useResourcePaginatedSearchParams(
 		(state: ResourcePaginatedSearchParamsState) =>
@@ -38,15 +37,22 @@ const ResourceWrapper = ({ type, id }: Props) => {
 	);
 
 	const { data, isSuccess, isLoading, isFetching, isError } =
-		useGetUserResourcesQuery({}, { user_id: authUser?.id, type, id });
+		useGetUserResourcesQuery(
+			{ tab: "resources" },
+			{ user_id: authUser?.id, type, id, tab: "resources" },
+		);
 
 	useEffect(() => {
-		setSearchParams({ queryKey: [`user-${type}${id ? `-${id}` : ""}`] });
+		setSearchParams({
+			queryKey: [`user-${type}${id ? `-${id}` : ""}-resources`],
+		});
 	}, []);
 
 	const collections = useGetCollectionsQuery({
 		enabled: !!authUser,
 	});
+
+	const { onOpen: onOpenModal } = useModal();
 
 	useEffect(() => {
 		if (!collections.isSuccess) return;
@@ -113,7 +119,7 @@ const ResourceWrapper = ({ type, id }: Props) => {
 		);
 	}
 
-	if (!data?.data.rows.length) {
+	if (!data?.data.rows?.length) {
 		return (
 			<div className="flex w-full flex-col items-center justify-center p-8 text-center">
 				<div className="mb-2 text-[8rem] font-bold leading-none text-gray-200 opacity-60">
@@ -128,25 +134,44 @@ const ResourceWrapper = ({ type, id }: Props) => {
 							? "This collection doesn't have any resources yet."
 							: "You don't have any resources in this category yet."}
 					</p>
-					<Button
-						radius="full"
-						className="bg-violet text-white"
-						onPress={() => router.push("/resources")}
-					>
-						Start adding now
-					</Button>
+					{type === "resources" && (
+						<Button
+							radius="full"
+							className="bg-violet text-white"
+							onPress={() =>
+								onOpenModal("resourcesForm", { type: "url" })
+							}
+						>
+							Start adding now
+						</Button>
+					)}
 				</div>
 			</div>
 		);
 	}
-
 	return (
-		<div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-			<AnimatePresence mode={"popLayout"}>
-				{data?.data.rows.map((resource: any) => (
-					<ResourceCard key={resource.name} data={resource} />
-				))}
-			</AnimatePresence>
+		<div className="flex w-full flex-col gap-4">
+			{type === "resources" && (
+				<div className="flex justify-end">
+					<Button
+						className="bg-violet text-white"
+						radius="full"
+						startContent={<Plus />}
+						onPress={() =>
+							onOpenModal("resourcesForm", { type: "url" })
+						}
+					>
+						Add Resource
+					</Button>
+				</div>
+			)}
+			<div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+				<AnimatePresence mode={"popLayout"}>
+					{data?.data.rows.map((resource: any) => (
+						<ResourceCard key={resource.name} data={resource} />
+					))}
+				</AnimatePresence>
+			</div>
 		</div>
 	);
 };

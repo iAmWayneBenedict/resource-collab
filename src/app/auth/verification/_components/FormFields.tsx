@@ -71,7 +71,7 @@ const FormFields = ({ email }: { email: string | undefined }) => {
 		toast.success("Successfully verified account!");
 
 		setTimeout(() => {
-			location.href = "/dashboard?page=resources";
+			location.href = "/auth/onboard";
 		}, 2000);
 	};
 	return (

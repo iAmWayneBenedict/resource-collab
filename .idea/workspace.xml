@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="19bd1d25-20e0-4f32-b114-63d1f0f52b8d" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/app/api/v1/rest/users/[id]/pinned/route.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/api/v1/rest/ai/extension/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/api/v1/rest/ai/extension/route.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/api/v1/rest/resource-collections/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/api/v1/rest/resource-collections/route.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/api/v1/rest/users/[id]/collections/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/api/v1/rest/users/[id]/collections/route.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/layouts/cards/components/collections/CollectionHeader.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/layouts/cards/components/collections/CollectionHeader.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/models/users.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/models/users.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/schema.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/schema.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/drizzle/meta/_journal.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/drizzle/meta/_journal.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/mutations/collections.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/mutations/collections.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/services/resource-collection-service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/services/resource-collection-service.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/services/resource-service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/services/resource-service.ts" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;iAmWayneBenedict&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;git@github.com:iAmWayneBenedict/resource-collab.git&quot;,
+    &quot;accountId&quot;: &quot;c0f976c7-6247-4258-bcb5-8fea0e136999&quot;
+  }
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 2
+}</component>
+  <component name="ProjectId" id="2vhO3QVjHTXBHC4ksOhakGvSnVW" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "com.codeium.enabled": "true",
+    "git-widget-placeholder": "feature-collections",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "D:/personal projects/coollabs-extension",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "pnpm",
+    "prettierjs.PrettierConfiguration.Package": "D:\\nextjs\\resource-collab\\node_modules\\prettier",
+    "settings.editor.selected.configurable": "preferences.lookFeel",
+    "ts.external.directory.path": "D:\\nextjs\\resource-collab\\node_modules\\typescript\\lib",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-WS-243.26053.12" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="19bd1d25-20e0-4f32-b114-63d1f0f52b8d" name="Changes" comment="" />
+      <created>1744593641275</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1744593641275</updated>
+      <workItem from="1744593645436" duration="164000" />
+      <workItem from="1744593856056" duration="606000" />
+      <workItem from="1744594507047" duration="13796000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>

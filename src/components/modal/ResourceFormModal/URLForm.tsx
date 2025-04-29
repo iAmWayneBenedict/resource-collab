@@ -1,6 +1,7 @@
 import { usePostResourceMutation } from "@/lib/mutations/resources";
 import { addToast, Alert, Button, Input } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
@@ -37,6 +38,8 @@ const URLForm = ({
 		resolver: zodResolver(formSchema),
 	});
 
+	const queryClient = useQueryClient();
+
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	const createResourceMutation = usePostResourceMutation({
@@ -44,6 +47,10 @@ const URLForm = ({
 			onSubmittingCallback(false);
 			setIsSubmitting(false);
 			onCloseModal();
+
+			queryClient.invalidateQueries({
+				queryKey: ["user-resources-resources"],
+			});
 
 			addToast({
 				title: "Success",

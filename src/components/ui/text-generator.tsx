@@ -38,7 +38,7 @@ export function TextGenerator({ text }: { text: string }) {
 
 	// Effect to handle text generation
 	useEffect(() => {
-		if (!isGenerating) return;
+		if (!isGenerating || !text) return;
 
 		// Split the text into words, preserving paragraph breaks
 		const paragraphs = text.split("\n");

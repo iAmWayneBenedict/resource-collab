@@ -1,12 +1,14 @@
 import { db } from "@/data/connection";
 import {
 	collectionFolders,
+	pinned,
 	resourceCollections,
 	resources,
 } from "@/data/schema";
 import { getSession } from "@/lib/auth";
 import { getApiHeaders } from "@/lib/utils";
-import { asc, count, desc, eq, inArray, sql } from "drizzle-orm";
+import { updateSubscriptionCountLimit } from "@/services/subscription-service";
+import { count, desc, eq, inArray, sql } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
 export const GET = async (req: NextRequest) => {
@@ -30,6 +32,9 @@ export const GET = async (req: NextRequest) => {
 				name: collectionFolders.name,
 				access_level: collectionFolders.access_level,
 				resourceCount: sql<number>`CAST((${db.select({ count: count() }).from(resourceCollections).where(eq(resourceCollections.collection_folder_id, collectionFolders.id))}) AS integer)`,
+				pinned: sql<boolean>`(CASE WHEN ${pinned.id} IS NOT NULL THEN true ELSE false END)`.as(
+					"pinned",
+				),
 				thumbnail: sql`(${db
 					.select({ thumbnail: resources.thumbnail })
 					.from(resources)
@@ -108,6 +113,12 @@ export const DELETE = async (req: NextRequest) => {
 		await db
 			.delete(collectionFolders)
 			.where(inArray(collectionFolders.id, body.ids));
+		await updateSubscriptionCountLimit({
+			userId: user.id,
+			limitCountName: "collections",
+			mode: "decrement",
+			tx: db,
+		});
 		return NextResponse.json(
 			{
 				message: "Successfully deleted collections",

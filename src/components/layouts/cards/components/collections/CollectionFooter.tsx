@@ -2,6 +2,7 @@ import { Layers2 } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React from "react";
 import { collectionItemIcons } from "../../utils";
+import { Avatar } from "@heroui/react";
 
 const CollectionFooter = ({
 	data,
@@ -17,7 +18,7 @@ const CollectionFooter = ({
 
 	return (
 		<div
-			className="absolute bottom-0 left-0 z-[2] flex w-full"
+			className="absolute bottom-0 left-0 z-[2] flex w-full flex-col"
 			onClick={onClickCardHandler}
 		>
 			<div className="flex flex-1 items-end justify-between gap-2 px-5 pb-4">

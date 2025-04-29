@@ -1,8 +1,8 @@
 import { db } from "@/data/connection";
 import {
-	collectionFolders,
+	collectionFolders, pinned,
 	resourceCollections,
-	resources,
+	resources
 } from "@/data/schema";
 import { getSession } from "@/lib/auth";
 import { count, desc, eq, sql } from "drizzle-orm";
@@ -26,6 +26,7 @@ export const GET = async (req: NextRequest) => {
 				name: collectionFolders.name,
 				access_level: collectionFolders.access_level,
 				resourceCount: sql<number>`CAST((${db.select({ count: count() }).from(resourceCollections).where(eq(resourceCollections.collection_folder_id, collectionFolders.id))}) AS integer)`,
+				pinned: sql<boolean>`(CASE WHEN ${pinned.id} IS NOT NULL THEN true ELSE false END)`.as("pinned"),
 				thumbnail: sql`(${db
 					.select({ thumbnail: resources.thumbnail })
 					.from(resources)
@@ -51,6 +52,7 @@ export const GET = async (req: NextRequest) => {
 					.limit(1)})`.as("thumbnail"),
 			})
 			.from(collectionFolders)
+			.leftJoin(pinned, eq(pinned.collection_id, collectionFolders.id))
 			.where(eq(collectionFolders.user_id, user.id))
 			.orderBy(desc(collectionFolders.id));
 

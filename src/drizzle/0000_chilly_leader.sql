@@ -1,5 +1,5 @@
 CREATE TYPE "public"."access_level" AS ENUM('public', 'private', 'shared');--> statement-breakpoint
-CREATE TYPE "public"."subscription_enum" AS ENUM('early access', 'free', 'premium', 'enterprise');--> statement-breakpoint
+CREATE TYPE "public"."subscription_enum" AS ENUM('early access', 'free', 'premium', 'ultimate');--> statement-breakpoint
 CREATE TYPE "public"."users_enum" AS ENUM('user', 'admin', 'guest');--> statement-breakpoint
 CREATE TYPE "public"."users_status_enum" AS ENUM('active', 'inactive', 'archived');--> statement-breakpoint
 CREATE TABLE "accounts" (
@@ -91,6 +91,13 @@ CREATE TABLE "oauth_account" (
 );
 --> statement-breakpoint
 ALTER TABLE "oauth_account" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
+CREATE TABLE "pinned" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"collection_id" serial NOT NULL,
+	"user_id" text
+);
+--> statement-breakpoint
+ALTER TABLE "pinned" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "portfolio_collections" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"user_id" varchar NOT NULL,
@@ -129,12 +136,6 @@ CREATE TABLE "portfolios" (
 );
 --> statement-breakpoint
 ALTER TABLE "portfolios" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
-CREATE TABLE "resource_access" (
-	"id" serial PRIMARY KEY NOT NULL,
-	"resource_short_url_id" serial NOT NULL
-);
---> statement-breakpoint
-ALTER TABLE "resource_access" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "resource_collections" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"user_id" varchar NOT NULL,
@@ -150,6 +151,7 @@ CREATE TABLE "resource_short_urls" (
 	"resource_id" serial NOT NULL,
 	"user_id" text,
 	"emails" text[] DEFAULT ARRAY[]::text[],
+	"access_level" "access_level" DEFAULT 'private' NOT NULL,
 	"expired_at" timestamp with time zone DEFAULT now(),
 	CONSTRAINT "resource_short_urls_short_code_unique" UNIQUE("short_code")
 );
@@ -199,7 +201,14 @@ CREATE TABLE "skills" (
 ALTER TABLE "skills" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "subscriptions" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"type" "subscription_enum" DEFAULT 'early access' NOT NULL
+	"type" "subscription_enum" DEFAULT 'early access' NOT NULL,
+	"monthly_price" integer NOT NULL,
+	"yearly_price" integer NOT NULL,
+	"description" text NOT NULL,
+	"features" text[] NOT NULL,
+	"is_active" boolean DEFAULT true NOT NULL,
+	"tier" smallint DEFAULT 1 NOT NULL,
+	"limits" jsonb DEFAULT '{}'::jsonb NOT NULL
 );
 --> statement-breakpoint
 ALTER TABLE "subscriptions" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
@@ -230,8 +239,10 @@ CREATE TABLE "user_subscriptions" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"user_id" varchar NOT NULL,
 	"subscription_id" serial NOT NULL,
-	"created_at" timestamp DEFAULT now(),
-	"updated_at" timestamp DEFAULT now()
+	"started_at" timestamp DEFAULT now(),
+	"expired_at" timestamp DEFAULT now(),
+	"is_trial" boolean DEFAULT false NOT NULL,
+	"is_lifetime" boolean DEFAULT false NOT NULL
 );
 --> statement-breakpoint
 ALTER TABLE "user_subscriptions" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
@@ -269,6 +280,8 @@ ALTER TABLE "email_verification_codes" ADD CONSTRAINT "email_verification_codes_
 ALTER TABLE "like_resources" ADD CONSTRAINT "like_resources_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
 ALTER TABLE "like_resources" ADD CONSTRAINT "like_resources_resource_id_resources_id_fk" FOREIGN KEY ("resource_id") REFERENCES "public"."resources"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
 ALTER TABLE "oauth_account" ADD CONSTRAINT "oauth_account_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
+ALTER TABLE "pinned" ADD CONSTRAINT "pinned_collection_id_collection_folders_id_fk" FOREIGN KEY ("collection_id") REFERENCES "public"."collection_folders"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
+ALTER TABLE "pinned" ADD CONSTRAINT "pinned_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
 ALTER TABLE "portfolio_collections" ADD CONSTRAINT "portfolio_collections_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
 ALTER TABLE "portfolio_collections" ADD CONSTRAINT "portfolio_collections_collection_folder_id_collection_folders_id_fk" FOREIGN KEY ("collection_folder_id") REFERENCES "public"."collection_folders"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
 ALTER TABLE "portfolio_collections" ADD CONSTRAINT "portfolio_collections_portfolio_id_portfolios_id_fk" FOREIGN KEY ("portfolio_id") REFERENCES "public"."portfolios"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
@@ -278,7 +291,6 @@ ALTER TABLE "portfolio_tags" ADD CONSTRAINT "portfolio_tags_portfolio_id_portfol
 ALTER TABLE "portfolio_tags" ADD CONSTRAINT "portfolio_tags_tag_id_tags_id_fk" FOREIGN KEY ("tag_id") REFERENCES "public"."tags"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
 ALTER TABLE "portfolios" ADD CONSTRAINT "portfolios_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
 ALTER TABLE "portfolios" ADD CONSTRAINT "portfolios_category_id_categories_id_fk" FOREIGN KEY ("category_id") REFERENCES "public"."categories"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
-ALTER TABLE "resource_access" ADD CONSTRAINT "resource_access_resource_short_url_id_resource_short_urls_id_fk" FOREIGN KEY ("resource_short_url_id") REFERENCES "public"."resource_short_urls"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
 ALTER TABLE "resource_collections" ADD CONSTRAINT "resource_collections_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
 ALTER TABLE "resource_collections" ADD CONSTRAINT "resource_collections_collection_folder_id_collection_folders_id_fk" FOREIGN KEY ("collection_folder_id") REFERENCES "public"."collection_folders"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
 ALTER TABLE "resource_collections" ADD CONSTRAINT "resource_collections_resource_id_resources_id_fk" FOREIGN KEY ("resource_id") REFERENCES "public"."resources"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint

@@ -38,7 +38,7 @@ const CollectionTab = ({ type, id }: Props) => {
 				onSelectionChange={(key) => {
 					setCurrentTab(key as string);
 
-					router.push(`${pathname}?tab=${key}`);
+					router.push(`${pathname}?page=collections&tab=${key}`);
 				}}
 				aria-label="Tabs variants"
 				variant={"light"}

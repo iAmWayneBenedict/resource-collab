@@ -212,4 +212,9 @@
 			transform: scale(1.5) translate(100px);
 		}
 	}
+
+	/* toast region custom style */
+	div[role="region"] {
+		@apply !z-[9999];
+	}
 }

@@ -1,9 +1,16 @@
 import { relations } from "drizzle-orm";
-import { pgTable, serial, timestamp, varchar } from "drizzle-orm/pg-core";
+import {
+	boolean,
+	jsonb,
+	pgTable,
+	serial,
+	timestamp,
+	varchar,
+} from "drizzle-orm/pg-core";
 import { users } from "./users";
 import { subscriptions } from "./subscriptions";
 
-export const userSubscription = pgTable("user_subscriptions", {
+export const userSubscriptions = pgTable("user_subscriptions", {
 	id: serial("id").primaryKey(),
 	user_id: varchar("user_id")
 		.notNull()
@@ -19,19 +26,28 @@ export const userSubscription = pgTable("user_subscriptions", {
 			onUpdate: "cascade",
 		})
 		.notNull(),
-	created_at: timestamp("created_at", { mode: "date" }).defaultNow(),
-	updated_at: timestamp("updated_at", { mode: "date" }).defaultNow(),
+	started_at: timestamp("started_at", { mode: "date" }).defaultNow(),
+	expired_at: timestamp("expired_at", { mode: "date" }).defaultNow(),
+	billing_type: varchar("billing_type").notNull().default("monthly"),
+	is_trial: boolean("is_trial").notNull().default(false),
+	is_lifetime: boolean("is_lifetime").notNull().default(false),
+	limit_counts: jsonb("limit_counts").notNull().default({
+		collections: 0,
+		shared_users: 0,
+		ai_searches_per_day: 0,
+		ai_searches: 0,
+	}),
 }).enableRLS();
 
 export const userSubscriptionRelations = relations(
-	userSubscription,
+	userSubscriptions,
 	({ one }) => ({
 		user: one(users, {
-			fields: [userSubscription.user_id],
+			fields: [userSubscriptions.user_id],
 			references: [users.id],
 		}),
 		subscription: one(subscriptions, {
-			fields: [userSubscription.subscription_id],
+			fields: [userSubscriptions.subscription_id],
 			references: [subscriptions.id],
 		}),
 	}),

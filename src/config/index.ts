@@ -26,6 +26,8 @@ const config = {
 
 	// extension
 	EXTENSION_ORIGIN: process.env.EXTENSION_ORIGIN,
+
+	IP_INFO_TOKEN: process.env.NEXT_PUBLIC_IP_INFO_TOKEN,
 };
 
 export default config;

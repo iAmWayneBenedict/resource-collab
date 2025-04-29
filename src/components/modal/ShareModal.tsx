@@ -112,7 +112,6 @@ const ShareModal = () => {
 	);
 
 	const renderAccessLevel = () => {
-		console.log(data?.restrictedTo);
 		if (data?.restrictedTo) return null;
 
 		return (

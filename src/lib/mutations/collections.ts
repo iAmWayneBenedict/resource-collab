@@ -1,11 +1,13 @@
 import { UseMutationResult } from "@tanstack/react-query";
 import { useHookMutation } from "./mutation-hook";
 
+const ROOT = "/resource-collections"
+
 export const usePostCreateCollectionsMutation = ({
 	...options
 }: TMutationOptions): UseMutationResult<
 	TSuccessAPIResponse<any> | TErrorAPIResponse
-> => useHookMutation({ endpoint: "/resource-collections/create", ...options });
+> => useHookMutation({ endpoint: `${ROOT}/create`, ...options });
 
 export const usePostCreateResourceCollectionsMutation = ({
 	...options
@@ -13,7 +15,7 @@ export const usePostCreateResourceCollectionsMutation = ({
 	TSuccessAPIResponse<any> | TErrorAPIResponse
 > =>
 	useHookMutation({
-		endpoint: "/resource-collections/add-resource",
+		endpoint: `${ROOT}/add-resource`,
 		...options,
 	});
 
@@ -22,7 +24,7 @@ export const useDeleteCollectionFoldersMutation = ({
 }: TMutationOptions) =>
 	useHookMutation({
 		method: "delete",
-		endpoint: "/resource-collections",
+		endpoint: ROOT,
 		...options,
 	});
 export const usePutCollectionFoldersMutation = ({
@@ -31,6 +33,23 @@ export const usePutCollectionFoldersMutation = ({
 }: TMutationOptions) =>
 	useHookMutation({
 		method: "put",
-		endpoint: "/resource-collections/" + params,
+		endpoint: `${ROOT}/${params}`,
+		...options,
+	});
+export const usePostPinCollectionMutation = ({
+	params,
+	...options
+}: TMutationOptions) =>
+	useHookMutation({
+		endpoint: `${ROOT}/${params}/pin`,
+		...options,
+	});
+export const useDeletePinCollectionMutation = ({
+	params,
+	...options
+}: TMutationOptions) =>
+	useHookMutation({
+		method: "delete",
+		endpoint: `${ROOT}/${params}/pin`,
 		...options,
 	});
