@@ -1,7 +1,6 @@
 import { db } from "@/data/connection";
 import { subscriptions, users, userSubscriptions } from "@/data/schema";
 import { getSession } from "@/lib/auth";
-import { updateSubscriptionCountLimit } from "@/services/subscription-service";
 import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -20,9 +19,9 @@ export const GET = async (req: NextRequest) => {
 			where: eq(userSubscriptions.user_id, user.id),
 		});
 
-		return (
-			NextResponse.json({ message: "Success", data: subscription }),
-			{ status: 200 }
+		return NextResponse.json(
+			{ message: "Success", data: subscription },
+			{ status: 200 },
 		);
 	} catch (err: any) {
 		if (err instanceof Error) {
