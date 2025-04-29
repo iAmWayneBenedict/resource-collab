@@ -115,17 +115,17 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
 	// Add CORS headers for all /v1/rest/auth paths to expose the auth api
 	if (targetPath.startsWith("/api/v1/rest/auth")) {
 		const response = NextResponse.next();
-		response.headers.set(
-			"Access-Control-Allow-Origin",
-			// process.env.EXTENSION_ORIGIN!,
-			"http://localhost:5173",
-		);
-		response.headers.set("Access-Control-Allow-Credentials", "true");
-		response.headers.set("Access-Control-Allow-Methods", "GET, POST");
-		response.headers.set(
-			"Access-Control-Allow-Headers",
-			"Content-Type, Authorization",
-		);
+		// response.headers.set(
+		// 	"Access-Control-Allow-Origin",
+		// 	// process.env.EXTENSION_ORIGIN!,
+		// 	"http://localhost:5173",
+		// );
+		// response.headers.set("Access-Control-Allow-Credentials", "true");
+		// response.headers.set("Access-Control-Allow-Methods", "GET, POST");
+		// response.headers.set(
+		// 	"Access-Control-Allow-Headers",
+		// 	"Content-Type, Authorization",
+		// );
 
 		// Handle preflight requests
 		if (request.method === "OPTIONS") {
