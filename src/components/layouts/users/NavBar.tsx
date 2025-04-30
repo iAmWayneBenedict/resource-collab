@@ -22,9 +22,10 @@ import {
 	Avatar,
 	Image,
 	DropdownSection,
+	addToast,
 } from "@heroui/react";
 import { authClient } from "@/config/auth";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { favicon } from "../../../../public/assets";
 import { useTheme } from "next-themes";
 import {
@@ -119,18 +120,41 @@ const NAV_LINKS = [
 ];
 
 const LargeNav = () => {
-	const { authUser } = useAuthUser();
+	const { authUser, setAuthUser } = useAuthUser();
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
 	const { theme, setTheme } = useTheme();
+	const router = useRouter();
 
 	const handleLogout = async () => {
-		await authClient.signOut({
-			fetchOptions: {
-				onSuccess: () => {
-					location.href = "/";
-				},
-			},
+		// !WARNING: Workaround for now since signout in vercel has undefined error on route "sign-out"
+		const { data } = await authClient.getSession();
+
+		const res = await authClient.multiSession.revoke({
+			sessionToken: data?.session.token || "",
 		});
+		console.log(res);
+		if (res.data?.status) {
+			setAuthUser(null);
+			router.push("/");
+		}
+
+		// TODO: Fix this issu
+		// await authClient.signOut({
+		// 	fetchOptions: {
+		// 		onSuccess: () => {
+		// 			setAuthUser(null);
+		// 			router.push("/");
+		// 		},
+		// 		onError: (err) => {
+		// 			console.log(err);
+		// 			addToast({
+		// 				title: "Error",
+		// 				description: "Something went wrong",
+		// 				color: "danger",
+		// 			});
+		// 		},
+		// 	},
+		// });
 	};
 
 	useLayoutEffect(() => {
