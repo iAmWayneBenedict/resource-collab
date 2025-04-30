@@ -1,5 +1,6 @@
 import config from "@/config";
 import { db } from "@/data/connection";
+import { useAuthUser } from "@/store";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -241,4 +242,19 @@ export const exceededSubscriptionLimitCountHandler = (err: Error) => {
 		return { path: ["toast", "alert"] };
 	}
 	return null;
+};
+
+export const hasUserSubscriptionAccess = async (
+	type: SubscriptionLimitType,
+) => {
+	const { authUser } = useAuthUser.getState();
+	if (!authUser) return false;
+	const {
+		subscription: {
+			userSubscription: { sub, ...userSubscription },
+		},
+	} = authUser;
+
+	if (userSubscription.limit_counts[type] < sub.limit[type]) return true;
+	return false;
 };

@@ -21,6 +21,7 @@ type Props = {
 		| "collections"
 		| "shared"
 		| "collection-resources"
+		| "collection-shared-resources"
 		| "collection-portfolios";
 
 	id?: number | string;
@@ -32,6 +33,7 @@ const ResourceWrapper = ({ type, id }: Props) => {
 			state.actions.setSearchParams,
 	) as ResourcePaginatedSearchParamsState["actions"]["setSearchParams"];
 	const setCollections = useCollections((state) => state.setCollections);
+
 	const setRequestStatus = useRequestStatus(
 		(state) => state.setRequestStatus,
 	);
@@ -60,7 +62,9 @@ const ResourceWrapper = ({ type, id }: Props) => {
 		setCollections(collections.data?.data);
 	}, [collections.isSuccess, collections.data]);
 
-	const isCollectionResources = type === "collection-resources";
+	const isCollectionResources =
+		type === "collection-resources" ||
+		type === "collection-shared-resources";
 
 	useEffect(() => {
 		let currentStatus = "idle";

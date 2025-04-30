@@ -7,6 +7,7 @@ import { metadataThumbnail } from "../../../../public/assets/img";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import CollectionHeader from "./components/collections/CollectionHeader";
 import CollectionFooter from "./components/collections/CollectionFooter";
+import { useSelectedCollection } from "@/store/useSelectedCollection";
 
 const CollectionCard = ({
 	data,
@@ -19,10 +20,15 @@ const CollectionCard = ({
 	const pathname = usePathname();
 	const searchParams = useSearchParams();
 	const tab = searchParams.get("tab");
+
 	const [enableClickHandler, setEnableClickHandler] =
 		useState<boolean>(false);
+	const setSelectedCollection = useSelectedCollection(
+		(state) => state.setSelectedCollection,
+	);
 
 	const onClickCardHandler = () => {
+		if (type === "shared") setSelectedCollection(data);
 		router.push(`${pathname}?page=${type}&tab=${tab}&item=${data.id}`);
 	};
 

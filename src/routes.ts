@@ -78,7 +78,7 @@ export const protectedRoutes: string[] = [
 export const DEFAULT_LOGIN_REDIRECT: string = "/";
 
 export const ALLOWED_ORIGINS = [
-	config.BASE_URL,
-	config.EXTENSION_ORIGIN,
+	config.BASE_URL!,
+	config.EXTENSION_ORIGIN!,
 	"http://localhost:5173",
 ];

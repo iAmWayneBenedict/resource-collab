@@ -1,4 +1,11 @@
-import { pgTable, serial, text, timestamp, varchar } from "drizzle-orm/pg-core";
+import {
+	boolean,
+	pgTable,
+	serial,
+	text,
+	timestamp,
+	varchar,
+} from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { userResources } from "./user-resources";
 import { categories } from "./categories";
@@ -24,6 +31,7 @@ export const resources = pgTable("resources", {
 	description: text("description"),
 	url: text("url").notNull(),
 	view_count: serial("view_count").notNull(),
+	is_global: boolean("is_global").default(false),
 	created_at: timestamp("created_at", { mode: "date" }).defaultNow(),
 	updated_at: timestamp("updated_at", { mode: "date" }).defaultNow(),
 }).enableRLS();

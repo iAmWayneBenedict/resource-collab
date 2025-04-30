@@ -7,6 +7,9 @@ import { ResourcePaginatedSearchParamsState } from "@/store/context/providers/Re
 import { useAuthUser, useModal } from "@/store";
 import { usePostLikeResourceMutation } from "@/lib/mutations/like";
 import { addToast } from "@heroui/react";
+import { useSelectedCollection } from "@/store/useSelectedCollection";
+import { useSearchParams } from "next/navigation";
+import { useDashboardPage } from "@/store/useDashboardPage";
 
 // Define type for the previous resources data structure
 type PreviousResourcesData = {
@@ -39,6 +42,10 @@ const LikeButton = ({
 		(state: ResourcePaginatedSearchParamsState) => state.searchParams,
 	) as ResourcePaginatedSearchParamsState["searchParams"];
 	const { authUser } = useAuthUser();
+	const getDashboardPage = useDashboardPage(
+		(state) => state.getDashboardPage,
+	);
+	const isSharedPage = getDashboardPage() === "shared";
 
 	// Create query key array for better reusability
 	const getQueryKey = () => searchParams.queryKey;
@@ -105,6 +112,8 @@ const LikeButton = ({
 	});
 
 	const onLike = () => {
+		if (isSharedPage) return;
+
 		if (!authUser) {
 			onOpenModal("auth-modal", {});
 			return;
@@ -117,7 +126,8 @@ const LikeButton = ({
 	return (
 		<button
 			onClick={onLike}
-			className="flex items-center gap-1 p-2 text-sm text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200"
+			disabled={isSharedPage}
+			className={`flex items-center gap-1 p-2 text-sm text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200 ${isSharedPage ? "cursor-not-allowed opacity-70 hover:text-zinc-700 dark:hover:text-zinc-200" : ""}`}
 		>
 			<Heart
 				fill={isLiked ? "#ef4444" : "none"}

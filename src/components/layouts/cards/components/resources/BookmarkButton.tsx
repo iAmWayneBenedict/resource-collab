@@ -1,7 +1,10 @@
+import { cn } from "@/lib/utils";
+import { useDashboardPage } from "@/store/useDashboardPage";
 import { Button } from "@heroui/react";
 import { Bookmark } from "lucide-react";
 // import { Button } from "@/components/ui/button";
 import { motion } from "motion/react";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 type BookmarkButtonProps = {
@@ -29,6 +32,10 @@ export const BookmarkButton = ({
 		fill: string;
 		stroke: string;
 	}>(ICON_COLORS.inactive);
+	const getDashboardPage = useDashboardPage(
+		(state) => state.getDashboardPage,
+	);
+	const isSharedPage = getDashboardPage() === "shared";
 
 	useEffect(() => {
 		const newIconColors = {
@@ -56,7 +63,10 @@ export const BookmarkButton = ({
 				// size="icon"
 				isIconOnly
 				disableRipple
-				className="overflow-visible bg-transparent bg-none transition-none hover:bg-transparent"
+				className={cn(
+					"overflow-visible bg-transparent bg-none transition-none hover:bg-transparent",
+					isSharedPage ? "cursor-not-allowed!" : "",
+				)}
 				{...props}
 			>
 				<motion.div

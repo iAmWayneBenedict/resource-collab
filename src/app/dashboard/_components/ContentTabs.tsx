@@ -21,6 +21,7 @@ import {
 import { useMediaQuery } from "react-responsive";
 import PortfolioTabs from "./PortfolioTabs";
 import SharedTab from "./shared/SharedTab";
+import { useDashboardPage } from "@/store/useDashboardPage";
 
 let TABS = [
 	{
@@ -56,7 +57,12 @@ const ContentTabs = () => {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const type = searchParams.get("page") ?? "resources";
-	const [currentTab, setCurrentTab] = useState<string>(type as string);
+	const { dashboardPage, setDashboardPage } = useDashboardPage();
+
+	useLayoutEffect(() => {
+		setDashboardPage(type);
+	}, []);
+	// const [currentTab, setCurrentTab] = useState<string>(type as string);
 	const id = searchParams.get("item") ?? "";
 
 	// ensure that there is always a tab selected
@@ -71,9 +77,9 @@ const ContentTabs = () => {
 	return (
 		<div className="mt-24 flex w-full flex-col">
 			<Tabs
-				selectedKey={currentTab}
+				selectedKey={dashboardPage}
 				onSelectionChange={(key) => {
-					setCurrentTab(key as string);
+					setDashboardPage(key as string);
 					router.push(
 						`/dashboard?page=${key}&tab=${["resources", "liked", "collections"].includes(key as string) ? "resources" : ""}`,
 						{ scroll: false },
@@ -104,22 +110,22 @@ const ContentTabs = () => {
 							</div>
 						}
 					>
-						{currentTab === "portfolios" && (
-							<PortfolioTabs type={currentTab} />
+						{dashboardPage === "portfolios" && (
+							<PortfolioTabs type={dashboardPage} />
 						)}
-						{currentTab === "resources" && (
-							<ResourceTab type={currentTab as any} />
+						{dashboardPage === "resources" && (
+							<ResourceTab type={dashboardPage as any} />
 						)}
-						{currentTab === "liked" && <LikedTab />}
-						{currentTab === "collections" && (
+						{dashboardPage === "liked" && <LikedTab />}
+						{dashboardPage === "collections" && (
 							<CollectionTab
-								type={currentTab as any}
+								type={dashboardPage as any}
 								id={id as string}
 							/>
 						)}
-						{currentTab === "shared" && (
+						{dashboardPage === "shared" && (
 							<SharedTab
-								type={currentTab as any}
+								type={dashboardPage as any}
 								id={id as string}
 							/>
 						)}

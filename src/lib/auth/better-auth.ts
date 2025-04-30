@@ -60,10 +60,14 @@ export const auth = betterAuth({
 						.from(users)
 						.where(eq(users.id, user.id));
 
-					const [subscription] = await tx
-						.select()
-						.from(userSubscriptions)
-						.where(eq(userSubscriptions.user_id, user?.id));
+					const [subscription] =
+						await tx.query.userSubscriptions.findMany({
+							with: {
+								subscription: { columns: { limits: true } },
+							},
+							where: eq(userSubscriptions.user_id, user?.id),
+							limit: 1,
+						});
 
 					return [userDetails, subscription];
 				},

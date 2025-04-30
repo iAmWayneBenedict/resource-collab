@@ -23,11 +23,12 @@ import {
 	Share2,
 	Trash2,
 } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import config from "@/config";
 import { useGetCollectionShortUrl } from "@/lib/queries/short-urls";
 import { usePostCollectionsShortUrlMutation } from "@/lib/mutations/short_urls";
 import { usePathname } from "next/navigation";
+import { useSelectedCollection } from "@/store/useSelectedCollection";
 
 const CollectionHeader = ({
 	data,
@@ -37,6 +38,9 @@ const CollectionHeader = ({
 	setEnableClickHandler: (d: any) => void;
 }) => {
 	const onOpenModal = useModal((state) => state.onOpen);
+	const getSelectedCollection = useSelectedCollection(
+		(state) => state.getSelectedCollection,
+	);
 	const setAlertDialogDetails = useAlertDialog(
 		(state) => state.setAlertDialogDetails,
 	);
@@ -263,42 +267,49 @@ const CollectionHeader = ({
 							>
 								{data.pinned ? "Unpin" : "Pin"}
 							</DropdownItem>
-							<DropdownItem
-								key="edit"
-								description="Change collection name"
-								startContent={<Pencil size={20} />}
-								onPress={() =>
-									onOpenModal(
-										"create-collection",
-										{ name: data.name, id: data.id },
-										"edit",
-									)
-								}
-							>
-								Edit
-							</DropdownItem>
-							<DropdownItem
-								key="share"
-								description="Share collection"
-								showDivider
-								startContent={<Share2 size={20} />}
-								onPress={onClickShareHandler}
-							>
-								Share
-							</DropdownItem>
-							<DropdownItem
-								key="delete"
-								color="danger"
-								description="Delete permanently"
-								onPress={onDeleteHandler}
-								startContent={<Trash2 size={20} />}
-								classNames={{
-									base: "text-danger",
-									description: "text-danger",
-								}}
-							>
-								Delete
-							</DropdownItem>
+							{!getSelectedCollection() ? (
+								<Fragment>
+									<DropdownItem
+										key="edit"
+										description="Change collection name"
+										startContent={<Pencil size={20} />}
+										onPress={() =>
+											onOpenModal(
+												"create-collection",
+												{
+													name: data.name,
+													id: data.id,
+												},
+												"edit",
+											)
+										}
+									>
+										Edit
+									</DropdownItem>
+									<DropdownItem
+										key="share"
+										description="Share collection"
+										showDivider
+										startContent={<Share2 size={20} />}
+										onPress={onClickShareHandler}
+									>
+										Share
+									</DropdownItem>
+									<DropdownItem
+										key="delete"
+										color="danger"
+										description="Delete permanently"
+										onPress={onDeleteHandler}
+										startContent={<Trash2 size={20} />}
+										classNames={{
+											base: "text-danger",
+											description: "text-danger",
+										}}
+									>
+										Delete
+									</DropdownItem>
+								</Fragment>
+							) : null}
 						</DropdownSection>
 					</DropdownMenu>
 				</Dropdown>

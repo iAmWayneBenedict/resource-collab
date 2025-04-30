@@ -1,0 +1,2 @@
+ALTER TABLE "user_subscriptions" ALTER COLUMN "limit_counts" SET DEFAULT '{"collections":0,"shared_users":0,"ai_searches_per_day":0,"ai_searches":0,"ai_generated_categories_and_tags":0}'::jsonb;--> statement-breakpoint
+ALTER TABLE "resources" ADD COLUMN "is_global" boolean DEFAULT false;

@@ -8,6 +8,7 @@ import { useState } from "react";
 import { DialogTitle } from "@/components/ui/dialog";
 import { VisuallyHidden } from "@heroui/react";
 import { useAuthUser, useModal } from "@/store";
+import { useDashboardPage } from "@/store/useDashboardPage";
 
 export function SaveResourceDrawer({
 	bookmarkCount,
@@ -24,12 +25,18 @@ export function SaveResourceDrawer({
 	const [isOpen, setIsOpen] = useState(false);
 	const { authUser } = useAuthUser();
 	const onOpenModal = useModal((state) => state.onOpen);
+	const getDashboardPage = useDashboardPage(
+		(state) => state.getDashboardPage,
+	);
+	const isSharedPage = getDashboardPage() === "shared";
 
 	const onCompleteHandler = () => {
 		onOpenChangeHandler(false);
 	};
 
 	const onOpenChangeHandler = (isOpen: boolean) => {
+		if (isSharedPage) return;
+
 		if (!authUser) {
 			onOpenModal("auth-modal", {});
 			return;
@@ -40,7 +47,7 @@ export function SaveResourceDrawer({
 
 	return (
 		<Drawer open={isOpen} onOpenChange={onOpenChangeHandler}>
-			<DrawerTrigger asChild>
+			<DrawerTrigger asChild disabled={isSharedPage}>
 				<BookmarkButton
 					count={bookmarkCount || 0}
 					isBookmarked={isBookmarked}
