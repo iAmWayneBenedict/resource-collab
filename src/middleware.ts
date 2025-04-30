@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { authRoutes, protectedRoutes } from "./routes";
+import { ALLOWED_ORIGINS, authRoutes, protectedRoutes } from "./routes";
 import { auth } from "./lib/auth";
-import { getApiHeaders } from "./lib/utils";
+import { getApiHeaders, getHeaders } from "./lib/utils";
 import { headers } from "next/headers";
 
 // Define allowed hosts
@@ -13,7 +13,7 @@ const allowedHosts = [
 
 export async function middleware(request: NextRequest): Promise<NextResponse> {
 	const session = await auth.api.getSession({ headers: await headers() });
-	console.log(session);
+	const origin = request.nextUrl.origin;
 	const targetPath = request.nextUrl.pathname;
 	const user = session?.user;
 
@@ -114,20 +114,33 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
 		});
 	}
 
+	const allowedRequestOrigin = ALLOWED_ORIGINS.includes(origin);
+	if (!allowedRequestOrigin)
+		return NextResponse.json(
+			{ error: "Unauthorized" },
+			{
+				status: 401,
+				headers: getApiHeaders([
+					"OPTIONS",
+					"POST",
+					"GET",
+					"PUT",
+					"DELETE",
+					"PATCH",
+				]),
+			},
+		);
+
 	// Add CORS headers for all /v1/rest/auth paths to expose the auth api
 	if (targetPath.startsWith("/api/v1/rest/auth")) {
 		const response = NextResponse.next();
-		// response.headers.set(
-		// 	"Access-Control-Allow-Origin",
-		// 	// process.env.EXTENSION_ORIGIN!,
-		// 	"http://localhost:5173",
-		// );
-		// response.headers.set("Access-Control-Allow-Credentials", "true");
-		// response.headers.set("Access-Control-Allow-Methods", "GET, POST");
-		// response.headers.set(
-		// 	"Access-Control-Allow-Headers",
-		// 	"Content-Type, Authorization",
-		// );
+		response.headers.set("Access-Control-Allow-Origin", origin);
+		response.headers.set("Access-Control-Allow-Credentials", "true");
+		response.headers.set("Access-Control-Allow-Methods", "GET, POST");
+		response.headers.set(
+			"Access-Control-Allow-Headers",
+			"Content-Type, Authorization",
+		);
 
 		// Handle preflight requests
 		if (request.method === "OPTIONS") {
