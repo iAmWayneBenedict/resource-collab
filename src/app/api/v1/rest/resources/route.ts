@@ -14,6 +14,10 @@ import { findAllCategory } from "@/services/category-service";
 import axios from "axios";
 import config from "@/config";
 import VectorService from "@/services/vector";
+import { resources } from "@/data/schema";
+import { db } from "@/data/connection";
+import { and, eq } from "drizzle-orm";
+import { hasSubscriptionAccess } from "@/services/subscription-service";
 
 type BodyParams = {
 	name: string;
@@ -23,6 +27,7 @@ type BodyParams = {
 	thumbnail: string;
 	description: string;
 	url: string;
+	is_global: boolean;
 	resourceIds?: number[];
 };
 export async function POST(request: NextRequest): Promise<NextResponse> {
@@ -49,10 +54,15 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 		}
 
 		// check if the resource already exists
-		const existingResource = await findResource({
-			value: body.url,
-			identifier: "url",
-		});
+		const existingResource = await db
+			.select()
+			.from(resources)
+			.where(
+				and(
+					eq(resources.owner_id, user.id),
+					eq(resources.url, body.url),
+				),
+			);
 
 		if (existingResource.length > 0) {
 			return NextResponse.json(
@@ -127,7 +137,13 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 			);
 		}
 
-		if (!resourceData.category) {
+		const hasUserSubscriptionAccess = await hasSubscriptionAccess({
+			type: "ai_generated_categories_and_tags",
+			user_id: user.id,
+			dbContext: db,
+		});
+
+		if (!resourceData.category && hasUserSubscriptionAccess) {
 			const categoriesWithTags = await findAllCategory({
 				type: "all",
 				with: { tags: true },
@@ -156,6 +172,12 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 			resourceData = {
 				...resourceData,
 				...categoryAndListOfTags,
+			};
+		} else {
+			resourceData = {
+				...resourceData,
+				category: resourceData.category ?? "",
+				tags: resourceData.tags ?? [],
 			};
 		}
 

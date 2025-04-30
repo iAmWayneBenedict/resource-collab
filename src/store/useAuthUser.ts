@@ -12,6 +12,7 @@ interface User {
 	email: string;
 	role: string;
 	image: string;
+	subscription: Record<string, any>;
 }
 
 export const useAuthUser = create<TUserState>((set) => ({

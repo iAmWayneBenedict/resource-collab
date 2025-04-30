@@ -29,6 +29,9 @@ import { collectionItemIcons } from "../../utils";
 import useResourcePaginatedSearchParams from "@/store/context/useResourcePaginatedSearchParams";
 import { ResourcePaginatedSearchParamsState } from "@/store/context/providers/ResourcePaginatedSearchParams";
 import { useMediaQuery } from "react-responsive";
+import { useSelectedCollection } from "@/store/useSelectedCollection";
+import { useSearchParams } from "next/navigation";
+import { useDashboardPage } from "@/store/useDashboardPage";
 
 // Collection item type
 // Update the Collection type to include additional information
@@ -391,11 +394,18 @@ const SaveResourcePopOver = ({
 	const { authUser } = useAuthUser();
 	const onOpenModal = useModal((state) => state.onOpen);
 
+	const getDashboardPage = useDashboardPage(
+		(state) => state.getDashboardPage,
+	);
+	const isSharedPage = getDashboardPage() === "shared";
+
 	const onCompleteHandler = () => {
 		onOpenChangeHandler(false);
 	};
 
 	const onOpenChangeHandler = (isOpen: boolean) => {
+		if (isSharedPage) return;
+
 		if (!authUser) {
 			onOpenModal("auth-modal", {});
 			return;
@@ -412,6 +422,7 @@ const SaveResourcePopOver = ({
 			backdrop="transparent"
 			isOpen={isOpen}
 			onOpenChange={onOpenChangeHandler}
+			isTriggerDisabled={isSharedPage}
 		>
 			<PopoverTrigger>
 				<BookmarkButton

@@ -29,6 +29,10 @@ import {
 	SQL,
 } from "drizzle-orm";
 import { NextResponse } from "next/server";
+import {
+	hasSubscriptionAccess,
+	updateSubscriptionCountLimit,
+} from "./subscription-service";
 
 type ResourceParams = {
 	name: string;
@@ -277,6 +281,21 @@ export const createResourceTransaction = async (
 				view_count: 0, // * default value
 			})
 			.returning();
+
+		const hasUserSubscriptionAccess = await hasSubscriptionAccess({
+			user_id: body.userId,
+			type: "ai_generated_categories_and_tags",
+			dbContext: tx,
+		});
+
+		if (hasUserSubscriptionAccess)
+			await updateSubscriptionCountLimit({
+				userId: body.userId,
+				limitCountName: "ai_generated_categories_and_tags",
+				mode: "increment",
+				count: 1,
+				tx,
+			});
 
 		// associate resource with tags
 		if (tagIds.length) {

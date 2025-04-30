@@ -1,10 +1,11 @@
 import { Tab, Tabs } from "@heroui/react";
-import React, { useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import ResourceTab from "../ResourceTab";
 import OptionsHeader from "../OptionsHeader";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import CollectionModal from "@/components/modal/CollectionModal";
 import ResourceCollectionTab from "../collections/ResourceCollectionTab";
+import { useSelectedCollection } from "@/store/useSelectedCollection";
 
 type Props = {
 	type:
@@ -23,12 +24,25 @@ const SharedTab = ({ type, id }: Props) => {
 	const [currentTab, setCurrentTab] = useState<string>(
 		(tab as string) || "resources",
 	);
+	const setSelectedCollection = useSelectedCollection(
+		(state) => state.setSelectedCollection,
+	);
 
-	if (type === "shared" && tab === "resources" && id) {
+	useLayoutEffect(() => {
+		if (id) router.push(`${pathname}?page=shared&tab=${currentTab}`);
+	}, []);
+
+	useEffect(() => {
+		return () => {
+			setSelectedCollection(null);
+		};
+	}, []);
+
+	if (type === "shared" && tab === "collections" && id) {
 		return (
 			<div className="flex flex-col gap-4">
 				<OptionsHeader />
-				<ResourceTab type={"collection-resources"} id={id} />
+				<ResourceTab type={"collection-shared-resources"} id={id} />
 			</div>
 		);
 	}
@@ -39,7 +53,6 @@ const SharedTab = ({ type, id }: Props) => {
 				selectedKey={currentTab}
 				onSelectionChange={(key) => {
 					setCurrentTab(key as string);
-
 					router.push(`${pathname}?page=shared&tab=${key}`);
 				}}
 				aria-label="Tabs variants"

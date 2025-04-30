@@ -2,6 +2,8 @@ import { ChartNoAxesColumn } from "lucide-react";
 import { formatNumber } from "../../utils";
 import LikeButton from "./LikeButton";
 import ShareButton from "./ShareButton";
+import { useSelectedCollection } from "@/store/useSelectedCollection";
+import { useSearchParams } from "next/navigation";
 
 type ResourceMetricsProps = {
 	id: number;
@@ -22,6 +24,8 @@ export const ResourceMetrics = ({
 	likes = 0,
 	isLiked = false,
 }: ResourceMetricsProps) => {
+	const searchParams = useSearchParams();
+	const page = searchParams.get("page");
 	return (
 		<div className="flex items-center">
 			<LikeButton id={id} isLiked={isLiked} likes={likes} />

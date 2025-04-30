@@ -1,4 +1,5 @@
 import { useRequestStatus } from "@/store/useRequestStatus";
+import { useSelectedCollection } from "@/store/useSelectedCollection";
 import { Button } from "@heroui/react";
 import { MoveLeft, Plus, Settings2 } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -9,6 +10,9 @@ const OptionsHeader = () => {
 	const router = useRouter();
 	const isMobileScreen = useMediaQuery({ query: "(max-width: 40rem)" });
 	const { requestStatus } = useRequestStatus();
+	const selectedCollection = useSelectedCollection(
+		(state) => state.selectedCollection,
+	);
 
 	const onClickReturnHandler = () => router.back();
 
@@ -32,14 +36,16 @@ const OptionsHeader = () => {
 				>
 					{!isMobileScreen ? "Options" : ""}
 				</Button>
-				<Button
-					radius="full"
-					className="bg-violet text-white"
-					isDisabled={requestStatus !== "success"}
-					startContent={<Plus size={18} />}
-				>
-					Add new
-				</Button>
+				{selectedCollection?.userAccess.permission === "edit" && (
+					<Button
+						radius="full"
+						className="bg-violet text-white"
+						isDisabled={requestStatus !== "success"}
+						startContent={<Plus size={18} />}
+					>
+						Add new
+					</Button>
+				)}
 			</div>
 		</div>
 	);

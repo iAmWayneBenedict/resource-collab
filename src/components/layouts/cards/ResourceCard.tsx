@@ -9,6 +9,8 @@ import { useState } from "react";
 import { Avatar, Image } from "@heroui/react";
 import { useMediaQuery } from "react-responsive";
 import { useSearchParams } from "next/navigation";
+import { useSelectedCollection } from "@/store/useSelectedCollection";
+import { useDashboardPage } from "@/store/useDashboardPage";
 
 type ResourceCardProps = {
 	data: any;
@@ -16,12 +18,16 @@ type ResourceCardProps = {
 
 const ResourceCard = ({ data }: ResourceCardProps) => {
 	const [isOpenDrawer, setIsOpenDrawer] = useState<boolean>(false);
-	const [icon, setIcon] = useState(data?.icon);
+	const [icon, setIcon] = useState(
+		data?.icon || "https://placehold.co/200x200",
+	);
+
 	const isSmallDevices = useMediaQuery({
 		query: "(max-width: 64rem)",
 	});
-	const params = useSearchParams();
-	const dashboardPage = params.get("page");
+	const getDashboardPage = useDashboardPage(
+		(state) => state.getDashboardPage,
+	);
 
 	const mutation = usePutViewResourceMutation({
 		params: data.id,
@@ -65,7 +71,9 @@ const ResourceCard = ({ data }: ResourceCardProps) => {
 			transition={{ ease: "easeInOut", duration: 0.2 }}
 			className="relative flex min-w-[19rem] flex-1 cursor-pointer flex-col rounded-2xl bg-content1 shadow-md dark:border-small dark:border-default-200 md:min-w-[22rem]"
 		>
-			<div className="absolute right-7 top-7">
+			<div
+				className={`absolute right-7 top-7 ${getDashboardPage() === "shared" ? "cursor-not-allowed" : ""}`}
+			>
 				{isSmallDevices ? (
 					<SaveResourceDrawer
 						bookmarkCount={data.bookmarksCount}
@@ -113,19 +121,20 @@ const ResourceCard = ({ data }: ResourceCardProps) => {
 					>
 						<ResourceTags tags={data.resourceTags} />
 						<div className="mt-4">
-							{dashboardPage === "shared" && data?.sharedBy && (
-								<div className="flex items-center gap-2">
-									<Avatar
-										name={data.sharedBy.email}
-										src={data.sharedBy.image}
-										className="h-5 w-5"
-										size="sm"
-									/>
-									<p className="text-xs text-zinc-600">
-										{data.sharedBy.email}
-									</p>
-								</div>
-							)}
+							{getDashboardPage() === "shared" &&
+								data?.sharedBy && (
+									<div className="flex items-center gap-2">
+										<Avatar
+											name={data.sharedBy.email}
+											src={data.sharedBy.image}
+											className="h-5 w-5"
+											size="sm"
+										/>
+										<p className="text-xs text-zinc-600">
+											{data.sharedBy.email}
+										</p>
+									</div>
+								)}
 							<ResourceMetrics
 								name={data.name}
 								id={data.id}

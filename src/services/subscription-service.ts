@@ -2,8 +2,8 @@ import { subscriptions, userSubscriptions } from "@/data/schema";
 import { and, eq, sql } from "drizzle-orm";
 type UpdateSubscriptionCountLimitParams = {
 	userId: string;
-	limitCountName: "collections" | "shared_users" | "ai_searches_per_day";
-	mode?: string;
+	limitCountName: SubscriptionLimitType;
+	mode?: "increment" | "decrement";
 	tx: any;
 	count?: number;
 };
@@ -14,11 +14,13 @@ const ERROR_MESSAGES = {
 		"Shared users limit exceeded. Please upgrade your plan to continue.",
 	collections:
 		"Collections limit exceeded. Please upgrade your plan to continue.",
+	ai_generated_categories_and_tags:
+		"Monthly AI generated categories and tags limit exceeded. Please upgrade your plan to continue.",
 };
 const checkLimitExceeded = (
 	currentCount: number,
 	limitCount: number,
-	limitCountName: keyof typeof ERROR_MESSAGES,
+	limitCountName: SubscriptionLimitType,
 ) => {
 	if (currentCount >= limitCount) {
 		const error = new Error(ERROR_MESSAGES[limitCountName]);
@@ -131,4 +133,30 @@ export const updateSubscriptionCountLimit = async ({
 	} catch (err) {
 		throw err;
 	}
+};
+
+type HasSubscriptionAccessParams = {
+	type: SubscriptionLimitType;
+	user_id: string;
+	dbContext: any;
+};
+
+export const hasSubscriptionAccess = async ({
+	type,
+	user_id,
+	dbContext,
+}: HasSubscriptionAccessParams) => {
+	const userSubscription = await dbContext.query.userSubscriptions.findFirst({
+		with: { subscription: true },
+		where: eq(userSubscriptions.user_id, user_id),
+	});
+
+	const {
+		subscription: { limits: subscriptionLimit },
+		limit_counts: userLimitCounts,
+	} = userSubscription;
+
+	if (userLimitCounts[type] < subscriptionLimit[type]) return true;
+
+	return false;
 };

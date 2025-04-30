@@ -63,6 +63,10 @@ export const GET = async (req: NextRequest) => {
 						sql`(SELECT json_build_object('image', users.image, 'email', users.email) FROM users WHERE users.id = collection_folders.user_id LIMIT 1)`.as(
 							"sharedBy",
 						),
+					userAccess:
+						sql`(SELECT json_build_object('permission', (SELECT el->>'permission' FROM jsonb_array_elements(${collectionFolders.shared_to}) AS el WHERE el->>'email' = ${user.email} LIMIT 1)))`.as(
+							"userAccess",
+						),
 					thumbnail: sql`(${db
 						.select({ thumbnail: resources.thumbnail })
 						.from(resources)

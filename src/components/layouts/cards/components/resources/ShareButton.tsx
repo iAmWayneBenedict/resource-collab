@@ -2,8 +2,10 @@ import config from "@/config";
 import { usePostResourceShortUrlMutation } from "@/lib/mutations/short_urls";
 import { useGetResourceShortUrl } from "@/lib/queries/short-urls";
 import { useModal } from "@/store";
+import { useDashboardPage } from "@/store/useDashboardPage";
+import { useSelectedCollection } from "@/store/useSelectedCollection";
 import { Share2 } from "lucide-react";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 const ShareButton = ({
@@ -18,6 +20,10 @@ const ShareButton = ({
 	const pathname = usePathname();
 	const onOpenModal = useModal((state) => state.onOpen);
 	const setSubmitCallback = useModal((state) => state.setSubmitCallback);
+	const getDashboardPage = useDashboardPage(
+		(state) => state.getDashboardPage,
+	);
+	const isSharedPage = getDashboardPage() === "shared";
 	const [shareData, setShareData] = useState<Record<string, any> | null>(
 		null,
 	);
@@ -59,6 +65,8 @@ const ShareButton = ({
 	};
 
 	const onClickShareHandler = () => {
+		if (isSharedPage) return;
+
 		const data = shareData ?? {
 			url: null,
 			type: "Resource",
@@ -124,7 +132,8 @@ const ShareButton = ({
 	return (
 		<button
 			onClick={onClickShareHandler}
-			className="flex items-center gap-1 p-2 text-sm text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200"
+			disabled={isSharedPage}
+			className={`flex items-center gap-1 p-2 text-sm text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200 ${isSharedPage ? "cursor-not-allowed opacity-70 hover:text-zinc-700 dark:hover:text-zinc-200" : ""}`}
 		>
 			<Share2 className="h-4 w-4" />
 			<span>Share</span>
