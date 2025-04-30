@@ -20,11 +20,11 @@ export const auth = betterAuth({
 	database: drizzleAdapter(db, { provider: "pg" }),
 	basePath: `/api/${config.SERVER_API_VERSION}/${config.SERVER_API_TYPE}/auth`,
 
-	// trustedOrigins: [
-	// 	config.EXTENSION_ORIGIN!,
-	// 	"http://localhost:5173",
-	// 	config.BASE_URL!,
-	// ],
+	trustedOrigins: [
+		config.EXTENSION_ORIGIN!,
+		// "http://localhost:5173",
+		config.BASE_URL!,
+	],
 
 	// auth providers
 	emailAndPassword: {
