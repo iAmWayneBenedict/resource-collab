@@ -21,10 +21,11 @@ export const auth = betterAuth({
 	basePath: `/api/${config.SERVER_API_VERSION}/${config.SERVER_API_TYPE}/auth`,
 
 	trustedOrigins: [
-		config.EXTENSION_ORIGIN!,
-		"http://localhost:5173",
-		"https://resource-collab.vercel.app",
-		config.BASE_URL!,
+		"chrome-extension://cohdpjcmhkpngpbejapjnbopkbebjbjh",
+		"http://localhost:5173/",
+		"http://localhost:8080/",
+		"https://resource-collab.vercel.app/",
+		// config.BASE_URL!,
 	],
 
 	// auth providers
