@@ -22,7 +22,8 @@ export const auth = betterAuth({
 
 	trustedOrigins: [
 		config.EXTENSION_ORIGIN!,
-		// "http://localhost:5173",
+		"http://localhost:5173",
+		"https://resource-collab.vercel.app",
 		config.BASE_URL!,
 	],
 
