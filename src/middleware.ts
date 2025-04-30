@@ -3,6 +3,7 @@ import type { NextRequest } from "next/server";
 import { authRoutes, protectedRoutes } from "./routes";
 import { auth } from "./lib/auth";
 import { getApiHeaders } from "./lib/utils";
+import { headers } from "next/headers";
 
 // Define allowed hosts
 const allowedHosts = [
@@ -11,7 +12,8 @@ const allowedHosts = [
 ];
 
 export async function middleware(request: NextRequest): Promise<NextResponse> {
-	const session = await auth.api.getSession({ headers: request.headers });
+	const session = await auth.api.getSession({ headers: await headers() });
+	console.log(session);
 	const targetPath = request.nextUrl.pathname;
 	const user = session?.user;
 
@@ -114,7 +116,6 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
 
 	// Add CORS headers for all /v1/rest/auth paths to expose the auth api
 	if (targetPath.startsWith("/api/v1/rest/auth")) {
-		console.log(session);
 		const response = NextResponse.next();
 		response.headers.set(
 			"Access-Control-Allow-Origin",

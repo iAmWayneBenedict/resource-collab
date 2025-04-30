@@ -8,6 +8,7 @@ import {
 	createAuthMiddleware,
 	customSession,
 	emailOTP,
+	multiSession,
 	openAPI,
 } from "better-auth/plugins";
 import { EmailService } from "@/services/email";
@@ -77,6 +78,7 @@ export const auth = betterAuth({
 				session,
 			};
 		}),
+		multiSession(),
 		emailOTP({
 			async sendVerificationOTP({ email, otp, type }) {
 				try {

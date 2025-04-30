@@ -19,20 +19,33 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuthUser } from "@/store/useAuthUser";
 import { authClient } from "@/config/auth";
 import { useRouter } from "next/navigation";
+import { addToast } from "@heroui/react";
 
 const ProfileDropDown = () => {
-	const { setAuthUser } = useAuthUser();
+	const { setAuthUser, authUser } = useAuthUser();
 	const router = useRouter();
 
 	const handleLogout = async () => {
-		await authClient.signOut({
-			fetchOptions: {
-				onSuccess: () => {
-					setAuthUser(null);
-					router.push("/");
-				},
-			},
-		});
+		console.log(authUser);
+		// await authClient.revokeSession({
+		// 	token: ""
+		// })
+		// await authClient.signOut({
+		// 	fetchOptions: {
+		// 		onSuccess: () => {
+		// 			setAuthUser(null);
+		// 			router.push("/");
+		// 		},
+		// 		onError: (err) => {
+		// 			console.log(err);
+		// 			addToast({
+		// 				title: "Error",
+		// 				description: "Something went wrong",
+		// 				color: "danger",
+		// 			});
+		// 		},
+		// 	},
+		// });
 	};
 	return (
 		<DropdownMenu>
