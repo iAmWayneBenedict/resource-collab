@@ -22,6 +22,7 @@ import { useMediaQuery } from "react-responsive";
 import PortfolioTabs from "./PortfolioTabs";
 import SharedTab from "./shared/SharedTab";
 import { useDashboardPage } from "@/store/useDashboardPage";
+import { useDashboardTab } from "@/store/useDashboardTab";
 
 let TABS = [
 	{
@@ -58,6 +59,7 @@ const ContentTabs = () => {
 	const searchParams = useSearchParams();
 	const type = searchParams.get("page") ?? "resources";
 	const { dashboardPage, setDashboardPage } = useDashboardPage();
+	const { setDashboardTab } = useDashboardTab();
 
 	useLayoutEffect(() => {
 		setDashboardPage(type);
@@ -80,10 +82,10 @@ const ContentTabs = () => {
 				selectedKey={dashboardPage}
 				onSelectionChange={(key) => {
 					setDashboardPage(key as string);
-					router.push(
-						`/dashboard?page=${key}&tab=${["resources", "liked", "collections"].includes(key as string) ? "resources" : ""}`,
-						{ scroll: false },
-					);
+					setDashboardTab("resources");
+					router.push(`/dashboard?page=${key}&tab=resources`, {
+						scroll: false,
+					});
 				}}
 				aria-label="Dynamic tabs"
 				radius="full"

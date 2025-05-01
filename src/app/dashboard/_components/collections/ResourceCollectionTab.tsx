@@ -50,6 +50,18 @@ const ResourceCollectionTab = ({ type }: Props) => {
 					<p className="mb-4 text-gray-600">
 						You don't have any collection in this category yet.
 					</p>
+					{type === "collections" && (
+						<motion.div
+							initial={{ opacity: 0 }}
+							animate={{ opacity: 1 }}
+							transition={{ duration: 0.25 }}
+							className="z-[10] flex h-fit w-full justify-center"
+						>
+							<div className="flex h-fit flex-row gap-4">
+								<CreateCollectionButton />
+							</div>
+						</motion.div>
+					)}
 				</div>
 			</div>
 		);
@@ -72,7 +84,7 @@ const ResourceCollectionTab = ({ type }: Props) => {
 			<AnimatePresence mode="popLayout">
 				{data?.data.rows.map((collection: CollectionResponse) => (
 					<CollectionCard
-						key={collection.name}
+						key={collection.name + collection.id}
 						data={collection}
 						type={type}
 					/>

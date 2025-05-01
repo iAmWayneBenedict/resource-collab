@@ -6,6 +6,7 @@ import React, { useState, useEffect } from "react";
 import { Spinner, Button, Spacer } from "@heroui/react";
 import Image from "next/image";
 import { bgGradient4 } from "../../../../../public/assets/img";
+import { cn } from "@/lib/utils";
 
 const RedirectShortUrl = () => {
 	const params = useParams();
@@ -57,10 +58,10 @@ const RedirectShortUrl = () => {
 			<div className="flex h-screen w-screen flex-col items-center justify-center gap-5">
 				<div className="flex flex-col items-center justify-center">
 					<Spinner size="lg" className="text-violet" />
-					<p className="mt-4 text-lg font-medium text-gray-700">
+					<p className="mt-4 text-lg font-medium text-zinc-700 dark:text-zinc-300">
 						Redirecting you to the resource...
 					</p>
-					<p className="mt-2 text-sm text-gray-500">
+					<p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
 						This may take a moment
 					</p>
 				</div>
@@ -69,7 +70,7 @@ const RedirectShortUrl = () => {
 	}
 
 	return (
-		<div className="relative flex min-h-screen w-screen items-center justify-center p-4">
+		<div className="relative flex min-h-screen w-screen items-center justify-center p-4 bg-white dark:bg-zinc-900">
 			<div className="w-full max-w-md">
 				<div className="flex flex-col justify-center gap-4">
 					<div className="h-[4rem] w-full overflow-hidden rounded-[10px]">
@@ -79,14 +80,14 @@ const RedirectShortUrl = () => {
 							alt="resource gradient"
 						/>
 					</div>
-					<h1 className="mt-6 text-center font-PlayFairDisplay text-4xl font-semibold">
+					<h1 className="mt-6 text-center font-PlayFairDisplay text-4xl font-semibold text-zinc-800 dark:text-zinc-100">
 						Resource Access
 					</h1>
 				</div>
 
 				<Spacer y={8} />
 
-				<p className="text-center">{error}</p>
+				<p className="text-center text-zinc-700 dark:text-zinc-300">{error}</p>
 
 				<Spacer y={4} className="mb-12" />
 
@@ -99,7 +100,7 @@ const RedirectShortUrl = () => {
 						Login to Access
 					</Button>
 				) : (
-					<p className="text-center text-sm text-gray-600">
+					<p className="text-center text-sm text-zinc-600 dark:text-zinc-400">
 						The link you tried to access is either invalid, expired,
 						or you don't have the necessary permissions.
 					</p>
@@ -109,7 +110,12 @@ const RedirectShortUrl = () => {
 					<Button
 						onPress={() => router.push("/")}
 						radius="full"
-						className="w-full bg-violet text-white"
+						className={cn(
+							"w-full bg-violet text-white",
+							errorStatus === 401
+								? "bg-transparent text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+								: "",
+						)}
 					>
 						Return to Home
 					</Button>

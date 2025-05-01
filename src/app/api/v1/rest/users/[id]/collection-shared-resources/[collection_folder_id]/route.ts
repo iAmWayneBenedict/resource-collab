@@ -44,13 +44,6 @@ export const GET = async (
 		}
 		const [sharedCollections, totalCount] = await db.transaction(
 			async (tx) => {
-				// const sharedCollections = await db
-				// 	.select()
-				// 	.from(collectionFolders)
-				// 	.where(
-				// 		sql`EXISTS (SELECT FROM jsonb_array_elements(${collectionFolders.shared_to}) AS shared WHERE (shared->>'email') = ${user.email})`,
-				// 	);
-
 				const sharedCollections =
 					await tx.query.collectionFolders.findFirst({
 						with: {
@@ -111,10 +104,20 @@ export const GET = async (
 				userId: user?.id,
 			});
 
+			// remove the resourceCollection value before sending it to the client
+			const {
+				resourceCollections: _,
+				...sharedCollectionsWithoutResources
+			} = sharedCollections;
+
 			return NextResponse.json(
 				{
 					message: "Success",
-					data: { rows, count: totalCount },
+					data: {
+						rows,
+						count: totalCount,
+						collection: sharedCollectionsWithoutResources,
+					},
 				},
 				{ status: 200 },
 			);

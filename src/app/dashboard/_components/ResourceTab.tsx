@@ -25,8 +25,9 @@ type Props = {
 		| "collection-portfolios";
 
 	id?: number | string;
+	callback?: (data: Record<string, any>) => void;
 };
-const ResourceWrapper = ({ type, id }: Props) => {
+const ResourceWrapper = ({ type, id, callback }: Props) => {
 	const { authUser } = useAuthUser();
 	const setSearchParams = useResourcePaginatedSearchParams(
 		(state: ResourcePaginatedSearchParamsState) =>
@@ -73,6 +74,8 @@ const ResourceWrapper = ({ type, id }: Props) => {
 			else if (isFetching) currentStatus = "fetching";
 			else if (isSuccess) currentStatus = "success";
 			else if (isError) currentStatus = "error";
+
+			if (callback && isSuccess) callback(data?.data.collection);
 		}
 		setRequestStatus(currentStatus);
 	}, [isLoading, isFetching, isSuccess, isError, isCollectionResources]);
@@ -180,10 +183,10 @@ const ResourceWrapper = ({ type, id }: Props) => {
 	);
 };
 
-export const ResourceTab = ({ type, id }: Props) => {
+export const ResourceTab = ({ type, id, callback }: Props) => {
 	return (
 		<ResourcePaginatedSearchParamsProvider initialSearchParams={{}}>
-			<ResourceWrapper type={type} id={id} />
+			<ResourceWrapper type={type} id={id} callback={callback} />
 		</ResourcePaginatedSearchParamsProvider>
 	);
 };

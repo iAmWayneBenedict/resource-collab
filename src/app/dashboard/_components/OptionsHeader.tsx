@@ -1,18 +1,25 @@
+import { useDashboardPage } from "@/store/useDashboardPage";
 import { useRequestStatus } from "@/store/useRequestStatus";
 import { useSelectedCollection } from "@/store/useSelectedCollection";
 import { Button } from "@heroui/react";
 import { MoveLeft, Plus, Settings2 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import React from "react";
 import { useMediaQuery } from "react-responsive";
 
-const OptionsHeader = () => {
+type Props = {
+	currentCollection?: Record<string, any> | null;
+};
+const OptionsHeader = ({ currentCollection }: Props) => {
 	const router = useRouter();
 	const isMobileScreen = useMediaQuery({ query: "(max-width: 40rem)" });
 	const { requestStatus } = useRequestStatus();
-	const selectedCollection = useSelectedCollection(
-		(state) => state.selectedCollection,
+	const getDashboardPage = useDashboardPage(
+		(state) => state.getDashboardPage,
 	);
+	const isCollectionPage = getDashboardPage() === "collections";
+
+	const permission = currentCollection?.shared_to[0]?.permission;
 
 	const onClickReturnHandler = () => router.back();
 
@@ -24,7 +31,7 @@ const OptionsHeader = () => {
 				onPress={onClickReturnHandler}
 				startContent={<MoveLeft />}
 			>
-				Return
+				{currentCollection?.name}
 			</Button>
 			<div className="flex gap-2">
 				<Button
@@ -36,7 +43,7 @@ const OptionsHeader = () => {
 				>
 					{!isMobileScreen ? "Options" : ""}
 				</Button>
-				{selectedCollection?.userAccess.permission === "edit" && (
+				{(permission === "edit" || isCollectionPage) && (
 					<Button
 						radius="full"
 						className="bg-violet text-white"

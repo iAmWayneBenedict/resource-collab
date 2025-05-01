@@ -1,11 +1,17 @@
 import { Tab, Tabs } from "@heroui/react";
-import React, { useEffect, useLayoutEffect, useState } from "react";
+import React, {
+	useCallback,
+	useEffect,
+	useLayoutEffect,
+	useState,
+} from "react";
 import ResourceTab from "../ResourceTab";
 import OptionsHeader from "../OptionsHeader";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import CollectionModal from "@/components/modal/CollectionModal";
 import ResourceCollectionTab from "../collections/ResourceCollectionTab";
 import { useSelectedCollection } from "@/store/useSelectedCollection";
+import { useDashboardTab } from "@/store/useDashboardTab";
 
 type Props = {
 	type:
@@ -21,28 +27,28 @@ const SharedTab = ({ type, id }: Props) => {
 	const pathname = usePathname();
 	const router = useRouter();
 	const tab = searchParams.get("tab");
-	const [currentTab, setCurrentTab] = useState<string>(
-		(tab as string) || "resources",
-	);
-	const setSelectedCollection = useSelectedCollection(
-		(state) => state.setSelectedCollection,
-	);
+	const [currentCollection, setCurrentCollection] = useState<Record<
+		string,
+		any
+	> | null>(null);
+	const { dashboardTab, setDashboardTab } = useDashboardTab();
 
-	useLayoutEffect(() => {
-		if (id) router.push(`${pathname}?page=shared&tab=${currentTab}`);
-	}, []);
-
-	useEffect(() => {
-		return () => {
-			setSelectedCollection(null);
-		};
+	const collectionCallback = useCallback((data: Record<string, any>) => {
+		setCurrentCollection(data);
 	}, []);
 
 	if (type === "shared" && tab === "collections" && id) {
 		return (
 			<div className="flex flex-col gap-4">
-				<OptionsHeader />
-				<ResourceTab type={"collection-shared-resources"} id={id} />
+				{/* <h3 className="font-PlayFairDisplay text-2xl">
+					{currentCollection?.name}
+				</h3> */}
+				<OptionsHeader currentCollection={currentCollection} />
+				<ResourceTab
+					callback={collectionCallback}
+					type={"collection-shared-resources"}
+					id={id}
+				/>
 			</div>
 		);
 	}
@@ -50,9 +56,9 @@ const SharedTab = ({ type, id }: Props) => {
 	return (
 		<div>
 			<Tabs
-				selectedKey={currentTab}
+				selectedKey={dashboardTab}
 				onSelectionChange={(key) => {
-					setCurrentTab(key as string);
+					setDashboardTab(key as string);
 					router.push(`${pathname}?page=shared&tab=${key}`);
 				}}
 				aria-label="Tabs variants"

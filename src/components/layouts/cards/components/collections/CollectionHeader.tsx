@@ -29,6 +29,7 @@ import { useGetCollectionShortUrl } from "@/lib/queries/short-urls";
 import { usePostCollectionsShortUrlMutation } from "@/lib/mutations/short_urls";
 import { usePathname } from "next/navigation";
 import { useSelectedCollection } from "@/store/useSelectedCollection";
+import { useDashboardPage } from "@/store/useDashboardPage";
 
 const CollectionHeader = ({
 	data,
@@ -38,9 +39,11 @@ const CollectionHeader = ({
 	setEnableClickHandler: (d: any) => void;
 }) => {
 	const onOpenModal = useModal((state) => state.onOpen);
-	const getSelectedCollection = useSelectedCollection(
-		(state) => state.getSelectedCollection,
+	const getDashboardPage = useDashboardPage(
+		(state) => state.getDashboardPage,
 	);
+	const isSharedPage = getDashboardPage() === "shared";
+
 	const setAlertDialogDetails = useAlertDialog(
 		(state) => state.setAlertDialogDetails,
 	);
@@ -55,7 +58,9 @@ const CollectionHeader = ({
 				title: "Success",
 				description: message,
 			});
-			queryClient.invalidateQueries({ queryKey: ["user-collections"] });
+			queryClient.invalidateQueries({
+				queryKey: ["user-collections-collections"],
+			});
 		},
 		onError: (error: any) => {
 			console.log(error);
@@ -89,7 +94,9 @@ const CollectionHeader = ({
 				title: "Success",
 				description: "Collection deleted successfully",
 			});
-			queryClient.invalidateQueries({ queryKey: ["user-collections"] });
+			queryClient.invalidateQueries({
+				queryKey: ["user-collections-collections"],
+			});
 		},
 		onError: (error) => {
 			console.log(error);
@@ -267,7 +274,7 @@ const CollectionHeader = ({
 							>
 								{data.pinned ? "Unpin" : "Pin"}
 							</DropdownItem>
-							{!getSelectedCollection() ? (
+							{!isSharedPage ? (
 								<Fragment>
 									<DropdownItem
 										key="edit"

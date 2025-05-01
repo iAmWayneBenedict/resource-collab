@@ -95,6 +95,41 @@ export const GET = async (req: NextRequest) => {
 				.where(
 					sql`EXISTS (SELECT FROM jsonb_array_elements(${collectionFolders.shared_to}) AS shared WHERE (shared->>'email') = ${user.email})`,
 				);
+			// const sharedCollections = await db.query.collectionFolders.findMany(
+			// 	{
+			// 		columns: {
+			// 			id: true,
+			// 			name: true,
+			// 			access_level: true,
+			// 		},
+			// 		extras: {
+			// 			pinned: sql<boolean>`(CASE WHEN ${pinned.id} IS NOT NULL AND ${pinned.user_id} = ${user.id} THEN true ELSE false END)`.as(
+			// 				"pinned",
+			// 			),
+			// 			sharedBy:
+			// 				sql`(SELECT json_build_object('image', users.image, 'email', users.email) FROM users WHERE users.id = ${collectionFolders.user_id} LIMIT 1)`.as(
+			// 					"sharedBy",
+			// 				),
+			// 			userAccess:
+			// 				sql`(SELECT json_build_object('permission', (SELECT el->>'permission' FROM jsonb_array_elements(${collectionFolders.shared_to}) AS el WHERE el->>'email' = ${user.email} LIMIT 1)))`.as(
+			// 					"userAccess",
+			// 				),
+			// 			thumbnail: sql`(
+			// 				SELECT ${resources.thumbnail}
+			// 				FROM ${resources}
+			// 				WHERE ${resources.id} = (
+			// 					SELECT ${resourceCollections.resource_id}
+			// 					FROM ${resourceCollections}
+			// 					WHERE ${resourceCollections.collection_folder_id} = ${collectionFolders.id}
+			// 					ORDER BY ${resourceCollections.id} DESC
+			// 					LIMIT 1
+			// 				)
+			// 				LIMIT 1
+			// 			)`.as("thumbnail"),
+			// 		},
+			// 		where: sql`EXISTS (SELECT FROM jsonb_array_elements(${collectionFolders.shared_to}) AS shared WHERE (shared->>'email') = ${user.email})`,
+			// 	},
+			// );
 
 			return NextResponse.json(
 				{

@@ -68,7 +68,7 @@ const CollectionModal = () => {
 		});
 		setIsLoading(false);
 		queryClient.invalidateQueries({
-			queryKey: ["user-collections"],
+			queryKey: ["user-collections-collections"],
 		});
 	};
 

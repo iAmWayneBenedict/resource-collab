@@ -1,8 +1,5 @@
 import { db } from "@/data/connection";
-import {
-	resources,
-	resourceShortUrlAccess,
-} from "@/data/schema";
+import { resources, resourceShortUrlAccess } from "@/data/schema";
 import { getSession } from "@/lib/auth";
 import { and, eq, sql } from "drizzle-orm";
 import { NextResponse } from "next/server";
@@ -22,19 +19,24 @@ export const GET = async (
 	try {
 		const response = await db.transaction(async (tx) => {
 			const [result] = await tx.query.resourceShortUrlAccess.findMany({
-				columns: { full_path: true, resource_id: true, emails: true },
+				columns: {
+					full_path: true,
+					resource_id: true,
+					emails: true,
+					access_level: true,
+				},
 				with: { user: { columns: { email: true } } },
 				where: eq(resourceShortUrlAccess.short_code, p.short_code),
 				limit: 1,
 			});
 
-			if (result.emails?.length) {
+			if (result.access_level === "private") {
 				if (!user) {
 					// User not logged in but email access is required
 					return { message: "Authentication required", status: 401 };
 				}
 				if (
-					!result.emails.includes(user?.email!) &&
+					!result.emails?.includes(user?.email!) &&
 					result.user?.email !== user?.email
 				) {
 					// User is logged in but doesn't have access
