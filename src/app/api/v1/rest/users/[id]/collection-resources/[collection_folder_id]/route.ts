@@ -39,7 +39,7 @@ export const GET = async (
 					message: "Collection not found",
 					data: { rows: [], totalCount: 0 },
 				},
-				{ status: 404 },
+				{ status: 200 },
 			);
 		}
 		const [resourceIds, totalCount] = await db.transaction(async (tx) => {
@@ -118,7 +118,7 @@ export const GET = async (
 			return NextResponse.json(
 				{
 					message: "Success",
-					data: { rows, count: totalCount },
+					data: { rows, count: totalCount, collection: exist[0] },
 				},
 				{ status: 200 },
 			);

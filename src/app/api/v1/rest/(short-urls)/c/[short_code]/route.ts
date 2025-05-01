@@ -43,7 +43,7 @@ export const GET = async (
 
 				if (user?.id === result.user_id) {
 					return {
-						redirect_url: `${config.BASE_URL}/dashboard/collections/${result.collectionFolder.id}?tab=resources`,
+						redirect_url: `${config.BASE_URL}/dashboard?page=collections&item=${result.collectionFolder.id}&tab=resources`,
 						status: 200,
 					};
 				}
@@ -56,13 +56,13 @@ export const GET = async (
 					return { message: "Access denied", status: 403 };
 				} else {
 					return {
-						redirect_url: `${config.BASE_URL}/dashboard/shared/${result.collectionFolder.id}`,
+						redirect_url: `${config.BASE_URL}/dashboard?page=shared&tab=collections&item=${result.collectionFolder.id}`,
 						status: 200,
 					};
 				}
 			} else {
 				return {
-					redirect_url: `${config.BASE_URL}/dashboard/shared/${result.collectionFolder.id}`,
+					redirect_url: `${config.BASE_URL}/dashboard?page=shared&tab=collections&item=${result.collectionFolder.id}`,
 					status: 200,
 				};
 			}

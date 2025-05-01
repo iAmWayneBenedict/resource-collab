@@ -1,10 +1,16 @@
 import { Tab, Tabs } from "@heroui/react";
-import React, { useState } from "react";
+import React, {
+	useCallback,
+	useEffect,
+	useLayoutEffect,
+	useState,
+} from "react";
 import ResourceCollectionTab from "./ResourceCollectionTab";
 import ResourceTab from "../ResourceTab";
 import OptionsHeader from "../OptionsHeader";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import CollectionModal from "@/components/modal/CollectionModal";
+import { useDashboardTab } from "@/store/useDashboardTab";
 
 type Props = {
 	type:
@@ -20,13 +26,25 @@ const CollectionTab = ({ type, id }: Props) => {
 	const pathname = usePathname();
 	const router = useRouter();
 	const tab = searchParams.get("tab");
-	const [currentTab, setCurrentTab] = useState<string>(tab as string);
+	const [currentCollection, setCurrentCollection] = useState<Record<
+		string,
+		any
+	> | null>(null);
+	const { dashboardTab, setDashboardTab } = useDashboardTab();
+
+	const collectionCallback = useCallback((data: Record<string, any>) => {
+		setCurrentCollection(data);
+	}, []);
 
 	if (type === "collections" && tab === "resources" && id) {
 		return (
 			<div className="flex flex-col gap-4">
-				<OptionsHeader />
-				<ResourceTab type={"collection-resources"} id={id} />
+				<OptionsHeader currentCollection={currentCollection} />
+				<ResourceTab
+					type={"collection-resources"}
+					id={id}
+					callback={collectionCallback}
+				/>
 			</div>
 		);
 	}
@@ -34,9 +52,9 @@ const CollectionTab = ({ type, id }: Props) => {
 	return (
 		<div>
 			<Tabs
-				selectedKey={currentTab}
+				selectedKey={dashboardTab}
 				onSelectionChange={(key) => {
-					setCurrentTab(key as string);
+					setDashboardTab(key as string);
 
 					router.push(`${pathname}?page=collections&tab=${key}`);
 				}}

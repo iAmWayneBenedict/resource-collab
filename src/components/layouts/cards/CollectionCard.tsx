@@ -8,6 +8,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import CollectionHeader from "./components/collections/CollectionHeader";
 import CollectionFooter from "./components/collections/CollectionFooter";
 import { useSelectedCollection } from "@/store/useSelectedCollection";
+import { useDashboardTab } from "@/store/useDashboardTab";
 
 const CollectionCard = ({
 	data,
@@ -26,10 +27,13 @@ const CollectionCard = ({
 	const setSelectedCollection = useSelectedCollection(
 		(state) => state.setSelectedCollection,
 	);
+	const { dashboardTab } = useDashboardTab();
 
 	const onClickCardHandler = () => {
 		if (type === "shared") setSelectedCollection(data);
-		router.push(`${pathname}?page=${type}&tab=${tab}&item=${data.id}`);
+		router.push(
+			`${pathname}?page=${type}&tab=${dashboardTab}&item=${data.id}`,
+		);
 	};
 
 	return (

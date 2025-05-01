@@ -126,35 +126,27 @@ const LargeNav = () => {
 	const router = useRouter();
 
 	const handleLogout = async () => {
-		// !WARNING: Workaround for now since signout in vercel has undefined error on route "sign-out"
-		const { data } = await authClient.getSession();
-
-		const res = await authClient.multiSession.revoke({
-			sessionToken: data?.session.token || "",
+		await authClient.signOut({
+			fetchOptions: {
+				onSuccess: () => {
+					setAuthUser(null);
+					addToast({
+						title: "Success",
+						description: "Logout successfully",
+						color: "success",
+					});
+					router.push("/");
+				},
+				onError: (err) => {
+					console.log(err);
+					addToast({
+						title: "Error",
+						description: "Something went wrong",
+						color: "danger",
+					});
+				},
+			},
 		});
-		console.log(res);
-		if (res.data?.status) {
-			setAuthUser(null);
-			router.push("/");
-		}
-
-		// TODO: Fix this issu
-		// await authClient.signOut({
-		// 	fetchOptions: {
-		// 		onSuccess: () => {
-		// 			setAuthUser(null);
-		// 			router.push("/");
-		// 		},
-		// 		onError: (err) => {
-		// 			console.log(err);
-		// 			addToast({
-		// 				title: "Error",
-		// 				description: "Something went wrong",
-		// 				color: "danger",
-		// 			});
-		// 		},
-		// 	},
-		// });
 	};
 
 	useLayoutEffect(() => {
