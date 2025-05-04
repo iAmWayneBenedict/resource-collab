@@ -17,9 +17,16 @@ type Props = {
 	setSharedTo: (value: Record<string, string>[]) => void;
 	type: "Resource" | "Collection";
 	handleChange: (e: any) => void;
+	disabled: boolean;
 };
 
-const SharedEmails = ({ sharedTo, setSharedTo, type, handleChange }: Props) => {
+const SharedEmails = ({
+	sharedTo,
+	setSharedTo,
+	type,
+	handleChange,
+	disabled,
+}: Props) => {
 	const [inputValue, setInputValue] = useState("");
 	const [error, setError] = useState("");
 	const [recentAddedEmails, setRecentAddedEmails] = useState<string[]>([]);
@@ -128,6 +135,7 @@ const SharedEmails = ({ sharedTo, setSharedTo, type, handleChange }: Props) => {
 						color={error ? "danger" : "default"}
 						isInvalid={!!error}
 						errorMessage={error}
+						isDisabled={disabled}
 						validate={(value) => {
 							if (
 								value &&
@@ -149,6 +157,7 @@ const SharedEmails = ({ sharedTo, setSharedTo, type, handleChange }: Props) => {
 						className="bg-violet text-white"
 						onPress={handleSendInvite}
 						radius="full"
+						isDisabled={disabled}
 					>
 						Send Invite
 					</Button>
@@ -182,7 +191,9 @@ const SharedEmails = ({ sharedTo, setSharedTo, type, handleChange }: Props) => {
 									<div className="flex items-center">
 										<Dropdown
 											placement="bottom-end"
-											isDisabled={type === "Resource"}
+											isDisabled={
+												type === "Resource" || disabled
+											}
 										>
 											<DropdownTrigger>
 												<Button
@@ -247,6 +258,7 @@ const SharedEmails = ({ sharedTo, setSharedTo, type, handleChange }: Props) => {
 											onPress={() =>
 												removeEmail(currentUser.email)
 											}
+											isDisabled={disabled}
 											className="text-default-500"
 										>
 											<X size={16} />

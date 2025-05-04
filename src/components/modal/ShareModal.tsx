@@ -121,6 +121,7 @@ const ShareModal = () => {
 					setShareType={setShareType}
 					handleChange={handleChange}
 					data={data}
+					disabled={isLoadingShortUrl}
 				/>
 			</div>
 		);
@@ -135,6 +136,7 @@ const ShareModal = () => {
 					role={role}
 					setRole={setRole}
 					data={data}
+					disabled={isLoadingShortUrl}
 				/>
 			</div>
 		);
@@ -167,6 +169,7 @@ const ShareModal = () => {
 								sharedTo={sharedTo}
 								setSharedTo={setSharedTo}
 								type={data?.type}
+								disabled={isLoadingShortUrl}
 							/>
 						)}
 						<ShortUrlContainer
