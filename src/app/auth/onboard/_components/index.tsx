@@ -43,8 +43,8 @@ function Walkthrough() {
 		}
 	};
 
-	const validateCurrentStep = () => {
-		switch (currentStep) {
+	const validateStep = (step: number) => {
+		switch (step) {
 			case 0: // Professional
 				if (!formData.selectedProfessions.length) {
 					setErrors({
@@ -86,7 +86,7 @@ function Walkthrough() {
 	};
 
 	const handleNext = () => {
-		if (!validateCurrentStep()) {
+		if (!validateStep(currentStep)) {
 			return;
 		}
 
@@ -103,6 +103,18 @@ function Walkthrough() {
 		}
 	};
 
+	const handleRowStepChange = (step: number) => {
+		for (let i = 0; i < step; i++) {
+			if (!validateStep(i)) {
+				setCurrentStep(i);
+				return;
+			}
+		}
+
+		setCurrentStep(step);
+		setErrors({});
+	};
+
 	const mutation = usePostUserSubscriptionMutation({
 		onSuccess: (data: any) => {
 			location.href = "/dashboard?page=resources"; // redirect to dashboard
@@ -113,7 +125,7 @@ function Walkthrough() {
 	});
 
 	const handleSubmit = () => {
-		if (!validateCurrentStep()) {
+		if (!validateStep(currentStep)) {
 			return;
 		}
 		console.log("Form submitted:", formData);
@@ -200,7 +212,7 @@ function Walkthrough() {
 							color="primary"
 							currentStep={currentStep}
 							steps={STEPS}
-							onStepChange={setCurrentStep}
+							onStepChange={handleRowStepChange}
 						/>
 					</div>
 

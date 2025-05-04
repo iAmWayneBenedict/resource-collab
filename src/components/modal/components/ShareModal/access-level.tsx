@@ -24,6 +24,7 @@ type Props = {
 	data: any;
 	setShareType: (shareType: "private" | "public") => void;
 	handleChange: (e: any) => void;
+	disabled: boolean;
 };
 
 const AccessLevel = ({
@@ -31,6 +32,7 @@ const AccessLevel = ({
 	data,
 	setShareType,
 	handleChange,
+	disabled,
 }: Props) => {
 	const isSmallDevices = useMediaQuery({
 		query: "(max-width: 64rem)",
@@ -46,7 +48,7 @@ const AccessLevel = ({
 			classNames={{
 				wrapper: "flex gap-3",
 			}}
-			isDisabled={!!data?.restrictedTo}
+			isDisabled={!!data?.restrictedTo || disabled}
 		>
 			{ACCESS_LEVELS.map((level) => (
 				<Radio

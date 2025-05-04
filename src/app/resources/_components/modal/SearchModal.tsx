@@ -28,6 +28,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { reInitQueryParams } from "@/lib/utils";
 import { useRecentSearches } from "@/store/useRecentSearches";
 import { useKeyboardShortcut } from "@/hooks/useKeyboardShortcut";
+import { useSearchData } from "@/store/useSearchData";
 
 // Helper function to highlight matching text
 const HighlightedText = ({
@@ -75,6 +76,7 @@ const SearchFormModal = () => {
 
 	const router = useRouter();
 	const searchRef = useRef<HTMLInputElement>(null);
+	const { searchData } = useSearchData();
 
 	const {
 		name: modalName,
@@ -84,11 +86,6 @@ const SearchFormModal = () => {
 	} = useModal();
 
 	const searchDebounced = useDebounce(searchValue, 250);
-
-	const { data } = useGetPaginatedResourcesQuery({
-		page: 1,
-		limit: -1,
-	});
 
 	useKeyboardShortcut({ ctrlKey: true, key: "k" }, () => {
 		onOpenModal("Search Filter", null);
@@ -100,7 +97,7 @@ const SearchFormModal = () => {
 
 	const filteredResources = useMemo(
 		() =>
-			data?.data?.rows
+			searchData
 				?.filter((resource: any) => {
 					if (!searchDebounced) return false;
 					const searchLower = searchDebounced.toLowerCase();
@@ -110,7 +107,7 @@ const SearchFormModal = () => {
 					);
 				})
 				.slice(0, 5) || [],
-		[data?.data?.rows, searchDebounced],
+		[searchData, searchDebounced],
 	);
 
 	useEffect(() => {

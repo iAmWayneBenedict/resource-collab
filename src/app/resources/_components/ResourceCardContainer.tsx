@@ -12,10 +12,11 @@ import {
 import useResourcePaginatedSearchParams from "@/store/context/useResourcePaginatedSearchParams";
 import { useAISearchStore } from "@/store/useAIResult";
 import { useCollections } from "@/store/useCollections";
+import { useSearchData } from "@/store/useSearchData";
 import { Button, Skeleton } from "@heroui/react";
 import { RotateCcw } from "lucide-react";
 import { useSearchParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 const ResourceCardWrapper = () => {
 	const searchParams = useSearchParams();
@@ -26,6 +27,7 @@ const ResourceCardWrapper = () => {
 			state.actions.setSearchParams,
 	) as ResourcePaginatedSearchParamsState["actions"]["setSearchParams"];
 	const { query } = useAISearchStore();
+	const setSearchData = useSearchData((state) => state.setSearchData);
 
 	const category = searchParams.get("category") ?? "";
 	const sortBySearchParams = searchParams.get("sortBy") ?? "";
@@ -81,7 +83,7 @@ const ResourceCardWrapper = () => {
 		useGetPaginatedResourcesQuery(
 			{
 				page: 1,
-				limit: 20,
+				limit: -1,
 				...(aiResponse.data?.data.ids
 					? { resource_ids: aiResponse.data.data.ids }
 					: {
@@ -101,8 +103,28 @@ const ResourceCardWrapper = () => {
 				aiResponse?.data,
 			],
 		);
+	const allResources = useGetPaginatedResourcesQuery(
+		{
+			page: 1,
+			limit: -1,
+		},
+		[],
+	);
 
-	useEffect(() => {}, [aiResponse.isSuccess, aiResponse.data]);
+	// search data for search modal
+	const searchFeedData = useMemo(
+		() =>
+			allResources.data?.data?.rows?.map((resource: any) => {
+				return {
+					name: resource.name,
+					description: resource.description,
+				};
+			}) || [],
+		[allResources.data?.data?.rows],
+	);
+	useEffect(() => {
+		if (searchFeedData.length) setSearchData(searchFeedData);
+	}, [searchFeedData]);
 
 	const collections = useGetCollectionsQuery({
 		enabled: !!authUser,
