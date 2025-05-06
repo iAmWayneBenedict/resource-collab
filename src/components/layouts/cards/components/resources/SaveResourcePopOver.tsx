@@ -123,9 +123,7 @@ export const CollectionsList = ({
 
 	const isSimilar = useMemo(() => {
 		const convert = (collectionList: any[]) => {
-			const sortedList = [...collectionList]
-				.map(Number)
-				.sort((a, b) => a - b);
+			const sortedList = [...collectionList].sort();
 			return JSON.stringify(sortedList);
 		};
 		const selectedSetKeys = convert([...selectedKeys]);
@@ -136,7 +134,7 @@ export const CollectionsList = ({
 
 	const onDoneSubmit = useCallback(() => {
 		mutation.mutate({
-			collection_folder_ids: [...selectedKeys].map((v) => Number(v)),
+			collection_folder_ids: [...selectedKeys],
 			resource_id: resourceId,
 		});
 	}, [selectedKeys]);
@@ -397,7 +395,8 @@ const SaveResourcePopOver = ({
 	const getDashboardPage = useDashboardPage(
 		(state) => state.getDashboardPage,
 	);
-	const isSharedPage = getDashboardPage() === "shared";
+	const isSharedPage =
+		getDashboardPage() === "shared" || getDashboardPage() === "public";
 
 	const onCompleteHandler = () => {
 		onOpenChangeHandler(false);

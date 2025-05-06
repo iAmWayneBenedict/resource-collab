@@ -1,11 +1,11 @@
-import { pgTable, serial, text } from "drizzle-orm/pg-core";
+import { pgTable, serial, text, uuid } from "drizzle-orm/pg-core";
 import { users } from "./users";
 import { collectionFolders } from "./collection-folders";
 import { relations } from "drizzle-orm";
 
 export const pinned = pgTable("pinned", {
 	id: serial("id").primaryKey(),
-	collection_id: serial("collection_id").references(
+	collection_id: uuid("collection_id").references(
 		() => collectionFolders.id,
 		{
 			onDelete: "cascade",

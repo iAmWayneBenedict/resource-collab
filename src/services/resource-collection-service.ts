@@ -11,7 +11,7 @@ type CollectionResponse = {
 export const addResourceToCollection = async (
 	userId: string,
 	resourceId: number,
-	collectionFolderIds: number[],
+	collectionFolderIds: string[],
 ): Promise<CollectionResponse> => {
 	return db.transaction(async (tx) => {
 		// Get existing collections for this resource and user

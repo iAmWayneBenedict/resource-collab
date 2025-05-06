@@ -169,7 +169,7 @@ export const config = {
 		"/",
 		"/auth/:path*",
 		"/admin/:path*",
-		"/api/:path*",
+		// "/api/:path*",
 		"/dashboard",
 	], //! BUG on matcher if we put resource/file routes "/_next" and others
 };

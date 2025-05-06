@@ -1,5 +1,5 @@
 {
-  "id": "248b4c45-6fe2-40cf-be6d-76a9b8e7bc76",
+  "id": "9a4ae6b5-0b47-4796-93ce-87105a4310e9",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -209,9 +209,10 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "serial",
+          "type": "uuid",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "gen_random_uuid()"
         },
         "user_id": {
           "name": "user_id",
@@ -281,9 +282,9 @@
         },
         "collection_folder_id": {
           "name": "collection_folder_id",
-          "type": "serial",
+          "type": "uuid",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "user_id": {
           "name": "user_id",
@@ -595,9 +596,9 @@
         },
         "collection_id": {
           "name": "collection_id",
-          "type": "serial",
+          "type": "uuid",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "user_id": {
           "name": "user_id",
@@ -659,7 +660,7 @@
         },
         "collection_folder_id": {
           "name": "collection_folder_id",
-          "type": "serial",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
@@ -972,7 +973,7 @@
         },
         "collection_folder_id": {
           "name": "collection_folder_id",
-          "type": "serial",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
@@ -1249,6 +1250,13 @@
           "primaryKey": false,
           "notNull": true
         },
+        "is_global": {
+          "name": "is_global",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp",
@@ -1433,17 +1441,29 @@
           "notNull": true,
           "default": "'early access'"
         },
+        "monthly_price_local": {
+          "name": "monthly_price_local",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "yearly_price_local": {
+          "name": "yearly_price_local",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
         "monthly_price": {
           "name": "monthly_price",
-          "type": "integer",
+          "type": "numeric",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "yearly_price": {
           "name": "yearly_price",
-          "type": "integer",
+          "type": "numeric",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "description": {
           "name": "description",
@@ -1687,6 +1707,13 @@
           "notNull": false,
           "default": "now()"
         },
+        "billing_type": {
+          "name": "billing_type",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'monthly'"
+        },
         "is_trial": {
           "name": "is_trial",
           "type": "boolean",
@@ -1700,6 +1727,13 @@
           "primaryKey": false,
           "notNull": true,
           "default": false
+        },
+        "limit_counts": {
+          "name": "limit_counts",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'{\"collections\":0,\"shared_users\":0,\"ai_searches_per_day\":0,\"ai_searches\":0,\"ai_generated_categories_and_tags\":0}'::jsonb"
         }
       },
       "indexes": {},
@@ -1779,6 +1813,34 @@
           "primaryKey": false,
           "notNull": true,
           "default": "'user'"
+        },
+        "profession": {
+          "name": "profession",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'[]'::jsonb"
+        },
+        "custom_profession": {
+          "name": "custom_profession",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "''"
+        },
+        "affiliation": {
+          "name": "affiliation",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "''"
+        },
+        "news_letter": {
+          "name": "news_letter",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
         },
         "status": {
           "name": "status",

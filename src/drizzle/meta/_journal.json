@@ -5,50 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1744773700912,
-      "tag": "0000_chilly_leader",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1744774175291,
-      "tag": "0001_icy_nekra",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1744774858138,
-      "tag": "0002_fat_silverclaw",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1745815614137,
-      "tag": "0003_funny_agent_zero",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1745899961168,
-      "tag": "0004_same_the_hand",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "7",
-      "when": 1745906229525,
-      "tag": "0005_marvelous_valeria_richards",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "7",
-      "when": 1746016281639,
-      "tag": "0006_cloudy_avengers",
+      "when": 1746536299307,
+      "tag": "0000_lowly_supernaut",
       "breakpoints": true
     }
   ]

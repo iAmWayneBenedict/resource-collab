@@ -36,7 +36,7 @@ CREATE TABLE "categories" (
 --> statement-breakpoint
 ALTER TABLE "categories" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "collection_folders" (
-	"id" serial PRIMARY KEY NOT NULL,
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"user_id" varchar NOT NULL,
 	"name" varchar NOT NULL,
 	"access_level" "access_level" DEFAULT 'private' NOT NULL,
@@ -47,7 +47,7 @@ ALTER TABLE "collection_folders" ENABLE ROW LEVEL SECURITY;--> statement-breakpo
 CREATE TABLE "collection_short_urls" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"short_code" varchar(10) NOT NULL,
-	"collection_folder_id" serial NOT NULL,
+	"collection_folder_id" uuid,
 	"user_id" text,
 	"expired_at" timestamp with time zone DEFAULT now(),
 	CONSTRAINT "collection_short_urls_short_code_unique" UNIQUE("short_code")
@@ -93,7 +93,7 @@ CREATE TABLE "oauth_account" (
 ALTER TABLE "oauth_account" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "pinned" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"collection_id" serial NOT NULL,
+	"collection_id" uuid,
 	"user_id" text
 );
 --> statement-breakpoint
@@ -101,7 +101,7 @@ ALTER TABLE "pinned" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "portfolio_collections" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"user_id" varchar NOT NULL,
-	"collection_folder_id" serial NOT NULL,
+	"collection_folder_id" uuid NOT NULL,
 	"portfolio_id" integer
 );
 --> statement-breakpoint
@@ -139,7 +139,7 @@ ALTER TABLE "portfolios" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "resource_collections" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"user_id" varchar NOT NULL,
-	"collection_folder_id" serial NOT NULL,
+	"collection_folder_id" uuid NOT NULL,
 	"resource_id" integer
 );
 --> statement-breakpoint
@@ -174,6 +174,7 @@ CREATE TABLE "resources" (
 	"description" text,
 	"url" text NOT NULL,
 	"view_count" serial NOT NULL,
+	"is_global" boolean DEFAULT false,
 	"created_at" timestamp DEFAULT now(),
 	"updated_at" timestamp DEFAULT now()
 );
@@ -202,8 +203,10 @@ ALTER TABLE "skills" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 CREATE TABLE "subscriptions" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"type" "subscription_enum" DEFAULT 'early access' NOT NULL,
-	"monthly_price" integer NOT NULL,
-	"yearly_price" integer NOT NULL,
+	"monthly_price_local" numeric,
+	"yearly_price_local" numeric,
+	"monthly_price" numeric,
+	"yearly_price" numeric,
 	"description" text NOT NULL,
 	"features" text[] NOT NULL,
 	"is_active" boolean DEFAULT true NOT NULL,
@@ -241,8 +244,10 @@ CREATE TABLE "user_subscriptions" (
 	"subscription_id" serial NOT NULL,
 	"started_at" timestamp DEFAULT now(),
 	"expired_at" timestamp DEFAULT now(),
+	"billing_type" varchar DEFAULT 'monthly' NOT NULL,
 	"is_trial" boolean DEFAULT false NOT NULL,
-	"is_lifetime" boolean DEFAULT false NOT NULL
+	"is_lifetime" boolean DEFAULT false NOT NULL,
+	"limit_counts" jsonb DEFAULT '{"collections":0,"shared_users":0,"ai_searches_per_day":0,"ai_searches":0,"ai_generated_categories_and_tags":0}'::jsonb NOT NULL
 );
 --> statement-breakpoint
 ALTER TABLE "user_subscriptions" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
@@ -253,6 +258,10 @@ CREATE TABLE "users" (
 	"email" text NOT NULL,
 	"email_verified" boolean DEFAULT false NOT NULL,
 	"role" "users_enum" DEFAULT 'user' NOT NULL,
+	"profession" jsonb DEFAULT '[]'::jsonb,
+	"custom_profession" text DEFAULT '',
+	"affiliation" text DEFAULT '',
+	"news_letter" boolean DEFAULT false NOT NULL,
 	"status" "users_status_enum" DEFAULT 'active' NOT NULL,
 	"password" text,
 	"created_at" timestamp DEFAULT now(),

@@ -13,6 +13,7 @@ import { Button, Skeleton } from "@heroui/react";
 import { useEffect } from "react";
 import { AnimatePresence } from "motion/react";
 import { Plus } from "lucide-react";
+import EmptyDisplay from "@/components/layouts/EmptyDisplay";
 
 type Props = {
 	type:
@@ -104,56 +105,33 @@ const ResourceWrapper = ({ type, id, callback }: Props) => {
 
 	if (isError) {
 		return (
-			<div className="flex flex-col items-center justify-center p-8 text-center">
-				<div className="mb-2 text-[8rem] font-bold leading-none text-gray-200 opacity-60">
-					404
-				</div>
-				<div>
-					<h3 className="mb-2 text-xl font-semibold">
-						Oops! Something went wrong
-					</h3>
-					<p className="mb-4 text-gray-600">
-						We couldn't load your resources. Please try again later.
-					</p>
-					<Button
-						radius="full"
-						onPress={() => window.location.reload()}
-					>
-						Try Again
-					</Button>
-				</div>
-			</div>
+			<EmptyDisplay
+				code="404"
+				title="Oops! Something went wrong"
+				description={
+					"We couldn't load your resources. Please try again later."
+				}
+				showButton={true}
+				onPress={() => () => window.location.reload()}
+				buttonText="Try Again"
+			/>
 		);
 	}
 
 	if (!data?.data.rows?.length) {
 		return (
-			<div className="flex w-full flex-col items-center justify-center p-8 text-center">
-				<div className="mb-2 text-[8rem] font-bold leading-none text-gray-200 opacity-60">
-					0
-				</div>
-				<div>
-					<h3 className="mb-2 text-xl font-semibold">
-						No resources found
-					</h3>
-					<p className="mb-4 text-gray-600">
-						{type.includes("collection")
-							? "This collection doesn't have any resources yet."
-							: "You don't have any resources in this category yet."}
-					</p>
-					{type === "resources" && (
-						<Button
-							radius="full"
-							className="bg-violet text-white"
-							onPress={() =>
-								onOpenModal("resourcesForm", { type: "url" })
-							}
-						>
-							Start adding now
-						</Button>
-					)}
-				</div>
-			</div>
+			<EmptyDisplay
+				code="0"
+				title="No resources found"
+				description={
+					type.includes("collection")
+						? "This collection doesn't have any resources yet."
+						: "You don't have any resources in this category yet."
+				}
+				showButton={true}
+				onPress={() => onOpenModal("resourcesForm", { type: "url" })}
+				buttonText="Start adding now"
+			/>
 		);
 	}
 	return (

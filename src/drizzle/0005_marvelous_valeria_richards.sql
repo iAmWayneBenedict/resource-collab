@@ -1,1 +1,0 @@
-ALTER TABLE "user_subscriptions" ALTER COLUMN "limit_counts" SET DEFAULT '{"collections":0,"shared_users":0,"ai_searches_per_day":0,"ai_searches":0}'::jsonb;

@@ -1,6 +1,6 @@
 import config from "@/config";
 import { db } from "@/data/connection";
-import { collectionFolders, collectionShortUrls } from "@/data/schema";
+import { collectionShortUrls } from "@/data/schema";
 import { getSession } from "@/lib/auth";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
@@ -28,12 +28,13 @@ export const GET = async (
 				where: eq(collectionShortUrls.short_code, p.short_code),
 				limit: 1,
 			});
-			const shared_to = result.collectionFolder.shared_to as Record<
+
+			const shared_to = result.collectionFolder?.shared_to as Record<
 				string,
 				string
 			>[];
 
-			if (result.collectionFolder.access_level !== "public") {
+			if (result.collectionFolder?.access_level !== "public") {
 				if (!shared_to.length)
 					return { message: "Access denied", status: 403 };
 				if (!user) {
@@ -43,7 +44,7 @@ export const GET = async (
 
 				if (user?.id === result.user_id) {
 					return {
-						redirect_url: `${config.BASE_URL}/dashboard?page=collections&item=${result.collectionFolder.id}&tab=resources`,
+						redirect_url: `${config.BASE_URL}/dashboard?page=collections&item=${result.collectionFolder?.id}&tab=resources`,
 						status: 200,
 					};
 				}
@@ -56,13 +57,13 @@ export const GET = async (
 					return { message: "Access denied", status: 403 };
 				} else {
 					return {
-						redirect_url: `${config.BASE_URL}/dashboard?page=shared&tab=collections&item=${result.collectionFolder.id}`,
+						redirect_url: `${config.BASE_URL}/dashboard?page=shared&tab=collections&item=${result.collectionFolder?.id}`,
 						status: 200,
 					};
 				}
 			} else {
 				return {
-					redirect_url: `${config.BASE_URL}/dashboard?page=shared&tab=collections&item=${result.collectionFolder.id}`,
+					redirect_url: `${config.BASE_URL}/collections/${result.collectionFolder.id}`,
 					status: 200,
 				};
 			}

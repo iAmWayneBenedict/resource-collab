@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Playfair_Display } from "next/font/google";
 import { GeistSans } from "geist/font/sans";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -26,6 +27,11 @@ export const metadata: Metadata = {
 	},
 };
 
+const playFairDisplay = Playfair_Display({
+	variable: "--font-playFairDisplay",
+	subsets: ["latin"],
+});
+
 export default async function RootLayout({
 	children,
 }: Readonly<{
@@ -44,7 +50,7 @@ export default async function RootLayout({
 					content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
 				/>
 			</Head>
-			<body className={cn(GeistSans.className)}>
+			<body className={cn(GeistSans.className, playFairDisplay.variable)}>
 				<NextSSRPlugin
 					/**
 					 * The `extractRouterConfig` will extract **only** the route configs

@@ -7,7 +7,7 @@ import React from "react";
 import "./styles.css";
 import { useMediaQuery } from "react-responsive";
 
-const SearchModalTrigger = () => {
+const SearchModalTrigger = ({ hideAiSearch }: { hideAiSearch?: boolean }) => {
 	const { onOpen: onOpenModal } = useModal();
 	const { authUser } = useAuthUser();
 	const isSmallDevices = useMediaQuery({
@@ -52,20 +52,22 @@ const SearchModalTrigger = () => {
 					<Search />
 				</Button>
 			</Tooltip>
-			<Button
-				disableRipple
-				onPress={clickAISearchHandler}
-				radius="full"
-				className="hover:gradient-animation data-[hover=true]:gradient-animation transform bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 font-bold text-white transition duration-500 ease-in-out md:px-4 md:py-2"
-			>
-				<span
-					suppressHydrationWarning
-					className="flex items-center gap-2"
+			{!hideAiSearch && (
+				<Button
+					disableRipple
+					onPress={clickAISearchHandler}
+					radius="full"
+					className="hover:gradient-animation data-[hover=true]:gradient-animation transform bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 font-bold text-white transition duration-500 ease-in-out md:px-4 md:py-2"
 				>
-					<Sparkles />
-					{!isSmallDevices ? "Try AI Search" : "AI Search"}
-				</span>
-			</Button>
+					<span
+						suppressHydrationWarning
+						className="flex items-center gap-2"
+					>
+						<Sparkles />
+						{!isSmallDevices ? "Try AI Search" : "AI Search"}
+					</span>
+				</Button>
+			)}
 		</div>
 	);
 };

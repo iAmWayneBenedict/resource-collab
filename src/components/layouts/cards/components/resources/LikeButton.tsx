@@ -45,7 +45,8 @@ const LikeButton = ({
 	const getDashboardPage = useDashboardPage(
 		(state) => state.getDashboardPage,
 	);
-	const isSharedPage = getDashboardPage() === "shared";
+	const isSharedPage =
+		getDashboardPage() === "shared" || getDashboardPage() === "public";
 
 	// Create query key array for better reusability
 	const getQueryKey = () => searchParams.queryKey;

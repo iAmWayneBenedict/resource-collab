@@ -23,7 +23,8 @@ const ShareButton = ({
 	const getDashboardPage = useDashboardPage(
 		(state) => state.getDashboardPage,
 	);
-	const isSharedPage = getDashboardPage() === "shared";
+	const isSharedPage =
+		getDashboardPage() === "shared" || getDashboardPage() === "public";
 	const [shareData, setShareData] = useState<Record<string, any> | null>(
 		null,
 	);

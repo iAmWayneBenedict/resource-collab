@@ -35,7 +35,8 @@ export const BookmarkButton = ({
 	const getDashboardPage = useDashboardPage(
 		(state) => state.getDashboardPage,
 	);
-	const isSharedPage = getDashboardPage() === "shared";
+	const isSharedPage =
+		getDashboardPage() === "shared" || getDashboardPage() === "public";
 
 	useEffect(() => {
 		const newIconColors = {
@@ -67,6 +68,7 @@ export const BookmarkButton = ({
 					"overflow-visible bg-transparent bg-none transition-none hover:bg-transparent",
 					isSharedPage ? "cursor-not-allowed!" : "",
 				)}
+				isDisabled={isSharedPage}
 				{...props}
 			>
 				<motion.div

@@ -4,6 +4,7 @@ import { useAuthUser } from "@/store";
 import { Button, Skeleton } from "@heroui/react";
 import CreateCollectionButton from "./CreateCollectionButton";
 import { AnimatePresence, motion } from "motion/react";
+import EmptyDisplay from "@/components/layouts/EmptyDisplay";
 
 type Props = {
 	type:
@@ -39,31 +40,25 @@ const ResourceCollectionTab = ({ type }: Props) => {
 
 	if (!data?.data.rows?.length) {
 		return (
-			<div className="flex w-full flex-col items-center justify-center p-8 text-center">
-				<div className="mb-2 text-[8rem] font-bold leading-none text-gray-200 opacity-60">
-					0
-				</div>
-				<div>
-					<h3 className="mb-2 text-xl font-semibold">
-						No collection found
-					</h3>
-					<p className="mb-4 text-gray-600">
-						You don't have any collection in this category yet.
-					</p>
-					{type === "collections" && (
-						<motion.div
-							initial={{ opacity: 0 }}
-							animate={{ opacity: 1 }}
-							transition={{ duration: 0.25 }}
-							className="z-[10] flex h-fit w-full justify-center"
-						>
-							<div className="flex h-fit flex-row gap-4">
-								<CreateCollectionButton />
-							</div>
-						</motion.div>
-					)}
-				</div>
-			</div>
+			<EmptyDisplay
+				code="0"
+				title="No collection found"
+				description="You don't have any collection in this category yet."
+				showButton={false}
+			>
+				{type === "collections" && (
+					<motion.div
+						initial={{ opacity: 0 }}
+						animate={{ opacity: 1 }}
+						transition={{ duration: 0.25 }}
+						className="z-[10] flex h-fit w-full justify-center"
+					>
+						<div className="flex h-fit flex-row gap-4">
+							<CreateCollectionButton />
+						</div>
+					</motion.div>
+				)}
+			</EmptyDisplay>
 		);
 	}
 
