@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { integer, pgTable, serial, varchar } from "drizzle-orm/pg-core";
+import { integer, pgTable, serial, uuid, varchar } from "drizzle-orm/pg-core";
 import { users } from "./users";
 import { portfolios } from "./portfolios";
 import { collectionFolders } from "./collection-folders";
@@ -12,7 +12,7 @@ export const portfolioCollections = pgTable("portfolio_collections", {
 			onUpdate: "cascade",
 		})
 		.notNull(),
-	collection_folder_id: serial("collection_folder_id")
+	collection_folder_id: uuid("collection_folder_id")
 		.references(() => collectionFolders.id, {
 			onDelete: "cascade",
 			onUpdate: "cascade",

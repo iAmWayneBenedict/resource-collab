@@ -16,9 +16,18 @@ type Props = {
  * @param {React.RefObject<HTMLElement>} [props.refObject] - Ref object for the section element.
  * @returns {React.ReactElement} The rendered component.
  */
-const Section: React.FC<Props> = ({ children, refObject, className, ...props }) => {
+const Section: React.FC<Props> = ({
+	children,
+	refObject,
+	className,
+	...props
+}) => {
 	return (
-		<section ref={refObject} className={cn(className, "mt-16 w-full")} {...props}>
+		<section
+			ref={refObject}
+			className={cn("mt-16 w-full", className)}
+			{...props}
+		>
 			{children}
 		</section>
 	);

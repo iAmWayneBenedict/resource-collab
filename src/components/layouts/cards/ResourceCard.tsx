@@ -72,7 +72,7 @@ const ResourceCard = ({ data }: ResourceCardProps) => {
 			className="relative flex min-w-[19rem] flex-1 cursor-pointer flex-col rounded-2xl bg-content1 shadow-md dark:border-small dark:border-default-200 md:min-w-[22rem]"
 		>
 			<div
-				className={`absolute right-7 top-7 ${getDashboardPage() === "shared" ? "cursor-not-allowed" : ""}`}
+				className={`absolute right-7 top-7 ${getDashboardPage() === "shared" || getDashboardPage() === "public" ? "cursor-not-allowed" : ""}`}
 			>
 				{isSmallDevices ? (
 					<SaveResourceDrawer
@@ -121,20 +121,21 @@ const ResourceCard = ({ data }: ResourceCardProps) => {
 					>
 						<ResourceTags tags={data.resourceTags} />
 						<div className="mt-4">
-							{getDashboardPage() === "shared" &&
-								data?.sharedBy && (
-									<div className="flex items-center gap-2">
-										<Avatar
-											name={data.sharedBy.email}
-											src={data.sharedBy.image}
-											className="h-5 w-5"
-											size="sm"
-										/>
-										<p className="text-xs text-zinc-600">
-											{data.sharedBy.email}
-										</p>
-									</div>
-								)}
+							{getDashboardPage() === "shared" ||
+								(getDashboardPage() === "public" &&
+									data?.sharedBy && (
+										<div className="flex items-center gap-2">
+											<Avatar
+												name={data.sharedBy.email}
+												src={data.sharedBy.image}
+												className="h-5 w-5"
+												size="sm"
+											/>
+											<p className="text-xs text-zinc-600">
+												{data.sharedBy.email}
+											</p>
+										</div>
+									))}
 							<ResourceMetrics
 								name={data.name}
 								id={data.id}

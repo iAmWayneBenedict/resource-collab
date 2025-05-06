@@ -42,7 +42,8 @@ const CollectionHeader = ({
 	const getDashboardPage = useDashboardPage(
 		(state) => state.getDashboardPage,
 	);
-	const isSharedPage = getDashboardPage() === "shared";
+	const isSharedPage =
+		getDashboardPage() === "shared" || getDashboardPage() === "public";
 
 	const setAlertDialogDetails = useAlertDialog(
 		(state) => state.setAlertDialogDetails,

@@ -1,1 +1,0 @@
-ALTER TABLE "user_subscriptions" ADD COLUMN "limit_counts" jsonb DEFAULT '{}'::jsonb NOT NULL;

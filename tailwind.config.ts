@@ -21,7 +21,7 @@ const config = {
 	prefix: "",
 	theme: {
 		fontFamily: {
-			PlayFairDisplay: ["Playfair Display", "serif"],
+			PlayFairDisplay: ["Playfair Display"],
 		},
 		container: {
 			center: true,

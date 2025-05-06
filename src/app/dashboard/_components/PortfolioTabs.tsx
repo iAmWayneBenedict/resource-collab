@@ -15,6 +15,7 @@ import { AnimatePresence } from "motion/react";
 import { useRouter } from "next/navigation";
 import { useLoading } from "@/store/useLoading";
 import PortfolioModal from "@/components/modal/PortfolioModal";
+import EmptyDisplay from "@/components/layouts/EmptyDisplay";
 
 type Props = {
 	type: "portfolios";
@@ -66,37 +67,25 @@ const PortfolioTabs = ({ type }: Props) => {
 
 	if (true) {
 		return (
-			<div className="flex w-full flex-col items-center justify-center p-8 text-center">
-				<div className="mb-2 text-[8rem] font-bold leading-none text-gray-300 opacity-60 dark:text-gray-600">
-					0
-				</div>
-				<div>
-					<h3 className="mb-2 text-xl font-semibold text-gray-800 dark:text-gray-200">
-						No portfolios found
-					</h3>
-					<p className="mb-4 text-gray-600 dark:text-gray-400">
-						{type.includes("collection")
-							? "This collection doesn't have any portfolios yet. Start showcasing your work and skills by adding one!"
-							: "You don't have any portfolios in this category yet. Add one to highlight your skills and projects!"}
-					</p>
-					<Button
-						radius="full"
-						className="bg-violet text-white hover:bg-violet-600 dark:bg-violet-700 dark:hover:bg-violet-600"
-						// Uncomment and update the route to navigate to the portfolio addition page
-						onPress={() =>
-							onOpenModal(
-								"portfolio-modal",
-								null,
-								"create",
-								"Add portfolio",
-							)
-						}
-					>
-						Add Your Portfolio
-					</Button>
-				</div>
-				<PortfolioModal />
-			</div>
+			<EmptyDisplay
+				code="0"
+				title="No portfolios found"
+				description={
+					type.includes("collection")
+						? "This collection doesn't have any portfolios yet. Start showcasing your work and skills by adding one!"
+						: "You don't have any portfolios in this category yet. Add one to highlight your skills and projects!"
+				}
+				showButton={true}
+				onPress={() =>
+					onOpenModal(
+						"portfolio-modal",
+						null,
+						"create",
+						"Add portfolio",
+					)
+				}
+				buttonText="Add Your Portfolio"
+			/>
 		);
 	}
 

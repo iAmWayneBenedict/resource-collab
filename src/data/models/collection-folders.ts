@@ -1,5 +1,13 @@
 import { relations, sql } from "drizzle-orm";
-import { jsonb, pgEnum, pgTable, serial, varchar } from "drizzle-orm/pg-core";
+import {
+	jsonb,
+	pgEnum,
+	pgTable,
+	serial,
+	text,
+	uuid,
+	varchar,
+} from "drizzle-orm/pg-core";
 import { users } from "./users";
 import { resourceCollections } from "./resource-collections";
 import { portfolioCollections } from "./portfolio-collections";
@@ -13,7 +21,7 @@ export const accessLevel = pgEnum("access_level", [
 // export const permissionLevel = pgEnum("permission_level", ["view", "edit"]);
 
 export const collectionFolders = pgTable("collection_folders", {
-	id: serial("id").primaryKey(),
+	id: uuid("id").primaryKey().defaultRandom(),
 	user_id: varchar("user_id")
 		.references(() => users.id, {
 			onDelete: "cascade",

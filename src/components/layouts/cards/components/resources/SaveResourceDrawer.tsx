@@ -28,7 +28,8 @@ export function SaveResourceDrawer({
 	const getDashboardPage = useDashboardPage(
 		(state) => state.getDashboardPage,
 	);
-	const isSharedPage = getDashboardPage() === "shared";
+	const isSharedPage =
+		getDashboardPage() === "shared" || getDashboardPage() === "public";
 
 	const onCompleteHandler = () => {
 		onOpenChangeHandler(false);
