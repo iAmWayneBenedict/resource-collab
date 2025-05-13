@@ -2,6 +2,7 @@ import { usePostResourceMutation } from "@/lib/mutations/resources";
 import { addToast, Alert, Button, Input } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
+import { useSearchParams } from "next/navigation";
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
@@ -37,6 +38,9 @@ const URLForm = ({
 		defaultValues: DEFAULT_VALUES,
 		resolver: zodResolver(formSchema),
 	});
+	const searchParams = useSearchParams();
+	const page = searchParams.get("page");
+	const item = searchParams.get("item");
 
 	const queryClient = useQueryClient();
 
@@ -50,6 +54,9 @@ const URLForm = ({
 
 			queryClient.invalidateQueries({
 				queryKey: ["user-resources-resources"],
+			});
+			queryClient.invalidateQueries({
+				queryKey: [`user-collection-resources-${item}-resources`],
 			});
 
 			addToast({
@@ -69,9 +76,10 @@ const URLForm = ({
 	});
 
 	const onSubmit = (data: any) => {
-		console.log(data);
 		onSubmittingCallback(true);
 		setIsSubmitting(true);
+
+		if (page === "collections") data["collection_folder_id"] = item;
 
 		createResourceMutation.mutate(data);
 	};

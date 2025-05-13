@@ -7,7 +7,13 @@ import React from "react";
 import "./styles.css";
 import { useMediaQuery } from "react-responsive";
 
-const SearchModalTrigger = ({ hideAiSearch }: { hideAiSearch?: boolean }) => {
+const SearchModalTrigger = ({
+	hideAiSearch,
+	iconOnly,
+}: {
+	hideAiSearch?: boolean;
+	iconOnly?: boolean;
+}) => {
 	const { onOpen: onOpenModal } = useModal();
 	const { authUser } = useAuthUser();
 	const isSmallDevices = useMediaQuery({
@@ -52,7 +58,18 @@ const SearchModalTrigger = ({ hideAiSearch }: { hideAiSearch?: boolean }) => {
 					<Search />
 				</Button>
 			</Tooltip>
-			{!hideAiSearch && (
+			{!hideAiSearch && iconOnly && (
+				<Button
+					disableRipple
+					onPress={clickAISearchHandler}
+					radius="full"
+					variant="light"
+					isIconOnly={true}
+				>
+					<Sparkles />
+				</Button>
+			)}
+			{!hideAiSearch && !iconOnly && (
 				<Button
 					disableRipple
 					onPress={clickAISearchHandler}

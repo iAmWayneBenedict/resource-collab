@@ -6,20 +6,16 @@ import ShareModal from "@/components/modal/ShareModal";
 
 const DashboardWrapper = ({ children }: { children: ReactNode }) => {
 	return (
-		<Suspense fallback={<h1>Loading</h1>}>
-			<Layout className="mt-4">
-				<Container className="mt-16">
-					<UserProfile />
-					<Suspense fallback={<h1>Loading...</h1>}>
-						{children}
-					</Suspense>
-				</Container>
-				{/* <FilterFormModal /> */}
-				{/* <SearchFormModal /> */}
-				{/* <AISearchModal /> */}
-				<ShareModal />
-			</Layout>
-		</Suspense>
+		<Layout className="mt-4">
+			<Container className="mt-16">
+				<UserProfile />
+				<Suspense fallback={null}>{children}</Suspense>
+			</Container>
+			{/* <FilterFormModal /> */}
+			{/* <SearchFormModal /> */}
+			{/* <AISearchModal /> */}
+			<ShareModal />
+		</Layout>
 	);
 };
 

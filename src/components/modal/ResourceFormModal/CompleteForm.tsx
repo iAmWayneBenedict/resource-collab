@@ -19,6 +19,8 @@ import { z } from "zod";
 import { usePostDeleteUploadThingFileMutation } from "../../../lib/mutations/storage/uploadthing";
 import { UploadImageResource } from "./UploadImage";
 import { useGetCategoriesQuery } from "@/lib/queries/categories";
+import { useSearchParams } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 
 const formSchema = z.object({
 	url: z.string().url("Invalid URL"),
@@ -68,6 +70,12 @@ const CompleteForm = ({
 		defaultValues: DEFAULT_VALUES,
 		resolver: zodResolver(formSchema),
 	});
+
+	const searchParams = useSearchParams();
+	const page = searchParams.get("page");
+	const item = searchParams.get("item");
+
+	const queryClient = useQueryClient();
 
 	const [fileIds, setFileIds] = useState({
 		icon: "", // uploaded file id
@@ -146,6 +154,10 @@ const CompleteForm = ({
 			setIsDisableForm(false);
 			setIsSubmitting(false);
 
+			queryClient.invalidateQueries({
+				queryKey: [`user-collection-resources-${item}-resources`],
+			});
+
 			addToast({
 				title: "Success",
 				description: "Resource created successfully.",
@@ -188,16 +200,17 @@ const CompleteForm = ({
 	});
 
 	const onSubmit = (payload: any) => {
-		console.log(payload);
 		onSubmittingCallback(true);
 		setIsDisableForm(true);
 		setIsSubmitting(true);
 
+		if (page === "collections") payload["collection_folder_id"] = item;
 		if (data?.category_id) {
 			payload["id"] = data?.id;
 			updateResourceMutation.mutate(payload);
 			return;
 		}
+
 		createResourceMutation.mutate(payload);
 	};
 	return (
@@ -242,7 +255,8 @@ const CompleteForm = ({
 						label="Website URL"
 						placeholder="Enter website URL"
 						color={errors.url ? "danger" : "default"}
-						isDisabled={isDisableForm}
+						isDisabled={isDisableForm || data}
+						className={data ? "opacity-70" : ""}
 					/>
 				)}
 			/>

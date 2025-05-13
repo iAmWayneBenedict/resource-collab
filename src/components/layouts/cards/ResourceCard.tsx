@@ -5,12 +5,14 @@ import { motion } from "motion/react";
 import SaveResourcePopOver from "./components/resources/SaveResourcePopOver";
 import { usePutViewResourceMutation } from "@/lib/mutations/resources";
 import { SaveResourceDrawer } from "./components/resources/SaveResourceDrawer";
-import { useState } from "react";
-import { Avatar, Image } from "@heroui/react";
+import React, { useState } from "react";
+import { Avatar, Image, Checkbox, Button, PressEvent } from "@heroui/react";
 import { useMediaQuery } from "react-responsive";
 import { useSearchParams } from "next/navigation";
 import { useSelectedCollection } from "@/store/useSelectedCollection";
 import { useDashboardPage } from "@/store/useDashboardPage";
+import { EllipsisVertical } from "lucide-react";
+import Options from "./components/resources/Options";
 
 type ResourceCardProps = {
 	data: any;
@@ -21,6 +23,7 @@ const ResourceCard = ({ data }: ResourceCardProps) => {
 	const [icon, setIcon] = useState(
 		data?.icon || "https://placehold.co/200x200",
 	);
+	const [isHovered, setIsHovered] = useState(false);
 
 	const isSmallDevices = useMediaQuery({
 		query: "(max-width: 64rem)",
@@ -60,7 +63,12 @@ const ResourceCard = ({ data }: ResourceCardProps) => {
 	const collectionList = data?.resourceCollections.map(
 		(id: number) => id + "",
 	);
-	console.log(isSmallDevices);
+
+	const handleMoreOptions = (e: PressEvent) => {
+		// Handle more options menu click
+		console.log("More options clicked");
+	};
+
 	return (
 		<motion.div
 			key={data.id}
@@ -70,25 +78,32 @@ const ResourceCard = ({ data }: ResourceCardProps) => {
 			exit={{ opacity: 0, y: 10 }}
 			transition={{ ease: "easeInOut", duration: 0.2 }}
 			className="relative flex min-w-[19rem] flex-1 cursor-pointer flex-col rounded-2xl bg-content1 shadow-md dark:border-small dark:border-default-200 md:min-w-[22rem]"
+			onMouseEnter={() => setIsHovered(true)}
+			onMouseLeave={() => setIsHovered(false)}
 		>
-			<div
-				className={`absolute right-7 top-7 ${getDashboardPage() === "shared" || getDashboardPage() === "public" ? "cursor-not-allowed" : ""}`}
-			>
-				{isSmallDevices ? (
-					<SaveResourceDrawer
-						bookmarkCount={data.bookmarksCount}
-						isBookmarked={!!data?.resourceCollections?.length}
-						collectionList={collectionList}
-						id={data.id}
-					/>
-				) : (
-					<SaveResourcePopOver
-						bookmarkCount={data.bookmarksCount}
-						isBookmarked={!!data?.resourceCollections?.length}
-						collectionList={collectionList}
-						id={data.id}
-					/>
-				)}
+			<div className="absolute right-7 top-12 flex items-center">
+				<div
+					className={`absolute right-7 ${getDashboardPage() === "shared" || getDashboardPage() === "public" ? "cursor-not-allowed" : ""}`}
+				>
+					{isSmallDevices ? (
+						<SaveResourceDrawer
+							bookmarkCount={data.bookmarksCount}
+							isBookmarked={!!data?.resourceCollections?.length}
+							collectionList={collectionList}
+							id={data.id}
+						/>
+					) : (
+						<SaveResourcePopOver
+							bookmarkCount={data.bookmarksCount}
+							isBookmarked={!!data?.resourceCollections?.length}
+							collectionList={collectionList}
+							id={data.id}
+						/>
+					)}
+				</div>
+				<div className="absolute right-0">
+					<Options data={data} />
+				</div>
 			</div>
 			<div
 				className="h-full"
