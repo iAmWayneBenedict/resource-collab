@@ -6,7 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const GET = async (
 	req: NextRequest,
-	{ params }: { params: Promise<{ id: number | string }> },
+	{ params }: { params: Promise<{ id: string }> },
 ) => {
 	const { id } = await params;
 	const searchParams = req.nextUrl.searchParams;
@@ -18,7 +18,7 @@ export const GET = async (
 	const exist = await db
 		.select()
 		.from(collectionFolders)
-		.where(eq(collectionFolders.id, id as number));
+		.where(eq(collectionFolders.id, id));
 
 	if (!exist.length || exist[0].access_level !== "public") {
 		return NextResponse.json(
@@ -40,7 +40,7 @@ export const GET = async (
 					},
 				},
 			},
-			where: eq(collectionFolders.id, id as number),
+			where: eq(collectionFolders.id, id),
 		});
 
 		return [

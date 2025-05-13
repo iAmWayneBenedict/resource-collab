@@ -6,7 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const POST = async (
 	req: NextRequest,
-	{ params }: { params: Promise<{ id: number }> },
+	{ params }: { params: Promise<{ id: string }> },
 ) => {
 	const session = await getSession(req.headers);
 	const user = session?.user;
@@ -31,8 +31,11 @@ export const POST = async (
 			collection_id: exist[0].id,
 			user_id: user.id,
 		});
-		
-		return NextResponse.json({message: "Successfully pinned collection!", data: null}, {status: 200})
+
+		return NextResponse.json(
+			{ message: "Successfully pinned collection!", data: null },
+			{ status: 200 },
+		);
 	} catch (err) {
 		console.log(err);
 		return NextResponse.json({ message: "Server error" }, { status: 500 });
@@ -40,7 +43,7 @@ export const POST = async (
 };
 export const DELETE = async (
 	req: NextRequest,
-	{ params }: { params: Promise<{ id: number }> },
+	{ params }: { params: Promise<{ id: string }> },
 ) => {
 	const session = await getSession(req.headers);
 	const user = session?.user;
@@ -69,7 +72,10 @@ export const DELETE = async (
 					eq(pinned.user_id, user.id),
 				),
 			);
-		return NextResponse.json({message: "Successfully unpinned collection!", data: null}, {status: 200})
+		return NextResponse.json(
+			{ message: "Successfully unpinned collection!", data: null },
+			{ status: 200 },
+		);
 	} catch (err) {
 		console.log(err);
 		return NextResponse.json({ message: "Server error" }, { status: 500 });

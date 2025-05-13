@@ -7,7 +7,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const GET = async (
 	req: NextRequest,
-	{ params }: { params: Promise<{ collection_folder_id: number | string }> },
+	{ params }: { params: Promise<{ collection_folder_id: string }> },
 ) => {
 	const { collection_folder_id } = await params;
 	const searchParams = req.nextUrl.searchParams;
@@ -30,7 +30,7 @@ export const GET = async (
 			.where(
 				and(
 					eq(collectionFolders.user_id, user?.id),
-					eq(collectionFolders.id, collection_folder_id as number),
+					eq(collectionFolders.id, collection_folder_id),
 				),
 			);
 		if (!exist.length) {
@@ -51,7 +51,7 @@ export const GET = async (
 						eq(resourceCollections.user_id, user?.id),
 						eq(
 							resourceCollections.collection_folder_id,
-							collection_folder_id as number,
+							collection_folder_id,
 						),
 					),
 				);
@@ -63,7 +63,7 @@ export const GET = async (
 						eq(resourceCollections.user_id, user?.id),
 						eq(
 							resourceCollections.collection_folder_id,
-							collection_folder_id as number,
+							collection_folder_id,
 						),
 					),
 				);

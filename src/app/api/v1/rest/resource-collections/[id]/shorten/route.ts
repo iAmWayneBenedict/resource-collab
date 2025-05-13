@@ -10,7 +10,7 @@ import { uniqueSharedEmails } from "@/services/short-url-service";
 
 export const GET = async (
 	req: NextRequest,
-	{ params }: { params: Promise<{ id: number }> },
+	{ params }: { params: Promise<{ id: string }> },
 ) => {
 	const session = await getSession(req.headers);
 	const user = session?.user;
@@ -37,10 +37,7 @@ export const GET = async (
 				.from(collectionShortUrls)
 				.where(
 					and(
-						eq(
-							collectionShortUrls.collection_folder_id,
-							id as number,
-						),
+						eq(collectionShortUrls.collection_folder_id, id),
 						eq(collectionShortUrls.user_id, user.id),
 					),
 				)
@@ -78,13 +75,13 @@ export const GET = async (
 interface ShortenResourceRequest {
 	shared_to: Record<string, string>[];
 	access_level: "public" | "private" | "shared";
-	collection_folder_id?: number;
+	collection_folder_id?: string;
 	id?: string;
 }
 
 export const POST = async (
 	req: NextRequest,
-	{ params }: { params: Promise<{ id: number }> },
+	{ params }: { params: Promise<{ id: string }> },
 ) => {
 	const session = await getSession(req.headers);
 	const user = session?.user;
@@ -165,7 +162,7 @@ const createOrUpdateShortUrl = async (
 		const filter = [
 			eq(
 				collectionShortUrls.collection_folder_id,
-				requestData.collection_folder_id as number,
+				requestData.collection_folder_id as string,
 			),
 			eq(collectionShortUrls.user_id, userId),
 		];
@@ -189,7 +186,7 @@ const createOrUpdateShortUrl = async (
 				.where(
 					eq(
 						collectionFolders.id,
-						requestData.collection_folder_id as number,
+						requestData.collection_folder_id as string,
 					),
 				)
 				.returning({ name: collectionFolders.name });
@@ -226,7 +223,7 @@ const createOrUpdateShortUrl = async (
 			.values({
 				user_id: userId,
 				collection_folder_id:
-					requestData.collection_folder_id as number,
+					requestData.collection_folder_id as string,
 				short_code: shortCode,
 			})
 			.returning();
