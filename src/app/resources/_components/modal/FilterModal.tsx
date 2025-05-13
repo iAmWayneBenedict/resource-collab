@@ -47,7 +47,7 @@ const FilterFormModal = () => {
 	const sortBySearchParams = searchParams.get("sortBy");
 	const tab = searchParams.get("tab");
 	const page = searchParams.get("page");
-	const id = searchParams.get("id");
+	const id = searchParams.get("item");
 	const category = searchParams.get("category") ?? "";
 
 	const isResources = page === "resources" || page === "liked" || id;
@@ -119,6 +119,8 @@ const FilterFormModal = () => {
 		if (category && !isSmallDevices) location += `?category=${category}`;
 		if (location.includes("/dashboard")) {
 			location += `?tab=${tab}&page=${page}`;
+
+			if (id) location += `&item=${id}`;
 		}
 
 		router.push(location, { scroll: false });

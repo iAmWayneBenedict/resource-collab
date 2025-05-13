@@ -551,7 +551,6 @@ export const findResources = async (
 							}
 						: {
 								owner_id: false,
-								created_at: false,
 								updated_at: false,
 							},
 					with: {

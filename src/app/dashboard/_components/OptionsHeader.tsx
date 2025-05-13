@@ -6,30 +6,32 @@ import { useModal } from "@/store";
 import { useDashboardPage } from "@/store/useDashboardPage";
 import { Button } from "@heroui/react";
 import { MoveLeft, Plus } from "lucide-react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import React from "react";
 
 type Props = {
 	currentCollection?: Record<string, any> | null;
 };
 const OptionsHeader = ({ currentCollection }: Props) => {
-	const router = useRouter();
 	const getDashboardPage = useDashboardPage(
 		(state) => state.getDashboardPage,
 	);
 	const { onOpen: onOpenModal } = useModal();
+	const searchParams = useSearchParams();
 	const isCollectionPage = getDashboardPage() === "collections";
+	const page = getDashboardPage();
+	const tab = searchParams.get("tab");
 
 	const permission = currentCollection?.shared_to[0]?.permission;
-
-	const onClickReturnHandler = () => router.back();
 
 	return (
 		<div className="flex items-center justify-between">
 			<Button
+				href={`/dashboard?page=${page}&tab=${tab}`}
 				variant="light"
 				radius="full"
-				onPress={onClickReturnHandler}
+				as={Link}
 				startContent={<MoveLeft />}
 			>
 				{currentCollection?.name}
