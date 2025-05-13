@@ -6,7 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const PUT = async (
 	req: NextRequest,
-	{ params }: { params: Promise<{ id: number }> },
+	{ params }: { params: Promise<{ id: string }> },
 ) => {
 	const session = await getSession(req.headers);
 	const user = session?.user;
