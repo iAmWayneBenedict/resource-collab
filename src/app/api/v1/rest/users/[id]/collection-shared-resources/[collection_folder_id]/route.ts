@@ -32,7 +32,7 @@ export const GET = async (
 		const exist = await db
 			.select()
 			.from(collectionFolders)
-			.where(eq(collectionFolders.id, collection_folder_id as number));
+			.where(eq(collectionFolders.id, collection_folder_id as string));
 		if (!exist.length) {
 			return NextResponse.json(
 				{
