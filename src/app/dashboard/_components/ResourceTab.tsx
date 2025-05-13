@@ -10,10 +10,17 @@ import useResourcePaginatedSearchParams from "@/store/context/useResourcePaginat
 import { useCollections } from "@/store/useCollections";
 import { useRequestStatus } from "@/store/useRequestStatus";
 import { Button, Skeleton } from "@heroui/react";
-import { useEffect } from "react";
-import { AnimatePresence } from "motion/react";
+import { useEffect, useMemo } from "react";
+import { AnimatePresence, motion } from "motion/react";
 import { Plus } from "lucide-react";
 import EmptyDisplay from "@/components/layouts/EmptyDisplay";
+import {
+	FilterModalTrigger,
+	SearchModalTrigger,
+} from "@/app/resources/_components/filter";
+import useGetPaginationValues from "@/store/useGetPaginationValues";
+import { useSearchData } from "@/store/useSearchData";
+import { cn } from "@/lib/utils";
 
 type Props = {
 	type:
@@ -35,6 +42,7 @@ const ResourceWrapper = ({ type, id, callback }: Props) => {
 			state.actions.setSearchParams,
 	) as ResourcePaginatedSearchParamsState["actions"]["setSearchParams"];
 	const setCollections = useCollections((state) => state.setCollections);
+	const setSearchData = useSearchData((state) => state.setSearchData);
 
 	const setRequestStatus = useRequestStatus(
 		(state) => state.setRequestStatus,
@@ -45,6 +53,8 @@ const ResourceWrapper = ({ type, id, callback }: Props) => {
 			{ tab: "resources" },
 			{ user_id: authUser?.id, type, id, tab: "resources" },
 		);
+
+	const sortedResources = useGetPaginationValues(data?.data?.rows);
 
 	useEffect(() => {
 		setSearchParams({
@@ -64,6 +74,21 @@ const ResourceWrapper = ({ type, id, callback }: Props) => {
 		setCollections(collections.data?.data);
 	}, [collections.isSuccess, collections.data]);
 
+	// search data for search modal
+	const searchFeedData = useMemo(
+		() =>
+			data?.data?.rows?.map((resource: any) => {
+				return {
+					name: resource.name,
+					description: resource.description,
+				};
+			}) || [],
+		[data?.data?.rows],
+	);
+	useEffect(() => {
+		if (searchFeedData.length) setSearchData(searchFeedData);
+	}, [searchFeedData]);
+
 	const isCollectionResources =
 		type === "collection-resources" ||
 		type === "collection-shared-resources";
@@ -80,11 +105,6 @@ const ResourceWrapper = ({ type, id, callback }: Props) => {
 		}
 		setRequestStatus(currentStatus);
 	}, [isLoading, isFetching, isSuccess, isError, isCollectionResources]);
-
-	let isLoadingOrFetching = false;
-
-	if (isCollectionResources) isLoadingOrFetching = isLoading || isFetching;
-	else isLoadingOrFetching = isLoading;
 
 	if (isLoading) {
 		return (
@@ -117,42 +137,153 @@ const ResourceWrapper = ({ type, id, callback }: Props) => {
 			/>
 		);
 	}
-
-	if (!data?.data.rows?.length) {
+	if (!sortedResources?.length) {
 		return (
-			<EmptyDisplay
-				code="0"
-				title="No resources found"
-				description={
-					type.includes("collection")
-						? "This collection doesn't have any resources yet."
-						: "You don't have any resources in this category yet."
-				}
-				showButton={true}
-				onPress={() => onOpenModal("resourcesForm", { type: "url" })}
-				buttonText="Start adding now"
-			/>
+			<div className="relative flex flex-col gap-4">
+				{(type === "resources" ||
+					type === "liked" ||
+					type === "shared" ||
+					type === "collection-shared-resources") && (
+					<div>
+						<motion.div
+							initial={{ opacity: 0 }}
+							animate={{ opacity: 1 }}
+							transition={{ duration: 0.25 }}
+							className={cn(
+								"fixed bottom-10 right-5 z-[10] hidden h-fit sm:absolute sm:-top-[3.25rem] sm:flex",
+								type === "resources" && "sm:hidden",
+							)}
+						>
+							<div className="flex justify-end gap-2">
+								<SearchModalTrigger
+									hideAiSearch={true}
+									iconOnly={true}
+								/>
+								<FilterModalTrigger iconOnly={true} />
+								{type !== "shared" && (
+									<Button
+										className="bg-violet text-white"
+										radius="full"
+										startContent={<Plus />}
+										onPress={() =>
+											onOpenModal("resourcesForm", {
+												type: "url",
+											})
+										}
+									>
+										Add Resource
+									</Button>
+								)}
+							</div>
+						</motion.div>
+						<div
+							className={cn(
+								"flex justify-end gap-2 sm:hidden",
+								type === "resources" && "sm:flex",
+							)}
+						>
+							<SearchModalTrigger
+								hideAiSearch={true}
+								iconOnly={true}
+							/>
+							<FilterModalTrigger iconOnly={true} />
+							{type !== "shared" && (
+								<Button
+									className="bg-violet text-white"
+									radius="full"
+									startContent={<Plus />}
+									onPress={() =>
+										onOpenModal("resourcesForm", {
+											type: "url",
+										})
+									}
+								>
+									Add Resource
+								</Button>
+							)}
+						</div>
+					</div>
+				)}
+				<EmptyDisplay
+					code="0"
+					title="No resources found"
+					description={
+						type.includes("collection")
+							? "This collection doesn't have any resources yet."
+							: "You don't have any resources in this category yet."
+					}
+					showButton={type !== "shared"}
+					onPress={() =>
+						onOpenModal("resourcesForm", { type: "url" })
+					}
+					buttonText="Start adding now"
+				/>
+			</div>
 		);
 	}
+
 	return (
-		<div className="flex w-full flex-col gap-4">
-			{type === "resources" && (
-				<div className="flex justify-end">
-					<Button
-						className="bg-violet text-white"
-						radius="full"
-						startContent={<Plus />}
-						onPress={() =>
-							onOpenModal("resourcesForm", { type: "url" })
-						}
+		<div className="relative flex w-full flex-col gap-4">
+			{(type === "resources" || type === "liked") && (
+				<div>
+					<motion.div
+						initial={{ opacity: 0 }}
+						animate={{ opacity: 1 }}
+						transition={{ duration: 0.25 }}
+						className={cn(
+							"fixed bottom-10 right-5 z-[10] hidden h-fit sm:absolute sm:-top-[3.25rem] sm:flex",
+							type === "resources" && "sm:hidden",
+						)}
 					>
-						Add Resource
-					</Button>
+						<div className="flex justify-end gap-2">
+							<SearchModalTrigger
+								hideAiSearch={true}
+								iconOnly={true}
+							/>
+							<FilterModalTrigger iconOnly={true} />
+							<Button
+								className="bg-violet text-white"
+								radius="full"
+								startContent={<Plus />}
+								onPress={() =>
+									onOpenModal("resourcesForm", {
+										type: "url",
+									})
+								}
+							>
+								Add Resource
+							</Button>
+						</div>
+					</motion.div>
+					<div
+						className={cn(
+							"flex justify-end gap-2 sm:hidden",
+							type === "resources" && "sm:flex",
+						)}
+					>
+						<SearchModalTrigger
+							hideAiSearch={true}
+							iconOnly={true}
+						/>
+						<FilterModalTrigger iconOnly={true} />
+						<Button
+							className="bg-violet text-white"
+							radius="full"
+							startContent={<Plus />}
+							onPress={() =>
+								onOpenModal("resourcesForm", {
+									type: "url",
+								})
+							}
+						>
+							Add Resource
+						</Button>
+					</div>
 				</div>
 			)}
 			<div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
 				<AnimatePresence mode={"popLayout"}>
-					{data?.data.rows.map((resource: any) => (
+					{sortedResources.map((resource: any) => (
 						<ResourceCard key={resource.name} data={resource} />
 					))}
 				</AnimatePresence>

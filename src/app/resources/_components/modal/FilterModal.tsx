@@ -15,8 +15,8 @@ import {
 	SelectItem,
 } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import { useGetCategoriesQuery } from "../../../../lib/queries/categories";
@@ -32,6 +32,7 @@ const FilterFormSchema = z.object({
 const FilterFormModal = () => {
 	const { isOpen, onOpen, onOpenChange } = useDisclosure();
 	const [isSubmitting, setIsSubmitting] = useState(false);
+	const pathname = usePathname();
 	const isSmallDevices = useMediaQuery({
 		query: "(max-width: 64rem)",
 	});
@@ -44,7 +45,12 @@ const FilterFormModal = () => {
 		?.split(",")
 		?.filter((tag) => tag);
 	const sortBySearchParams = searchParams.get("sortBy");
+	const tab = searchParams.get("tab");
+	const page = searchParams.get("page");
+	const id = searchParams.get("id");
 	const category = searchParams.get("category") ?? "";
+
+	const isResources = page === "resources" || page === "liked" || id;
 
 	const { name: modalName, onClose, data: dataModal, type } = useModal();
 
@@ -111,6 +117,9 @@ const FilterFormModal = () => {
 	const onReset = () => {
 		let location = window.location.pathname;
 		if (category && !isSmallDevices) location += `?category=${category}`;
+		if (location.includes("/dashboard")) {
+			location += `?tab=${tab}&page=${page}`;
+		}
 
 		router.push(location, { scroll: false });
 		onCloseModal();
@@ -134,29 +143,38 @@ const FilterFormModal = () => {
 							<span>Filters</span>
 						</ModalHeader>
 						<ModalBody className="gap-4">
-							{isSmallDevices && (
-								<Controller
-									name="category"
-									control={control}
-									render={({ field }) => (
-										<Select
-											selectedKeys={[field.value ?? ""]}
-											onChange={field.onChange}
-											label="Category"
-											placeholder="Select category"
-										>
-											{categoriesResponse.data?.data.rows.map(
-												(category: any) => (
-													<SelectItem
-														key={category.id}
-													>
-														{category.name}
-													</SelectItem>
-												),
+							{isResources && (
+								<Fragment>
+									{(isSmallDevices ||
+										pathname !== "/resources") && (
+										<Controller
+											name="category"
+											control={control}
+											render={({ field }) => (
+												<Select
+													selectedKeys={[
+														field.value ?? "",
+													]}
+													onChange={field.onChange}
+													label="Category"
+													placeholder="Select category"
+												>
+													{categoriesResponse.data?.data.rows.map(
+														(category: any) => (
+															<SelectItem
+																key={
+																	category.id
+																}
+															>
+																{category.name}
+															</SelectItem>
+														),
+													)}
+												</Select>
 											)}
-										</Select>
+										/>
 									)}
-								/>
+								</Fragment>
 							)}
 							<Controller
 								name="sortBy"
@@ -178,21 +196,23 @@ const FilterFormModal = () => {
 									</Select>
 								)}
 							/>
-							<Controller
-								name="tags"
-								control={control}
-								render={({ field }) => (
-									<CustomComboBox
-										triggerText="Select Tags"
-										value={field.value as string[]}
-										onSelect={field.onChange}
-										options={tags}
-										selectionMode="multiple"
-										placement="top-start"
-										disableParentScrollOnOpen={false}
-									/>
-								)}
-							/>
+							{isResources && (
+								<Controller
+									name="tags"
+									control={control}
+									render={({ field }) => (
+										<CustomComboBox
+											triggerText="Select Tags"
+											value={field.value as string[]}
+											onSelect={field.onChange}
+											options={tags}
+											selectionMode="multiple"
+											placement="top-start"
+											disableParentScrollOnOpen={false}
+										/>
+									)}
+								/>
+							)}
 						</ModalBody>
 						<ModalFooter>
 							<Button

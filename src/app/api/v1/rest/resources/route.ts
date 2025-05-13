@@ -14,12 +14,13 @@ import { findAllCategory } from "@/services/category-service";
 import axios from "axios";
 import config from "@/config";
 import VectorService from "@/services/vector";
-import { resources } from "@/data/schema";
+import { collectionFolders, resources } from "@/data/schema";
 import { db } from "@/data/connection";
 import { and, eq } from "drizzle-orm";
 import { hasSubscriptionAccess } from "@/services/subscription-service";
 
 type BodyParams = {
+	collection_folder_id?: string;
 	name: string;
 	category: number | string;
 	tags: number[] | string[];
@@ -105,6 +106,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
 			resourceData = {
 				...response.data?.data,
+				collection_folder_id: body.collection_folder_id,
 				category: body.category,
 				thumbnail: response.data?.data.image,
 				icon: response.data?.data.icon,
@@ -135,6 +137,22 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 				},
 				{ status: 404 },
 			);
+		}
+
+		if (body?.collection_folder_id) {
+			const exist = await db
+				.select()
+				.from(collectionFolders)
+				.where(eq(collectionFolders.id, body?.collection_folder_id));
+
+			if (!exist.length)
+				return NextResponse.json(
+					{
+						message: "Collection folder not found",
+						data: { path: ["url"] },
+					},
+					{ status: 404 },
+				);
 		}
 
 		const hasUserSubscriptionAccess = await hasSubscriptionAccess({
@@ -266,23 +284,15 @@ export const DELETE = async (request: NextRequest) => {
 		);
 	}
 
-	if (!body.type || !["soft", "hard"].includes(body.type)) {
-		return NextResponse.json(
-			{ message: "Type parameter is missing", data: null },
-			{ status: 404 },
-		);
-	}
-
-	const { ids, type } = body;
+	const { ids } = body;
 
 	try {
 		const deletedResources = await deleteResourceTransaction({
 			ids: ids as number[],
 			userId: user.id,
-			type: type as "soft" | "hard",
 		});
 
-		if (user.role === "admin" && type === "hard")
+		if (user.role === "admin")
 			await VectorService.pinecone.deleteResource(
 				deletedResources.map((n) => n + ""),
 			);

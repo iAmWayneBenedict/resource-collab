@@ -5,6 +5,7 @@ import {
 	pgTable,
 	serial,
 	text,
+	timestamp,
 	uuid,
 	varchar,
 } from "drizzle-orm/pg-core";
@@ -33,9 +34,8 @@ export const collectionFolders = pgTable("collection_folders", {
 	shared_to: jsonb("shared_to")
 		.default(sql`'[]'::jsonb`)
 		.notNull(),
-	// permission_level: permissionLevel("permission_level")
-	// 	.notNull()
-	// 	.default("view"),
+	updated_at: timestamp("updated_at").defaultNow().notNull(),
+	created_at: timestamp("created_at").defaultNow().notNull(),
 }).enableRLS();
 
 export const collectionFoldersRelations = relations(

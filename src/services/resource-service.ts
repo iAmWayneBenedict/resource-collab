@@ -2,6 +2,7 @@ import { db } from "@/data/connection";
 import { ResourcesSelectType, ResourcesType } from "@/data/models/resources";
 import {
 	categories as categoriesTable,
+	collectionFolders,
 	likeResources,
 	resourceCollections,
 	resources,
@@ -23,12 +24,10 @@ import {
 	inArray,
 	InferInsertModel,
 	InferSelectModel,
-	isNull,
 	or,
 	sql,
 	SQL,
 } from "drizzle-orm";
-import { NextResponse } from "next/server";
 import {
 	hasSubscriptionAccess,
 	updateSubscriptionCountLimit,
@@ -42,6 +41,7 @@ type ResourceParams = {
 	description: string;
 	category: string | number;
 	tags: string[] | number[];
+	collection_folder_id?: string;
 };
 
 type FindResourceParams = {
@@ -308,6 +308,19 @@ export const createResourceTransaction = async (
 			);
 		}
 
+		if (body?.collection_folder_id) {
+			console.log(
+				`Associating resource with collection folder: ${body.collection_folder_id}`,
+			);
+			await tx.insert(resourceCollections).values({
+				user_id: body.userId,
+				resource_id: newResource.id,
+				collection_folder_id: body.collection_folder_id,
+			});
+			console.log(
+				`Resource associated with collection folder: ${body.collection_folder_id}`,
+			);
+		}
 		// associate resource with user
 		console.log(`Associating resource with user: ${body.userId}`);
 		await tx
@@ -388,35 +401,18 @@ export const updateResourceTransaction = async (
 type DeleteResourceTransactionParams = {
 	userId: string;
 	ids: number[];
-	type: "soft" | "hard";
 };
 export const deleteResourceTransaction = async (
 	body: DeleteResourceTransactionParams,
 ): Promise<number[]> => {
 	return await db.transaction(async (tx) => {
-		const { ids, type, userId } = body;
-
-		if (type === "soft") {
-			await tx
-				.delete(userResources)
-				.where(
-					and(
-						inArray(userResources.resource_id, ids),
-						eq(userResources.user_id, userId),
-					),
-				)
-				.returning();
-		} else {
-			await tx
-				.delete(resources)
-				.where(
-					and(
-						inArray(resources.id, ids),
-						eq(resources.owner_id, userId),
-					),
-				)
-				.returning();
-		}
+		const { ids, userId } = body;
+		await tx
+			.delete(resources)
+			.where(
+				and(inArray(resources.id, ids), eq(resources.owner_id, userId)),
+			)
+			.returning();
 
 		return ids;
 	});
@@ -750,7 +746,6 @@ export const findUserResources = async (body: FindResourcesParams) => {
 				.findMany({
 					columns: {
 						owner_id: false,
-						created_at: false,
 						updated_at: false,
 					},
 					with: {
