@@ -11,7 +11,7 @@ const LoadingScreen = () => {
 			<div className="flex flex-col items-center">
 				<Link href="/" className="flex items-center gap-2">
 					<img src={favicon.src} className="aspect-auto w-12" />
-					<span className="hidden font-PlayFairDisplay text-2xl font-black uppercase sm:flex">
+					<span className="flex font-PlayFairDisplay text-2xl font-black uppercase">
 						Coollabs
 					</span>
 				</Link>

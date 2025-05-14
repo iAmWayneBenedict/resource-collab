@@ -13,6 +13,7 @@ interface User {
 	role: string;
 	image: string;
 	subscription: Record<string, any>;
+	provider: "google" | "github" | "credential";
 }
 
 export const useAuthUser = create<TUserState>((set) => ({
