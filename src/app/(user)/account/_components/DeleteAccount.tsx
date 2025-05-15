@@ -53,7 +53,7 @@ const DeleteAccount = () => {
 
 	return (
 		<div className="rounded-2xl border border-destructive/20 bg-destructive/5 p-6">
-			<div className="flex items-center justify-between">
+			<div className="flex w-full flex-col items-start space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
 				<div className="space-y-1">
 					<h2 className="text-lg font-medium">Delete Account</h2>
 					<p className="text-sm text-default-500">

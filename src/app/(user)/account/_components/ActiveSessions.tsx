@@ -138,7 +138,7 @@ const ActiveSessions = () => {
 	return (
 		<Card className="border-none bg-default-50 shadow-none">
 			<CardHeader>
-				<div className="flex w-full items-center justify-between">
+				<div className="flex w-full flex-col items-start space-y-3 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
 					<div className="space-y-1">
 						<h2 className="text-lg font-medium">Active Sessions</h2>
 						<p className="text-sm text-default-500">
