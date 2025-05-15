@@ -40,12 +40,10 @@ const getDeviceInfo = (userAgent: string) => {
 	};
 };
 
-const getDeviceIcon = (type: "web" | "mobile" | "extension") => {
+const getDeviceIcon = (type: "web" | "mobile") => {
 	switch (type) {
 		case "mobile":
 			return <Smartphone className="h-5 w-5" />;
-		case "extension":
-			return <Chrome className="h-5 w-5" />;
 		default:
 			return <Laptop className="h-5 w-5" />;
 	}
@@ -214,10 +212,7 @@ const ActiveSessions = () => {
 									<div className="flex items-center gap-4">
 										<div className="flex h-10 w-10 items-center justify-center rounded-full bg-default-200">
 											{getDeviceIcon(
-												deviceType as
-													| "web"
-													| "mobile"
-													| "extension",
+												deviceType as "web" | "mobile",
 											)}
 										</div>
 										<div className="space-y-1">
