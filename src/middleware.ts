@@ -174,5 +174,5 @@ export const config = {
 		"/admin/:path*",
 		// "/api/:path*",
 		"/dashboard",
-	], //! BUG on matcher if we put resource/file routes "/_next" and others
+	], //! BUG on matcher if we put resource/file routes "/_next" and otherss
 };
