@@ -190,7 +190,7 @@ export const SocialAuthInfo = () => {
 			<CardBody>
 				<h2 className="mb-4 text-lg font-semibold">Password</h2>
 				<div className="flex items-center gap-4 rounded-2xl bg-default-100 p-4">
-					<div className="flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-sm">
+					<div className="flex h-12 w-12 min-w-12 items-center justify-center rounded-full bg-white shadow-sm">
 						<Image
 							src={providerIcon.src}
 							alt={providerName}
