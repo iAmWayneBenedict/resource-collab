@@ -16,7 +16,7 @@ import { UploadButton } from "@/lib/storage/uploadthing";
 import { authClient } from "@/config/auth";
 import { ClientUploadedFileData } from "uploadthing/types";
 import { usePostDeleteUploadThingFileMutation } from "@/lib/mutations/storage/uploadthing";
-import { motion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 
 const updateUserFields = async (body: Record<string, string>) => {
 	const { setAuthUser } = useAuthUser.getState();
@@ -50,7 +50,7 @@ export const ProfileForm = () => {
 	useEffect(() => {
 		if (authUser) {
 			setFormData({ name: authUser?.name, email: authUser?.email });
-			setFileId(authUser?.image.split("/").at(-1) as string);
+			setFileId(authUser?.image?.split("/").at(-1) as string);
 		}
 	}, [authUser]);
 
@@ -79,11 +79,9 @@ export const ProfileForm = () => {
 	};
 
 	return (
-		<div className="mx-auto w-full max-w-2xl">
-			<h1 className="mb-6 text-2xl font-semibold">Profile Settings</h1>
-
+		<div className="mx-auto w-full">
 			<Form onSubmit={handleSave} className="w-full">
-				<Card className="mb-6 w-full shadow-md">
+				<Card className="mb-6 w-full bg-default-50 shadow-none">
 					<CardBody className="gap-6">
 						<div className="flex items-center gap-4">
 							<Avatar
@@ -135,16 +133,19 @@ export const ProfileForm = () => {
 
 						<motion.div
 							className="flex gap-2"
-							initial={{ opacity: 0, y: 20 }}
-							animate={{ opacity: 1, y: 0 }}
+							initial={{ opacity: 0 }}
+							animate={{ opacity: 1 }}
 							transition={{ duration: 0.3 }}
 						>
-							{isEditing ? (
-								<>
+							<AnimatePresence mode="wait" initial={false}>
+								{isEditing ? (
 									<motion.div
-										initial={{ x: -20, opacity: 0 }}
-										animate={{ x: 0, opacity: 1 }}
-										transition={{ delay: 0.1 }}
+										key="submit"
+										initial={{ opacity: 0, x: -20 }}
+										animate={{ opacity: 1, x: 0 }}
+										exit={{ opacity: 0, x: 20 }}
+										transition={{ duration: 0.2 }}
+										className="flex gap-2"
 									>
 										<Button
 											className="bg-violet text-white"
@@ -154,12 +155,6 @@ export const ProfileForm = () => {
 										>
 											Save Changes
 										</Button>
-									</motion.div>
-									<motion.div
-										initial={{ x: -20, opacity: 0 }}
-										animate={{ x: 0, opacity: 1 }}
-										transition={{ delay: 0.2 }}
-									>
 										<Button
 											variant="light"
 											radius="full"
@@ -170,15 +165,15 @@ export const ProfileForm = () => {
 											Cancel
 										</Button>
 									</motion.div>
-								</>
-							) : (
-								<>
-									<button type="submit" hidden />
+								) : (
 									<motion.div
-										initial={{ scale: 0.8, opacity: 0 }}
-										animate={{ scale: 1, opacity: 1 }}
-										transition={{ delay: 0.2 }}
+										key="edit"
+										initial={{ opacity: 0, x: 20 }}
+										animate={{ opacity: 1, x: 0 }}
+										exit={{ opacity: 0, x: -20 }}
+										transition={{ duration: 0.2 }}
 									>
+										<button type="submit" hidden />
 										<Button
 											className="bg-violet-200 text-violet-700 dark:bg-violet-900 dark:text-violet-200"
 											radius="full"
@@ -189,8 +184,8 @@ export const ProfileForm = () => {
 											Edit Profile
 										</Button>
 									</motion.div>
-								</>
-							)}
+								)}
+							</AnimatePresence>
 						</motion.div>
 					</CardBody>
 				</Card>

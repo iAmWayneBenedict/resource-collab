@@ -32,7 +32,12 @@ export const authRoutes: string[] = [
  *
  * @type {string[]}
  */
-export const userDashboardRoutes: string[] = ["/dashboard"];
+export const userDashboardRoutes: string[] = [
+	"/dashboard",
+	"/profile",
+	"/account",
+	"/subscriptions",
+];
 
 /**
  * Admin dashboard routes are routes accessible only to administrators.

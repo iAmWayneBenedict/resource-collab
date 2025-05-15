@@ -3,6 +3,7 @@
 import { useAuthUser } from "@/store";
 import { Avatar, Button } from "@heroui/react";
 import { Settings } from "lucide-react";
+import Link from "next/link";
 import React from "react";
 
 const UserProfile = () => {
@@ -29,6 +30,8 @@ const UserProfile = () => {
 					</div>
 					<div className="mt-4 flex gap-3">
 						<Button
+							as={Link}
+							href="/profile"
 							variant="solid"
 							radius="full"
 							// className="bg-violet text-white"

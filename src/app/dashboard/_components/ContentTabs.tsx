@@ -11,7 +11,7 @@ import {
 import ResourceTab from "./ResourceTab";
 import LikedTab from "./liked/LikedTab";
 import CollectionTab from "./collections/CollectionTab";
-import { useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import {
 	useParams,
 	usePathname,
@@ -64,6 +64,11 @@ const ContentTabs = () => {
 	useLayoutEffect(() => {
 		setDashboardPage(type);
 	}, []);
+
+	useEffect(() => {
+		setDashboardPage(type);
+	}, [type]);
+
 	// const [currentTab, setCurrentTab] = useState<string>(type as string);
 	const id = searchParams.get("item") ?? "";
 
