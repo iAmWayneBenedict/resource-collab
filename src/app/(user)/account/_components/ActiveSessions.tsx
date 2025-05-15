@@ -14,6 +14,7 @@ import {
 import { Chrome, Globe, Laptop, Smartphone, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { UAParser } from "ua-parser-js";
+import { AnimatePresence, motion } from "motion/react";
 
 type Session = {
 	id: string;
@@ -135,6 +136,21 @@ const ActiveSessions = () => {
 		});
 	};
 
+	const container = {
+		hidden: { opacity: 0 },
+		show: {
+			opacity: 1,
+			transition: {
+				staggerChildren: 0.1,
+			},
+		},
+	};
+
+	const item = {
+		hidden: { opacity: 0, y: 20 },
+		show: { opacity: 1, y: 0 },
+	};
+
 	return (
 		<Card className="border-none bg-default-50 shadow-none">
 			<CardHeader>
@@ -167,85 +183,116 @@ const ActiveSessions = () => {
 					</Button>
 				</div>
 			</CardHeader>
-			<CardBody className="gap-4">
-				{sessions?.map((session) => {
-					const { deviceName, browser, deviceType } = getDeviceInfo(
-						session.userAgent as string,
-					);
-					const isCurrentDevice = session.id === currentSessionId;
+			<CardBody className="gap-4 overflow-visible">
+				<motion.div
+					variants={container}
+					initial="hidden"
+					animate="show"
+					className="flex flex-col gap-2"
+				>
+					<AnimatePresence mode="popLayout">
+						{sessions?.map((session, index) => {
+							const { deviceName, browser, deviceType } =
+								getDeviceInfo(session.userAgent as string);
+							const isCurrentDevice =
+								session.id === currentSessionId;
 
-					return (
-						<div
-							key={session.id}
-							className="flex items-center justify-between rounded-2xl border border-default-200 bg-default-100/50 p-4"
-						>
-							<div className="flex items-center gap-4">
-								<div className="flex h-10 w-10 items-center justify-center rounded-full bg-default-200">
-									{getDeviceIcon(
-										deviceType as
-											| "web"
-											| "mobile"
-											| "extension",
-									)}
-								</div>
-								<div className="space-y-1">
-									<div className="flex items-center gap-2">
-										<h3 className="font-medium">
-											{deviceName} ({browser})
-										</h3>
-										{isCurrentDevice && (
-											<Chip
-												size="sm"
-												variant="flat"
-												color="success"
-												className="h-5 text-xs"
-											>
-												Current
-											</Chip>
-										)}
-									</div>
-									<div className="flex items-center gap-2 text-xs text-default-500">
-										<Globe className="h-3 w-3" />
-										<span>{session.ipAddress}</span>
-										<span>•</span>
-										<span>
-											{formatLastActive(
-												session.updatedAt as unknown as string,
-											)}
-										</span>
-									</div>
-								</div>
-							</div>
-							{!isCurrentDevice && (
-								<Button
-									color="danger"
-									variant="light"
-									onPress={() => handleRevoke(session.token)}
-									radius="full"
-									size="sm"
-									isLoading={
-										loadingSession &&
-										session.token === revokingSessionToken
-									}
+							return (
+								<motion.div
+									key={session.id}
+									variants={item}
+									layout
+									className="flex items-center justify-between rounded-2xl border border-default-200 bg-default-100/50 p-4"
+									initial={{ opacity: 0, y: 20 }}
+									animate={{ opacity: 1, y: 0 }}
+									exit={{ opacity: 0, y: -20 }}
+									transition={{
+										duration: 0.3,
+										delay: 0.1 * (index + 1),
+									}}
 								>
-									{loadingSession ? "Revoking..." : "Revoke"}
-								</Button>
-							)}
-						</div>
-					);
-				})}
+									<div className="flex items-center gap-4">
+										<div className="flex h-10 w-10 items-center justify-center rounded-full bg-default-200">
+											{getDeviceIcon(
+												deviceType as
+													| "web"
+													| "mobile"
+													| "extension",
+											)}
+										</div>
+										<div className="space-y-1">
+											<div className="flex items-center gap-2">
+												<h3 className="font-medium">
+													{deviceName} ({browser})
+												</h3>
+												{isCurrentDevice && (
+													<Chip
+														size="sm"
+														variant="flat"
+														color="success"
+														className="h-5 text-xs"
+													>
+														Current
+													</Chip>
+												)}
+											</div>
+											<div className="flex items-center gap-2 text-xs text-default-500">
+												<Globe className="h-3 w-3" />
+												<span>{session.ipAddress}</span>
+												<span>•</span>
+												<span>
+													{formatLastActive(
+														session.updatedAt as unknown as string,
+													)}
+												</span>
+											</div>
+										</div>
+									</div>
+									{!isCurrentDevice && (
+										<Button
+											color="danger"
+											variant="light"
+											onPress={() =>
+												handleRevoke(session.token)
+											}
+											radius="full"
+											size="sm"
+											isLoading={
+												loadingSession &&
+												session.token ===
+													revokingSessionToken
+											}
+										>
+											{loadingSession &&
+											session.token ===
+												revokingSessionToken
+												? "Revoking..."
+												: "Revoke"}
+										</Button>
+									)}
+								</motion.div>
+							);
+						})}
+					</AnimatePresence>
 
-				{(!sessions || sessions.length === 0) && (
-					<div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-default-200 p-8 text-center">
-						<div className="mb-4 rounded-full bg-default-100 p-3">
-							<Globe className="h-6 w-6 text-default-500" />
-						</div>
-						<h3 className="font-medium">No Active Sessions</h3>
-						<p className="mt-1 text-sm text-default-500">
-							There are no other active sessions on your account.
-						</p>
-					</div>
-				)}
+					{(!sessions || sessions.length === 0) && (
+						<motion.div
+							initial={{ opacity: 0, scale: 0.9 }}
+							animate={{ opacity: 1, scale: 1 }}
+							transition={{ duration: 0.3 }}
+							className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-default-200 p-8 text-center"
+						>
+							<div className="mb-4 rounded-full bg-default-100 p-3">
+								<Globe className="h-6 w-6 text-default-500" />
+							</div>
+							<h3 className="font-medium">No Active Sessions</h3>
+							<p className="mt-1 text-sm text-default-500">
+								There are no other active sessions on your
+								account.
+							</p>
+						</motion.div>
+					)}
+				</motion.div>
 			</CardBody>
 		</Card>
 	);
