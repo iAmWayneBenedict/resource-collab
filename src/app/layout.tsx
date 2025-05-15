@@ -25,6 +25,8 @@ export const metadata: Metadata = {
 		siteName: "Coollabs",
 		type: "website",
 	},
+	viewport:
+		"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no",
 };
 
 const playFairDisplay = Playfair_Display({

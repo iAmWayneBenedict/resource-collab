@@ -2,9 +2,9 @@
 "use client";
 
 import Link from "next/link";
-import React, { useLayoutEffect, useState } from "react";
+import React, { JSX, useLayoutEffect, useState } from "react";
 import { cn, toggleScrollBody } from "@/lib/utils";
-
+import { Icon } from "@iconify/react";
 import { useAuthUser } from "@/store/useAuthUser";
 import {
 	Navbar,
@@ -28,14 +28,8 @@ import { authClient } from "@/config/auth";
 import { usePathname, useRouter } from "next/navigation";
 import { favicon } from "../../../../public/assets";
 import { useTheme } from "next-themes";
-import {
-	Box,
-	GalleryVerticalEnd,
-	LogOut,
-	Moon,
-	Repeat,
-	Sun,
-} from "lucide-react";
+import { LogOut, Moon, Sun } from "lucide-react";
+import { navSections } from "@/lib/navigation";
 
 const NavBar = () => {
 	return (
@@ -286,29 +280,81 @@ const LargeNav = () => {
 										</DropdownItem>
 									</DropdownSection>
 								) : null}
-								<DropdownSection title="Contents">
-									<DropdownItem
-										as={Link}
-										key={"my-resources"}
-										startContent={
-											<GalleryVerticalEnd size={16} />
-										}
-										href="/dashboard?page=resources"
-									>
-										My Resources
-									</DropdownItem>
-									<DropdownItem
-										key={"my-collections"}
-										startContent={<Box size={16} />}
-									>
-										My Collection
-									</DropdownItem>
-									<DropdownItem
-										key={"shared-collections"}
-										startContent={<Repeat size={16} />}
-									>
-										Shared Collection
-									</DropdownItem>
+
+								{/* Dashboard Navigation */}
+								<DropdownSection
+									key={navSections[0].title}
+									title={navSections[0].title}
+								>
+									{navSections[0].items.map((item) => {
+										const IconComponent =
+											typeof item.icon === "string"
+												? null
+												: item.icon;
+										return (
+											<DropdownItem
+												key={item.page}
+												as={Link}
+												href={
+													item.href || `/${item.page}`
+												}
+												startContent={
+													IconComponent ? (
+														<IconComponent
+															size={16}
+														/>
+													) : (
+														<Icon
+															icon={
+																item.icon as string
+															}
+															width={16}
+														/>
+													)
+												}
+											>
+												{item.label}
+											</DropdownItem>
+										);
+									})}
+								</DropdownSection>
+
+								{/* Settings Navigation */}
+								<DropdownSection
+									key={navSections[1].title}
+									title={navSections[1].title}
+								>
+									{navSections[1].items.map((item) => {
+										const IconComponent =
+											typeof item.icon === "string"
+												? null
+												: item.icon;
+										return (
+											<DropdownItem
+												key={item.page}
+												as={Link}
+												href={
+													item.href || `/${item.page}`
+												}
+												startContent={
+													IconComponent ? (
+														<IconComponent
+															size={16}
+														/>
+													) : (
+														<Icon
+															icon={
+																item.icon as string
+															}
+															width={16}
+														/>
+													)
+												}
+											>
+												{item.label}
+											</DropdownItem>
+										);
+									})}
 								</DropdownSection>
 
 								<DropdownSection title="Session">

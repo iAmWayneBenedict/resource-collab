@@ -55,10 +55,10 @@ export const auth = betterAuth({
 		customSession(async ({ user, session }) => {
 			const [userData, subscription] = await db.transaction(
 				async (tx) => {
-					const [userDetails] = await tx
-						.select()
-						.from(users)
-						.where(eq(users.id, user.id));
+					const userDetails = await tx.query.users.findFirst({
+						with: { accounts: { columns: { provider_id: true } } },
+						where: eq(users.id, user.id),
+					});
 
 					const [subscription] =
 						await tx.query.userSubscriptions.findMany({
@@ -72,13 +72,13 @@ export const auth = betterAuth({
 					return [userDetails, subscription];
 				},
 			);
-
 			return {
 				user: {
 					...user,
 					image: userData?.image,
 					role: userData?.role,
 					status: userData?.status,
+					provider: userData?.accounts[0].provider_id,
 					subscription,
 				},
 				session,
@@ -118,6 +118,10 @@ export const auth = betterAuth({
 			emailVerified: "email_verified",
 			createdAt: "created_at",
 			updatedAt: "updated_at",
+		},
+
+		deleteUser: {
+			enabled: true,
 		},
 	},
 

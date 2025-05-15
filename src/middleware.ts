@@ -167,6 +167,9 @@ export const config = {
 	runtime: "nodejs",
 	matcher: [
 		"/",
+		"/profile",
+		"/account",
+		"/subscription",
 		"/auth/:path*",
 		"/admin/:path*",
 		// "/api/:path*",

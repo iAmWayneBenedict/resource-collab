@@ -20,6 +20,7 @@ import { resourceCollections } from "./resource-collections";
 import { portfolioCollections } from "./portfolio-collections";
 import { collectionFolders } from "./collection-folders";
 import { pinned } from "@/data/models/pinned";
+import { accounts } from "./accounts";
 
 export const usersEnum = pgEnum("users_enum", ["user", "admin", "guest"]);
 export const usersStatusEnum = pgEnum("users_status_enum", [
@@ -75,6 +76,7 @@ export const userRelations = relations(users, ({ many, one }) => ({
 		fields: [users.id],
 		references: [admins.user_id],
 	}),
+	accounts: many(accounts),
 	pinned: many(pinned),
 	collectionFolders: many(collectionFolders),
 	messages: many(userMessages),
