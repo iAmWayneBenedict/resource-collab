@@ -4,19 +4,17 @@ import BannerContent from "@/components/layouts/users/BannerContent";
 import BannerGradient from "@/components/layouts/users/BannerGradient";
 import Layout from "@/components/layouts/users/Layout";
 import Section from "@/components/layouts/Section";
-import React, { Suspense } from "react";
+import React from "react";
 import Container from "@/components/layouts/Container";
-import {
-	AISearchModal,
-	FilterFormModal,
-	SearchFormModal,
-} from "./_components/modal";
 import { FilterModalTrigger, SearchModalTrigger } from "./_components/filter";
 import ResourceCardContainer from "./_components/ResourceCardContainer";
 import CategoriesAsideContainer from "./_components/CategoriesAsideContainer";
 import AISearchResult from "./_components/AISearchResult";
 import ShareModal from "@/components/modal/ShareModal";
 import AuthModal from "@/components/modal/AuthModal";
+import FilterFormModal from "@/components/modal/FilterModal";
+import SearchFormModal from "@/components/modal/SearchModal";
+import AISearchModal from "@/components/modal/AISearchModal";
 
 const Page = () => {
 	return (

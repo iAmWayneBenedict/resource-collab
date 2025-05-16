@@ -19,8 +19,8 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Fragment, useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
-import { useGetCategoriesQuery } from "../../../../lib/queries/categories";
 import { useMediaQuery } from "react-responsive";
+import { useGetCategoriesQuery } from "@/lib/queries/categories";
 
 const SORT_LIST = ["Newest", "Oldest", "Alphabetical", "Reverse Alphabetical"];
 const FilterFormSchema = z.object({
