@@ -180,7 +180,7 @@ const AISearchModal = () => {
 							onMouseEnter={onButtonHover}
 							onMouseLeave={onButtonLeave}
 						>
-							<motion.div
+							<div
 								key={"permanent"}
 								className="flex flex-wrap gap-2"
 							>
@@ -208,7 +208,7 @@ const AISearchModal = () => {
 										</Button>
 									</motion.div>
 								))}
-							</motion.div>
+							</div>
 							{/* Additional rows - visible on hover */}
 							<AnimatePresence>
 								{showAllButtons && (
