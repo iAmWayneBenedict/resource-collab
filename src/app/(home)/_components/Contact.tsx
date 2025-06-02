@@ -111,7 +111,7 @@ const Contact = () => {
 					<h1
 						className={cn(
 							"font-PlayFairDisplay font-medium",
-							"flex flex-col gap-3 whitespace-pre-wrap ~text-4xl/6xl",
+							"flex flex-col gap-3 whitespace-pre-wrap text-5xl font-medium leading-snug xl:text-6xl",
 						)}
 					>
 						<span>Want to add?</span>

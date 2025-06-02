@@ -6,19 +6,19 @@ import SaveResourcePopOver from "./components/resources/SaveResourcePopOver";
 import { usePutViewResourceMutation } from "@/lib/mutations/resources";
 import { SaveResourceDrawer } from "./components/resources/SaveResourceDrawer";
 import React, { useState } from "react";
-import { Avatar, Image, Checkbox, Button, PressEvent } from "@heroui/react";
+import { Avatar, Image, PressEvent } from "@heroui/react";
 import { useMediaQuery } from "react-responsive";
-import { useSearchParams } from "next/navigation";
-import { useSelectedCollection } from "@/store/useSelectedCollection";
 import { useDashboardPage } from "@/store/useDashboardPage";
-import { EllipsisVertical } from "lucide-react";
 import Options from "./components/resources/Options";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 type ResourceCardProps = {
 	data: any;
 };
 
 const ResourceCard = ({ data }: ResourceCardProps) => {
+	const pathname = usePathname();
 	const [isOpenDrawer, setIsOpenDrawer] = useState<boolean>(false);
 	const [icon, setIcon] = useState(
 		data?.icon || "https://placehold.co/200x200",
@@ -81,7 +81,12 @@ const ResourceCard = ({ data }: ResourceCardProps) => {
 			onMouseEnter={() => setIsHovered(true)}
 			onMouseLeave={() => setIsHovered(false)}
 		>
-			<div className="absolute right-7 top-12 flex items-center">
+			<div
+				className={cn(
+					"absolute right-7 top-12 flex items-center",
+					pathname === "/resources" && "right-0",
+				)}
+			>
 				<div
 					className={`absolute right-7 ${getDashboardPage() === "shared" || getDashboardPage() === "public" ? "cursor-not-allowed" : ""}`}
 				>
@@ -101,9 +106,11 @@ const ResourceCard = ({ data }: ResourceCardProps) => {
 						/>
 					)}
 				</div>
-				<div className="absolute right-0">
-					<Options data={data} />
-				</div>
+				{pathname !== "/resources" && (
+					<div className="absolute right-0">
+						<Options data={data} />
+					</div>
+				)}
 			</div>
 			<div
 				className="h-full"

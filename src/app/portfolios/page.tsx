@@ -6,6 +6,7 @@ import Section from "@/components/layouts/Section";
 import PortfolioCard from "@/components/layouts/cards/PortfolioCard";
 import React, { Suspense } from "react";
 import Container from "@/components/layouts/Container";
+import EmptyDisplay from "@/components/layouts/EmptyDisplay";
 
 const Portfolios = () => {
 	return (
@@ -15,14 +16,19 @@ const Portfolios = () => {
 
 				<Section>
 					<BannerContent
-						title={`Need a dev? \n Check out these amazing developers`}
-						description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-		incididunt ut labore et dolore magna aliqua."
+						title="Explore & Connect with Inspiring Creators"
+						description={`Check out these incredible portfolios and connect with the creative minds behind them.`}
 					/>
 				</Section>
 
 				<Section className="flex">
-					<Aside
+					<EmptyDisplay
+						code="beta"
+						title="Coming Soon!"
+						description="We're currently in beta. The showcasing of amazing portfolios will be available soon. Stay tuned for more!"
+						showButton={false}
+					/>
+					{/* <Aside
 						links={[
 							{ id: 1, title: "All", href: "/portfolios" },
 							{
@@ -53,7 +59,7 @@ const Portfolios = () => {
 								<PortfolioCard key={el} />
 							))}
 						</div>
-					</div>
+					</div> */}
 				</Section>
 			</Container>
 		</Layout>

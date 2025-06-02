@@ -71,9 +71,7 @@ const ResourceCollectionTab = ({ type }: Props) => {
 									radius="full"
 									startContent={<Plus />}
 									onPress={() =>
-										onOpenModal("resourcesForm", {
-											type: "url",
-										})
+										onOpenModal("create-collection", null)
 									}
 								>
 									Add collection
@@ -91,7 +89,7 @@ const ResourceCollectionTab = ({ type }: Props) => {
 							radius="full"
 							startContent={<Plus />}
 							onPress={() =>
-								onOpenModal("resourcesForm", { type: "url" })
+								onOpenModal("create-collection", null)
 							}
 						>
 							Add collection
@@ -141,7 +139,7 @@ const ResourceCollectionTab = ({ type }: Props) => {
 							radius="full"
 							startContent={<Plus />}
 							onPress={() =>
-								onOpenModal("resourcesForm", { type: "url" })
+								onOpenModal("create-collection", null)
 							}
 						>
 							Add collection
@@ -157,7 +155,7 @@ const ResourceCollectionTab = ({ type }: Props) => {
 					radius="full"
 					startContent={<Plus />}
 					onPress={() =>
-						onOpenModal("resourcesForm", { type: "url" })
+						onOpenModal("create-collection", null)
 					}
 				>
 					Add collection

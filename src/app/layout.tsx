@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Playfair_Display } from "next/font/google";
 import { GeistSans } from "geist/font/sans";
 import "./globals.css";
@@ -25,8 +25,13 @@ export const metadata: Metadata = {
 		siteName: "Coollabs",
 		type: "website",
 	},
-	viewport:
-		"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no",
+};
+
+export const viewport: Viewport = {
+	width: "device-width",
+	initialScale: 1,
+	maximumScale: 1,
+	userScalable: false,
 };
 
 const playFairDisplay = Playfair_Display({
@@ -46,10 +51,6 @@ export default async function RootLayout({
 				<script
 					crossOrigin="anonymous"
 					src="//unpkg.com/react-scan/dist/auto.global.js"
-				/>
-				<meta
-					name="viewport"
-					content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
 				/>
 			</Head>
 			<body className={cn(GeistSans.className, playFairDisplay.variable)}>

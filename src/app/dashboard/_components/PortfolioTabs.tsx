@@ -65,29 +65,29 @@ const PortfolioTabs = ({ type }: Props) => {
 	// 	);
 	// }
 
-	if (true) {
-		return (
-			<EmptyDisplay
-				code="0"
-				title="No portfolios found"
-				description={
-					type.includes("collection")
-						? "This collection doesn't have any portfolios yet. Start showcasing your work and skills by adding one!"
-						: "You don't have any portfolios in this category yet. Add one to highlight your skills and projects!"
-				}
-				showButton={true}
-				onPress={() =>
-					onOpenModal(
-						"portfolio-modal",
-						null,
-						"create",
-						"Add portfolio",
-					)
-				}
-				buttonText="Add Your Portfolio"
-			/>
-		);
-	}
+	// if (true) {
+	// 	return (
+	// 		<EmptyDisplay
+	// 			code="0"
+	// 			title="No portfolios found"
+	// 			description={
+	// 				type.includes("collection")
+	// 					? "This collection doesn't have any portfolios yet. Start showcasing your work and skills by adding one!"
+	// 					: "You don't have any portfolios in this category yet. Add one to highlight your skills and projects!"
+	// 			}
+	// 			showButton={true}
+	// 			onPress={() =>
+	// 				onOpenModal(
+	// 					"portfolio-modal",
+	// 					null,
+	// 					"create",
+	// 					"Add portfolio",
+	// 				)
+	// 			}
+	// 			buttonText="Add Your Portfolio"
+	// 		/>
+	// 	);
+	// }
 
 	// return (
 	// 	<div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
@@ -98,6 +98,15 @@ const PortfolioTabs = ({ type }: Props) => {
 	// 		</AnimatePresence>
 	// 	</div>
 	// );
+
+	return (
+		<EmptyDisplay
+			code="beta"
+			title="Coming Soon!"
+			description="We are currently in beta. Showcasing your portfolio will be available soon. Stay tuned!"
+			showButton={false}
+		/>
+	);
 };
 
 export default PortfolioTabs;
