@@ -22,7 +22,7 @@ const ShareModal = () => {
 	const [copied, setCopied] = useState<boolean>(false);
 	// const [emails, setEmails] = useState<string>("");
 	const [sharedTo, setSharedTo] = useState<Record<string, string>[]>([]);
-	const [shareType, setShareType] = useState<"private" | "public">("private");
+	const [shareType, setShareType] = useState<"private" | "public">("public");
 	const [role, setRole] = useState<"view" | "edit">("view");
 	const [isLoadingShortUrl, setIsLoadingShortUrl] = useState<boolean>(false);
 	const { name, data, title, onClose, onSubmitCallback } = useModal();
@@ -31,7 +31,9 @@ const ShareModal = () => {
 	useEffect(() => {
 		if (name === "share-modal") {
 			setIsOpen(true);
-			setShareType(data?.restrictedTo ?? "private");
+			setShareType(
+				(data?.restrictedTo || data?.access_level) ?? "private",
+			);
 			setIsLoadingShortUrl(true);
 			toggleScrollBody(true);
 
@@ -65,8 +67,8 @@ const ShareModal = () => {
 	}, [data]);
 
 	const onCloseModal = useCallback(() => {
-		setIsOpen(false);
 		onClose();
+		setIsOpen(false);
 		toggleScrollBody(false);
 	}, [onClose]);
 
@@ -141,7 +143,6 @@ const ShareModal = () => {
 			</div>
 		);
 	};
-
 	return (
 		<Modal
 			isOpen={isOpen}

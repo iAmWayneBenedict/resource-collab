@@ -38,7 +38,13 @@ const UserProfile = () => {
 						>
 							Edit Profile
 						</Button>
-						<Button isIconOnly variant="light" radius="full">
+						<Button
+							as={Link}
+							href="/account"
+							isIconOnly
+							variant="light"
+							radius="full"
+						>
 							<Settings />
 						</Button>
 					</div>

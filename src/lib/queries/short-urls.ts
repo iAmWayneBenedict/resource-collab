@@ -16,13 +16,15 @@ export const useGetResourceShortUrlRedirect = ({
 export const useGetResourceShortUrl = ({
 	resourceId,
 	enabled,
+	params = [],
 }: {
 	resourceId: number;
 	enabled: boolean;
+	params?: any[];
 }) => {
 	return useQuery({
 		enabled: enabled,
-		queryKey: ["resource-short-url", resourceId, enabled],
+		queryKey: ["resource-short-url", resourceId, enabled, ...params],
 		queryFn: () => request({ url: `/resources/${resourceId}/shorten` }),
 		retry: 1,
 	});

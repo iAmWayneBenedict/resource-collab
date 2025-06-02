@@ -20,6 +20,7 @@ const ShareButton = ({
 	const pathname = usePathname();
 	const onOpenModal = useModal((state) => state.onOpen);
 	const setSubmitCallback = useModal((state) => state.setSubmitCallback);
+	const { isOpen } = useModal();
 	const getDashboardPage = useDashboardPage(
 		(state) => state.getDashboardPage,
 	);
@@ -49,12 +50,9 @@ const ShareButton = ({
 			};
 
 			setShareData(formattedData);
-			setEnableInitShortUrl(false);
 			onOpenModal("share-modal", formattedData, undefined, name);
 		},
-		onError: () => {
-			setEnableInitShortUrl(false);
-		},
+		onError: () => {},
 	});
 
 	const onSubmitShare = (data: any) => {
@@ -77,12 +75,15 @@ const ShareButton = ({
 			{
 				...data,
 				restrictedTo,
-				loaded: false,
+				loaded: enabledInitShortUrl,
 			},
 			undefined,
 			name,
 		);
-		if (!data?.restrictedTo) setEnableInitShortUrl(true);
+		if (!data?.restrictedTo) {
+			setEnableInitShortUrl(true);
+			shortUrlResponse.refetch();
+		}
 		setSubmitCallback(onSubmitShare);
 	};
 
@@ -104,30 +105,34 @@ const ShareButton = ({
 				url: `${config.BASE_URL}/r/${shortUrlData.short_code}`,
 				loaded: true,
 				restrictedTo,
-				access_level: shortUrlData.emails.length ? "private" : "public",
+				access_level:
+					(shortUrlData.access_level ?? shortUrlData.emails.length)
+						? "private"
+						: "public",
 			};
 
-			onOpenModal("share-modal", formattedData, undefined, name);
-			setEnableInitShortUrl(false);
+			isOpen &&
+				onOpenModal("share-modal", formattedData, undefined, name);
 		}
 		if (shortUrlResponse.isError) {
-			onOpenModal(
-				"share-modal",
-				{
-					url: null,
-					restrictedTo,
-					type: "Resource",
-					loaded: true,
-				},
-				undefined,
-				name,
-			);
-			setEnableInitShortUrl(false);
+			isOpen &&
+				onOpenModal(
+					"share-modal",
+					{
+						url: null,
+						restrictedTo,
+						type: "Resource",
+						loaded: true,
+					},
+					undefined,
+					name,
+				);
 		}
 	}, [
 		shortUrlResponse.data,
 		shortUrlResponse.isSuccess,
 		shortUrlResponse.isError,
+		shortUrlResponse.isFetching,
 	]);
 
 	return (

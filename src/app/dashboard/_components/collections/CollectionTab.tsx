@@ -11,6 +11,7 @@ import OptionsHeader from "../OptionsHeader";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import CollectionModal from "@/components/modal/CollectionModal";
 import { useDashboardTab } from "@/store/useDashboardTab";
+import EmptyDisplay from "@/components/layouts/EmptyDisplay";
 
 type Props = {
 	type:
@@ -71,7 +72,12 @@ const CollectionTab = ({ type, id }: Props) => {
 					<ResourceCollectionTab type={type} />
 				</Tab>
 				<Tab key="portfolios" title="Portfolios">
-					test
+					<EmptyDisplay
+						code="beta"
+						title="Coming Soon!"
+						description="We are currently in beta. Showcasing your portfolio will be available soon. Stay tuned!"
+						showButton={false}
+					/>
 				</Tab>
 			</Tabs>
 			<CollectionModal />

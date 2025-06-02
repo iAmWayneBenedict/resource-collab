@@ -2,7 +2,6 @@ import { ChartNoAxesColumn } from "lucide-react";
 import { formatNumber } from "../../utils";
 import LikeButton from "./LikeButton";
 import ShareButton from "./ShareButton";
-import { useSelectedCollection } from "@/store/useSelectedCollection";
 import { useSearchParams } from "next/navigation";
 
 type ResourceMetricsProps = {

@@ -216,3 +216,14 @@
 		@apply !z-[9999];
 	}
 }
+
+
+
+@layer base {
+  * {
+    @apply border-border;
+	}
+  body {
+    @apply bg-background text-foreground;
+	}
+}

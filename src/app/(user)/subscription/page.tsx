@@ -13,7 +13,7 @@ const Page = () => {
 					<EmptyDisplay
 						code="beta"
 						title="Early Access"
-						description="You are currently on early access subscription. Choosing from different subscription plans will be available soon."
+						description="We are currently in beta. Choosing from different subscription plans will be available soon."
 						showButton={false}
 					/>
 				</div>

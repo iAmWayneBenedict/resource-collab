@@ -50,7 +50,11 @@ const FilterFormModal = () => {
 	const id = searchParams.get("item");
 	const category = searchParams.get("category") ?? "";
 
-	const isResources = page === "resources" || page === "liked" || id;
+	const isResources =
+		page === "resources" ||
+		page === "liked" ||
+		id ||
+		pathname.includes("/resources");
 
 	const { name: modalName, onClose, data: dataModal, type } = useModal();
 
@@ -127,6 +131,10 @@ const FilterFormModal = () => {
 		onCloseModal();
 	};
 
+	const categoryOptions = categoriesResponse.data?.data.rows.filter(
+		(category: any) => category.name,
+	);
+
 	return (
 		<Modal
 			isOpen={isOpen}
@@ -145,10 +153,9 @@ const FilterFormModal = () => {
 							<span>Filters</span>
 						</ModalHeader>
 						<ModalBody className="gap-4">
-							{isResources && (
-								<Fragment>
-									{(isSmallDevices ||
-										pathname !== "/resources") && (
+							<Fragment>
+								{isSmallDevices &&
+									pathname === "/resources" && (
 										<Controller
 											name="category"
 											control={control}
@@ -161,10 +168,14 @@ const FilterFormModal = () => {
 													label="Category"
 													placeholder="Select category"
 												>
-													{categoriesResponse.data?.data.rows.map(
+													{categoryOptions.map(
 														(category: any) => (
 															<SelectItem
 																key={
+																	category.id
+																}
+																textValue={
+																	"category" +
 																	category.id
 																}
 															>
@@ -176,8 +187,8 @@ const FilterFormModal = () => {
 											)}
 										/>
 									)}
-								</Fragment>
-							)}
+							</Fragment>
+
 							<Controller
 								name="sortBy"
 								control={control}

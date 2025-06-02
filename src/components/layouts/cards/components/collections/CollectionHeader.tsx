@@ -28,7 +28,6 @@ import config from "@/config";
 import { useGetCollectionShortUrl } from "@/lib/queries/short-urls";
 import { usePostCollectionsShortUrlMutation } from "@/lib/mutations/short_urls";
 import { usePathname } from "next/navigation";
-import { useSelectedCollection } from "@/store/useSelectedCollection";
 import { useDashboardPage } from "@/store/useDashboardPage";
 
 const CollectionHeader = ({
@@ -39,6 +38,7 @@ const CollectionHeader = ({
 	setEnableClickHandler: (d: any) => void;
 }) => {
 	const onOpenModal = useModal((state) => state.onOpen);
+	const { isOpen } = useModal();
 	const getDashboardPage = useDashboardPage(
 		(state) => state.getDashboardPage,
 	);
@@ -150,12 +150,13 @@ const CollectionHeader = ({
 			await queryClient.invalidateQueries({
 				queryKey: ["collection-short-url"],
 			});
-			onOpenModal(
-				"share-modal",
-				formattedData,
-				undefined,
-				data.data.name,
-			);
+			isOpen &&
+				onOpenModal(
+					"share-modal",
+					formattedData,
+					undefined,
+					data.data.name,
+				);
 		},
 		onError: () => {
 			setEnableInitShortUrl(false);
@@ -165,19 +166,31 @@ const CollectionHeader = ({
 	const onSubmitShare = (data: any) => resourceShortUrlMutation.mutate(data);
 
 	const onClickShareHandler = () => {
-		const data = shareData ?? {
-			url: null,
-			restrictedTo,
-			type: "Collection",
-		};
+		const cachedData = shortUrlResponse.data?.data;
+		let tempData;
+		if (cachedData) {
+			tempData = {
+				...cachedData.collection_short_urls,
+				...cachedData.collection_folders,
+				type: "Collection",
+				url: `${config.BASE_URL}/c/${cachedData.collection_short_urls.short_code}`,
+				loaded: true,
+			};
+		} else
+			tempData = {
+				url: null,
+				restrictedTo,
+				type: "Collection",
+			};
 		onOpenModal(
 			"share-modal",
-			{ ...data, loaded: false },
+			{ ...tempData, loaded: false },
 			undefined,
-			data.name,
+			tempData.name,
 		);
 		setEnableInitShortUrl(true);
 		setSubmitCallback(onSubmitShare);
+		shortUrlResponse.refetch();
 	};
 
 	const shortUrlResponse = useGetCollectionShortUrl({
@@ -196,21 +209,23 @@ const CollectionHeader = ({
 				loaded: true,
 			};
 
-			onOpenModal("share-modal", formattedData, undefined, data.name);
+			isOpen &&
+				onOpenModal("share-modal", formattedData, undefined, data.name);
 			// setEnableInitShortUrl(false);
 		}
 		if (shortUrlResponse.isError) {
-			onOpenModal(
-				"share-modal",
-				{
-					url: null,
-					restrictedTo,
-					type: "Collection",
-					loaded: true,
-				},
-				undefined,
-				data.name,
-			);
+			isOpen &&
+				onOpenModal(
+					"share-modal",
+					{
+						url: null,
+						restrictedTo,
+						type: "Collection",
+						loaded: true,
+					},
+					undefined,
+					data.name,
+				);
 			setEnableInitShortUrl(false);
 		}
 	}, [
