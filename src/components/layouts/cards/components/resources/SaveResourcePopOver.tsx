@@ -10,7 +10,7 @@ import {
   Selection,
   Image,
 } from "@heroui/react";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { BookmarkButton } from "./BookmarkButton";
 import { motion, AnimatePresence } from "motion/react";
 import { Plus, ArrowLeft } from "lucide-react";
