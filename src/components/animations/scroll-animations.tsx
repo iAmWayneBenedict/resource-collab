@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useInView } from "framer-motion";
+import { useInView, Variants } from "framer-motion";
 
 // Animation variants for different elements
 export const fadeIn = {
@@ -10,7 +10,7 @@ export const fadeIn = {
 		opacity: 1,
 		transition: { duration: 0.6, ease: "easeOut" },
 	},
-};
+} satisfies Variants;
 
 export const fadeInUp = {
 	hidden: { opacity: 0, y: 40 },
@@ -19,7 +19,7 @@ export const fadeInUp = {
 		y: 0,
 		transition: { duration: 0.6, ease: "easeOut" },
 	},
-};
+} satisfies Variants;
 
 export const fadeInDown = {
 	hidden: { opacity: 0, y: -40 },
@@ -28,7 +28,7 @@ export const fadeInDown = {
 		y: 0,
 		transition: { duration: 0.6, ease: "easeOut" },
 	},
-};
+} satisfies Variants;
 
 export const fadeInLeft = {
 	hidden: { opacity: 0, x: -40 },
@@ -37,7 +37,7 @@ export const fadeInLeft = {
 		x: 0,
 		transition: { duration: 0.6, ease: "easeOut" },
 	},
-};
+} satisfies Variants;
 
 export const fadeInRight = {
 	hidden: { opacity: 0, x: 40 },
@@ -46,7 +46,7 @@ export const fadeInRight = {
 		x: 0,
 		transition: { duration: 0.6, ease: "easeOut" },
 	},
-};
+} satisfies Variants;
 
 export const staggerContainer = {
 	hidden: { opacity: 0 },
@@ -57,7 +57,7 @@ export const staggerContainer = {
 			delayChildren: 0.2,
 		},
 	},
-};
+} satisfies Variants;
 
 export const scaleUp = {
 	hidden: { opacity: 0, scale: 0.8 },
@@ -66,7 +66,7 @@ export const scaleUp = {
 		scale: 1,
 		transition: { duration: 0.6, ease: "easeOut" },
 	},
-};
+} satisfies Variants;
 
 // Custom hook for triggering animations when element is in view
 export function useScrollAnimation(threshold = 0.1) {
